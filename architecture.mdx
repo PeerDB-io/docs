@@ -1,0 +1,35 @@
+---
+title: "PeerDB Architecture Overview"
+---
+
+PeerDB is fundamentally made up of two parts: the platform and the connectors.
+
+The **platform** encompasses the essential services necessary to configure and run data querying and movement operations, which include the Nexus Query Layer and the Flow Data Transfer Component.
+
+- **Nexus Query Layer**: Located in the `nexus` subfolder in the root repository, Nexus is a Rust-implemented service that enables Postgres-compatible SQL querying across various data sources and sinks. It supports the PGWire protocol and can be horizontally scaled to manage high demand.
+
+- **Flow Data Transfer Component**: Stored in the `flow` subfolder of the root repository, Flow is written in Golang. It manages data transfer between sources and sinks, and consists of a Flow API and horizontally scalable Flow Workers.
+
+The **connectors** signify various data sources and sinks that PeerDB can interact with. They include databases like Postgres, MySQL (sources), and Bigquery, Snowflake (sinks).
+
+<img src="images/peerdb-arch.svg" />
+
+### Detailed Components
+
+- **Nexus Query Layer**: This is the user interface to run SQL queries. It communicates with both data sources and sinks.
+
+- **Flow Data Transfer Component**: It has two parts - the Flow API that manages the process and the Flow Workers that perform the actual data transfer.
+
+- **Sources**: These are the databases from which data can be fetched, like Postgres and MySQL.
+
+- **Sinks**: These are the databases where data can be deposited, like Bigquery and Snowflake.
+
+### Dependencies
+
+PeerDB has two primary dependencies:
+
+1. **[Temporal Orchestration Engine](https://www.temporal.io/)**: This external service orchestrates the data transfer process within the Flow component.
+
+2. **Catalog Database (Postgres)**: This database stores metadata related to PeerDB's operations.
+
+The main strengths of PeerDB are its scalability and flexibility, allowing for the addition of Nexus and Flow Worker instances to handle increased load efficiently.
