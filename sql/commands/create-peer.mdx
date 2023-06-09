@@ -6,8 +6,8 @@ description: "Guide to creating Peers in PeerDB"
 PeerDB currently supports 3 types of Peers. To connect a database to PeerDB, you need to create a Peer. A Peer is a connection to a database that PeerDB can query. Peers are created using the `CREATE PEER` command.
 
 1. [BigQuery](#bigquery-peer) (Stable)
-2. Snowflake (Beta)
-3. PostgreSQL (Beta)
+2. [Snowflake](#snowflake-peer) (Under development)
+3. [PostgreSQL](#postgresql-peer) (Under development)
 
 ## BigQuery Peer
 
@@ -45,3 +45,63 @@ If you have a service account key, you can use that or [create a new one](https:
 3. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying. Record and Struct data-types are projected as JSONB. JSON datatype in BQ is not supported yet.
 4. **SQL Coverage:** Most SQL constructs in reads incl. Simple Selects, JOINs, aggregations, window functions, CTEs etc are supported. You can run both Postgres compatible and BQ compatible queries through PeerDBs interface.
 5. **Error Handling:** If a query fails on the BigQuery side because of lack of auth or query coverage or timeout, PeerDB handles that error and propagates the entire message  as a JSON text to the end-user. We also capture this ERROR message within PeerDB logs.
+
+
+## Snowflake Peer
+
+```sql
+CREATE PEER sf_peer FROM SNOWFLAKE WITH
+(
+  account_id = 'LC83243.us-east-2.aws',
+  username = 'saipeerdb',
+  private_key ='<private_key>',
+  database = '<db name>',
+  schema = '<schema>',
+  warehouse = '<WARE_HOUSE>',
+  role = '<role>',
+  query_timeout = '<query_timeout_in_seconds'
+);
+
+-- Query away tables in Snowflake
+SELECT * FROM sf_peer.<schema>.<tablename>;
+```
+
+
+
+### Authentication
+
+PeerDB authenticates the creation of a Snowflake peer based key pair authentication. 
+Refer to this [doc](https://docs.snowflake.com/en/user-guide/key-pair-auth#configuring-key-pair-authentication) to create key pair, assign them to the right role and help populate the above fields.
+
+<Info>Make sure you have the right permissions for the service account, PeerDB requires at least read permissions for querying. For MIRROR it requires both read and write.</Info>
+
+
+### Known Limitations
+
+1. **Database Specific:** PeerDB only supports querying tables within a dataset. Cross dataset joins are not supported yet.
+2. **Read Only:** You can only read from a Snowflake peer. Writing to the Snowflake peer is not yet supported.
+3. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying.
+4. **SQL Coverage:** Most SQL constructs in reads incl. Simple Selects, JOINs, aggregations, window functions, CTEs etc are supported. You can run both Postgres compatible and SF compatible queries through PeerDBs interface.
+5. **Error Handling:** If a query fails on the Snowflake side because of lack of auth or query coverage or timeout, PeerDB handles that error and propagates the entire message  as a JSON text to the end-user. We also capture this ERROR message within PeerDB logs.
+
+
+## PostgreSQL Peer
+
+```sql
+CREATE PEER postgres_peer FROM POSTGRES WITH
+(
+    host = '<hostname>',
+    port = '<port>',
+    user = '<user>',
+    password = '<password>',
+    database = '<dbname>'
+);
+
+-- Query away tables in Postgres
+SELECT * FROM postgres_peer.<schema>.<tablename>;
+```
+
+### Known Limitations
+
+1. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying. We are actively addding support for other types.
+2. **Unsupported COPY command:** COPY command is not supported yet.
