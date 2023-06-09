@@ -19,7 +19,7 @@
     {
       "name": "API Reference",
       "icon": "rectangle-terminal",
-      "url": "api-reference"
+      "url": "/sql/reference"
     },
     {
       "name": "Changelog",
