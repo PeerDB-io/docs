@@ -1,0 +1,39 @@
+---
+title: Quickstart Guide
+description: "Get started with PeerDB in a few simple steps."
+---
+
+Deploying PeerDB is a simple process involving just a couple of steps.
+
+1.  **Install Docker on your workstation:** Refer to [these instructions](https://www.docker.com/products/docker-desktop) if you haven't already done so. Make sure you have the latest version of `docker-compose`.
+
+2.  **Run the following commands in your terminal:**
+
+    ```bash
+    git clone https://github.com/PeerDB-io/peerdb.git
+    cd peerdb
+    docker-compose up
+    ```
+
+3.  **Connect to PeerDB:**
+
+
+    ```bash
+    psql "port=9900 host=localhost password=peerdb"
+    ```
+
+
+That's it! You now have PeerDB up and running on your machine, ready to query away!
+
+FAQ
+---
+
+If you have any questions about the PeerDB setup and deployment process, don't hesitate to reach out on [Slack](https://join.slack.com/t/peerdb-public/shared_invite/zt-1wo9jydev-EXInbMtCtpAKFFWdi7QvLQ). We're more than happy to assist and answer any questions, including:
+
+*   How long does it take to set up PeerDB?
+*   How do I know my data sync is successful?
+*   Can I set a specific time to start my data sync?
+
+If there are any unanswered questions, we'd love to help you get started. Feel free to ask your questions on our community [Slack](https://join.slack.com/t/peerdb-public/shared_invite/zt-1wo9jydev-EXInbMtCtpAKFFWdi7QvLQ) channel.
+
+In addition to this, if you require direct access to our team for any assistance, don't hesitate to contact us to discuss our premium support offerings.

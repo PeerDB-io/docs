@@ -17,9 +17,14 @@
   },
   "anchors": [
     {
-      "name": "API Reference",
+      "name": "SQL Reference",
       "icon": "rectangle-terminal",
-      "url": "api-reference"
+      "url": "/sql/reference"
+    },
+    {
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://github.com/PeerDB-io/peerdb"
     },
     {
       "name": "Changelog",
@@ -37,22 +42,21 @@
       "group": "Home",
       "pages": [
         "introduction",
-        "features"
+        "quickstart",
+        "architecture"
       ]
     },
     {
-      "group": "API Documentation",
+      "group": "SQL Reference",
       "pages": [
-        "api-reference/authentication"
+        "sql/reference"
       ]
     },
     {
-      "group": "Endpoint Examples",
+      "group": "SQL Commands",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/update",
-        "api-reference/endpoint/delete"
+        "sql/commands/create-peer",
+        "sql/commands/create-mirror"
       ]
     }
   ],
