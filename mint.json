@@ -17,9 +17,14 @@
   },
   "anchors": [
     {
-      "name": "API Reference",
+      "name": "SQL Reference",
       "icon": "rectangle-terminal",
       "url": "/sql/reference"
+    },
+    {
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://github.com/PeerDB-io/peerdb"
     },
     {
       "name": "Changelog",
@@ -37,6 +42,7 @@
       "group": "Home",
       "pages": [
         "introduction",
+        "quickstart",
         "architecture"
       ]
     },
