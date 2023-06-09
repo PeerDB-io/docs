@@ -11,15 +11,9 @@
     "light": "#4D9CFF",
     "dark": "#0050B4"
   },
-  "topbarLinks": [
-    {
-      "name": "Documentation",
-      "url": "https://mintlify.com/docs"
-    }
-  ],
   "topbarCtaButton": {
     "name": "Get Started",
-    "url": "https://github.com/mintlify/starter"
+    "url": "https://github.com/PeerDB-io/peerdb"
   },
   "anchors": [
     {
@@ -30,22 +24,27 @@
     {
       "name": "Changelog",
       "icon": "list",
-      "url": "https://mintlify.com"
+      "url": "https://github.com/PeerDB-io/peerdb/releases"
     },
     {
       "name": "Community",
-      "icon": "discord",
-      "url": "https://mintlify.com/community"
+      "icon": "slack",
+      "url": "https://join.slack.com/t/peerdb-public/shared_invite/zt-1wo9jydev-EXInbMtCtpAKFFWdi7QvLQ"
     }
   ],
   "navigation": [
     {
       "group": "Home",
-      "pages": ["introduction", "features"]
+      "pages": [
+        "introduction",
+        "features"
+      ]
     },
     {
       "group": "API Documentation",
-      "pages": ["api-reference/authentication"]
+      "pages": [
+        "api-reference/authentication"
+      ]
     },
     {
       "group": "Endpoint Examples",
@@ -58,8 +57,6 @@
     }
   ],
   "footerSocials": {
-    "twitter": "https://twitter.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://www.linkedin.com/company/mintsearch"
+    "github": "https://github.com/PeerDB-io"
   }
 }

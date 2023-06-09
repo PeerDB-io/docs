@@ -1,0 +1,47 @@
+---
+title: Creating Peers
+description: "Guide to creating Peers in PeerDB"
+---
+
+PeerDB currently supports 3 types of Peers. To connect a database to PeerDB, you need to create a Peer. A Peer is a connection to a database that PeerDB can query. Peers are created using the `CREATE PEER` command.
+
+1. [BigQuery](#bigquery-peer) (Stable)
+2. Snowflake (Beta)
+3. PostgreSQL (Beta)
+
+## BigQuery Peer
+
+```sql
+CREATE PEER bq_peer FROM BIGQUERY WITH
+(
+  type = 'service_account',
+  project_id = '<project_id>',
+  private_key_id = '<private_key_id>',
+  private_key = '<private_key>',
+  client_email = '<client_email>',
+  client_id = '<client_id>',
+  auth_uri = '<auth_uri>',
+  token_uri = '<token_uri>',
+  auth_provider_x509_cert_url = '<auth_provider_x509_cert_url>',
+  client_x509_cert_url = '<client_x509_cert_url>',
+  dataset_id = '<dataset_id>'
+);
+
+-- Query away tables in BigQuery
+SELECT * FROM bq_peer.test_table;
+```
+
+### Authentication
+
+PeerDB authenticates the creation of a BigQuery peer based on the service account. All the fields within the `CREATE PEER` command can be acquired from a service account JSON.
+If you have a service account key, you can use that or [create a new one](https://cloud.google.com/iam/docs/keys-create-delete) dedicated for PeerDB.
+
+<Info>Make sure you have the right permissions for the service account, PeerDB requires at least read permissions for querying. For MIRROR it requires both read and write.</Info>
+
+### Known Limitations
+
+1. **Dataset Specific:** PeerDB only supports querying tables within a dataset. Cross dataset joins are not supported yet.
+2. **Read Only:** You can only read from a BQ peer. Writing to the BQ peer is not yet supported.
+3. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying. Record and Struct data-types are projected as JSONB. JSON datatype in BQ is not supported yet.
+4. **SQL Coverage:** Most SQL constructs in reads incl. Simple Selects, JOINs, aggregations, window functions, CTEs etc are supported. You can run both Postgres compatible and BQ compatible queries through PeerDBs interface.
+5. **Error Handling:** If a query fails on the BigQuery side because of lack of auth or query coverage or timeout, PeerDB handles that error and propagates the entire message  as a JSON text to the end-user. We also capture this ERROR message within PeerDB logs.

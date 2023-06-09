@@ -1,0 +1,71 @@
+---
+title: PeerDB Installation on Ubuntu / Debian
+description: "Welcome to PeerDB docs. Here you'll find everything you need to get started with PeerDB."
+---
+
+To get started with PeerDB, you will first need the binaries from the latest release. See: https://github.com/PeerDB-io/peerdb/releases.
+
+<Warning>Currently only query layer setup is documented here. To enable transfer look at TODO.</Warning>
+
+## Setup
+
+1. **Machine Provisioning**: The machine on which PeerDB will live can be on-premise or on the cloud. Please provision a machine with ubuntu 22.04 or ubuntu 22.10 or any debian distribution with with debian 11 or higher.
+    - **Sizing:** This depends on the workload and our team will provide guidance on the right configuration before you go production. A configuration you could start with for testing can be 8vcores, 32GB RAM and 100GB disk.
+2. **Install PeerDB**
+
+    ```bash
+    sudo dpkg -i peerdb-server_x.y.z_amd64.deb
+    ```
+
+3. **PeerDB Catalog:** PeerDB requires a catalog Posgres database for storing metadata. The catalog database can be on-prem OR on the cloud. If you already have a postgres database you can use that as the catalog. If not setup a postgres database on the vm using [these](https://www.postgresql.org/download/linux/ubuntu/) steps.
+4. Update the `/etc/systemd/system/peerdb-server.service` OR `/etc/systemd/system/multi-user.target.wants/peerdb-server.service` with the desired Postgres catalog information. The environment variables there are placeholders, so edit them to point to the right things. `PEERDB_PASSWORD` cannot be empty.
+
+    ```bash
+    # Environment variables for PeerDB
+    Environment=PEERDB_HOST=0.0.0.0
+    Environment=PEERDB_PORT=9090
+    Environment=PEERDB_LOG_DIR=/var/log/peerdb
+    Environment=PEERDB_PASSWORD=peerdb
+    # Environment=PEERDB_FDW_MODE=false
+    # Environment=PEERDB_FLOW_SERVER_ADDRESS=http://flow_api:8112
+    # Environment variables for Catalog
+    Environment=PEERDB_CATALOG_HOST=localhost
+    Environment=PEERDB_CATALOG_PORT=5432
+    Environment=PEERDB_CATALOG_USER=postgres
+    Environment=PEERDB_CATALOG_PASSWORD=postgres
+    Environment=PEERDB_CATALOG_DATABASE=postgres
+    ```
+
+5. Reload the systemctl services `sudo systemctl daemon-reload`
+6. Restart PeerDB server
+
+    ```bash
+    sudo service peerdb-server restart
+    ```
+
+7. Check the status of PeerDB and confirm it is healthy
+
+    ```bash
+    sudo service peerdb-server status
+    ```
+
+8. Connect to PeerDB and query away!
+
+    ```bash
+    psql "host=localhost port=9090 password=peerdb"
+    ```
+
+
+### Check Service Status
+
+```bash
+sudo service peerdb-server status
+```
+
+## PeerDB Logs
+
+Logs are captured in the /var/log/nexus/nexus.log file. You can run the below command to view logs
+
+```bash
+tail -f 200 /var/log/peerdb/peerdb.log
+```
