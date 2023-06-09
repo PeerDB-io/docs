@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Documentation Starter Kit",
+  "name": "PeerDB Docs: Setup your ETL in minutes with SQL.",
   "logo": {
     "dark": "/logo/docs-logo-dark-svg.svg",
     "light": "/logo/docs-logo-light-svg.svg"
