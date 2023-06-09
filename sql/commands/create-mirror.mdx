@@ -1,0 +1,44 @@
+---
+title: Creating Mirrors
+description: "Guide to creating synchornization jobs in PeerDB"
+---
+
+PeerDB allows you to create synchronization jobs between tables between different Peers.
+Currently only postgres is supported as a source.
+
+|                  | Snowflake | BigQuery |
+|------------------|-----------|----------|
+| Postgres - CDC   |    ✅     |    ✅     |
+| Postgres - Query |    🚧    |      🚧   |
+
+
+## Command Reference
+
+### For CDC
+
+```sql
+CREATE MIRROR <mirror_name> FROM
+  <peer_name>.<schema_name>.<table_name> TO
+  <peer_name>.<schema_name>.<table_name> WITH
+  (
+    <mirror_options>
+  );
+```
+
+### For Query
+
+```sql
+CREATE MIRROR <mirror_name> FROM
+  QUERY <select_query> TO
+  <peer_name>.<schema_name>.<table_name> WITH
+  (
+    <mirror_options>
+  );
+```
+
+## Mirror Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `sync_frequency` | How often to run the mirror | `1 hour` |
+| `max_parallelism` | How many parallel workers to use | `16` |

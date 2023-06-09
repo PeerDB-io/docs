@@ -37,22 +37,20 @@
       "group": "Home",
       "pages": [
         "introduction",
-        "features"
+        "architecture"
       ]
     },
     {
-      "group": "API Documentation",
+      "group": "SQL Reference",
       "pages": [
-        "api-reference/authentication"
+        "sql/reference"
       ]
     },
     {
-      "group": "Endpoint Examples",
+      "group": "SQL Commands",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/update",
-        "api-reference/endpoint/delete"
+        "sql/commands/create-peer",
+        "sql/commands/create-mirror"
       ]
     }
   ],
