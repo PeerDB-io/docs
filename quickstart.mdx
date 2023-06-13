@@ -10,9 +10,12 @@ Deploying PeerDB is a simple process involving just a couple of steps.
 2.  **Run the following commands in your terminal:**
 
     ```bash
-    git clone https://github.com/PeerDB-io/peerdb.git
+    git clone --recursive git@github.com:PeerDB-io/peerdb.git
     cd peerdb
-    docker-compose up
+    
+    # Run docker containers: peerdb-server, postgres as catalog, temporal
+    export COMPOSE_PROJECT_NAME=peerdb-stack
+    docker compose up
     ```
 
 3.  **Connect to PeerDB:**
