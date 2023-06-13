@@ -47,21 +47,6 @@
       ]
     },
     {
-      "group": "Use-cases",
-      "pages": [
-        "sql/commands/create-peer",
-        "sql/commands/create-mirror"
-      ]
-    },
-    {
-      "group": "Use cases",
-      "pages": [
-        "usecases/realtime-cdc",
-        "usecases/customizable-etl",
-        "usecases/federated-query"
-      ]
-    },
-    {
       "group": "SQL Commands",
       "pages": [
         "sql/commands/create-peer",
