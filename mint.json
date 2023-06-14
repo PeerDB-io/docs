@@ -5,7 +5,7 @@
     "dark": "/logo/docs-logo-dark-svg.svg",
     "light": "/logo/docs-logo-light-svg.svg"
   },
-  "favicon": "/favicon.png",
+  "favicon": "/favicon.jpg",
   "colors": {
     "primary": "#0069ED",
     "light": "#4D9CFF",
@@ -44,6 +44,12 @@
         "introduction",
         "quickstart",
         "architecture"
+      ]
+    },
+    {
+      "group": "Use-cases",
+      "pages": [
+        "usecases/realtime-CDC"
       ]
     },
     {
