@@ -53,12 +53,6 @@
       ]
     },
     {
-      "group": "SQL Reference",
-      "pages": [
-        "sql/reference"
-      ]
-    },
-    {
       "group": "SQL Commands",
       "pages": [
         "sql/commands/create-peer",
