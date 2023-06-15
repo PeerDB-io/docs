@@ -49,7 +49,7 @@
     {
       "group": "Use-cases",
       "pages": [
-        "usecases/realtime-CDC"
+        "usecases/realtime-cdc"
       ]
     },
     {
