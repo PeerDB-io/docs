@@ -25,6 +25,9 @@ Suppose you have a banking application running on PostgreSQL. There are two tabl
 Run the following commands to let PeerDB know about the existing Postgres and BigQuery Peers.
 
 ```sql
+-- Connect to PeerDB
+psql "port=9900 host=localhost password=peerdb"
+
 -- Add Postgres and BigQuery peers
 CREATE PEER postgres_peer FROM postgres (...);
 CREATE PEER bigquery_peer FROM bigquery (...);
