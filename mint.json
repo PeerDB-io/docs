@@ -50,7 +50,8 @@
       "group": "Use-cases",
       "pages": [
         "usecases/realtime-cdc",
-        "usecases/customizable-etl-from-postgres"
+        "usecases/customizable-etl-from-postgres",
+        "usecases/postgres-compatible-layer-for-bigquery-and-snowflake"
       ]
     },
     {

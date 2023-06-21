@@ -1,0 +1,109 @@
+---
+title: "Query Federation via PostgreSQL"
+---
+
+## Postgres-Compatible Query Layer for BigQuery and Snowflake
+
+You can use PeerDB's Postgres-compatible SQL layer to query tables in BigQuery or Snowflake. You can leverage Postgres' hundreds of integrations, including client tools like pgadmin and psql, BI tools like Grafana and Power BI, and languages such as Python and Ruby to query data in BigQuery or Snowflake.
+
+PeerDB parses and translates the incoming SQL query to make it compatible with the appropriate Peer. It pushes down most SQL constructs, including filters, JOINs, aggregates, sorts, limits etc., to the attached Peer. This enables blazing fast performance.
+
+You can also query tables in BigQuery or Snowflake from your existing Postgres database by connecting PeerDB as a `postgres_fdw` FOREIGN SERVER.
+
+>You can utilize postgres_fdw's [advance](https://www.enterprisedb.com/blog/postgresql-aggregate-push-down-postgresfdw) push-down capabilities to maximize the performance of your queries involving BigQuery and Snowflake tables. For queries where push-down is important, you can expect **100x** performance gains compared to other foreign data wrappers.
+>
+
+Let's go through steps to query BigQuery and Snowflake using PeerDB.
+
+
+### Step 1: Add BigQuery and Snowflake Peers
+
+Run the following commands to let PeerDB know about the existing Postgres and Snowflake Peers:
+
+```sql
+-- Connect to PeerDB
+psql "port=9900 host=localhost password=peerdb"
+
+-- Add Postgres and BigQuery peers
+CREATE PEER bigquery_peer FROM bigquery (...);
+CREATE PEER snowflake_peer FROM snowflake (...);
+```
+
+Make sure to replace **`(…)`** with the appropriate connection details for both the Postgres and Snowflake instances. More details on adding PEERs are available [here](https://docs.peerdb.io/sql/commands/create-peer).
+
+### Step 2: Query Tables in BigQuery and Snowflake
+
+```sql
+-- Querying table(s) in BigQuery PEER
+SELECT country, count(*), sum(id), count(distinct id), avg(id), max(id), min(id)
+FROM bigquery_peer.users
+WHERE id = 1 AND country = 'India'
+GROUP BY country
+HAVING count(*) > 0
+ORDER BY country DESC
+LIMIT 1;
+
+-- Querying table(s) in Snowflake PEER
+SELECT count(*)
+FROM snowflake_peer.PUBLIC.EVENTS e
+RIGHT JOIN snowflake_peer.PUBLIC.USERS u ON u.id = e.user_id
+JOIN sf_test.PUBLIC.USERS u1 ON u1.id = u.id
+WHERE u1.country = 'Indonesia';
+```
+
+You can find different variations of queries that should work out of the box for [BigQuery](https://github.com/PeerDB-io/peerdb/blob/main/nexus/server/tests/sql/bq.sql) and [Snowflake](https://github.com/PeerDB-io/peerdb/blob/main/nexus/server/tests/sql/snowflake.sql) in the provided links. Currently, only SELECT commands are supported, while DML and DDL commands are not yet.
+
+## Query BigQuery and Snowflake using `postgres_fdw`
+
+
+PeerDB enables you to query BigQuery or Snowflake from your existing Postgres database using `postgres_fdw`. As PeerDB is Postgres wire-compatible, you can connect to PeerDB as a **postgres_fdw** FOREIGN SERVER from your Postgres database and start querying tables in Peers that have been created on PeerDB.
+
+
+Let's walk through the steps to query tables in BigQuery from your existing Postgres database using PeerDB.
+
+### Step 1: Create PeerDB as a FOREIGN SERVER to your Postgres database
+
+```sql
+-- Creating PeerDB as a Foreign Server
+
+
+CREATE SERVER bigquery FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host 'localhost', port '9900');
+
+-- Creating a user mapping
+CREATE USER MAPPING FOR postgres SERVER bigquery OPTIONS (user 'peerdb', password 'peerdb');
+```
+
+### Step 2: Create FOREIGN TABLE on Postgres pointing to tables in BigQuery
+
+```sql
+-- Creating a FOREIGN TABLE pointing to BigQuery via PeerDB
+CREATE FOREIGN TABLE events_bigquery (
+    id int,
+    user_id int,
+    event_type text,
+    os text,
+    device text,
+    ip text,
+    time_spent int,
+    domain_name text,
+    payload text
+) SERVER bigquery OPTIONS (schema_name 'bigquery_peer', table_name 'events');
+```
+
+### Step 3: Start querying BigQuery FOREIGN TABLE from Postgres
+
+```sql
+SELECT count(*) FROM events_bigquery;
+SELECT count(*) FROM events_bigquery WHERE country = 'USA';
+SELECT * FROM events_bigquery LIMIT 5;
+```
+
+### **Step 4: Join local Postgres tables with the BigQuery FOREIGN TABLE**
+
+```sql
+SELECT count(*) FROM events_bigquery e JOIN users u ON e.user_id = u.id;
+```
+
+### Support
+
+If you run into any issues, please file them on our gihub [repository](https://github.com/peerdb-io/peerdb) or reach out to founders@peerdb.io . We will follow up!
