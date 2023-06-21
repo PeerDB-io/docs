@@ -1,3 +1,7 @@
+---
+title: "Realtime CDC from PostgreSQL"
+---
+
 ## Real-time CDC from PostgreSQL to BigQuery or Snowflake
 
 PeerDB introduces **CREATE MIRROR for streaming changes** to enable real-time Change Data Capture (CDC) from PostgreSQL to either Snowflake or BigQuery. 
@@ -86,3 +90,8 @@ DROP MIRROR real_time_cdc;
 1. Blazing fast initial load - parallelism within a table and across tables will be available in a few weeks.
 2. Support for tables without primary keys using UNIQUE index or [REPLICA IDENTITY FULL](https://www.notion.so/f0e258f310dc4231ad35b6a210f7d4b1?pvs=21) will be added in a few weeks.
 3. Handling Schema Changes will be added in a few weeks.
+
+
+### Support
+
+If you run into any issues, join our [slack channel](https://join.slack.com/t/peerdb-public/shared_invite/zt-1wo9jydev-EXInbMtCtpAKFFWdi7QvLQ) and reach out to us. You can file an issue on our [gihub repository](https://github.com/peerdb-io/peerdb) or reach out to founders@peerdb.io . We will follow up!

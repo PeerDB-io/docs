@@ -1,3 +1,7 @@
+---
+title: "Customizable ETL from PostgreSQL"
+---
+
 PeerDB introduces the **CREATE MIRROR FOR SELECT** SQL command for continuous sync of data from PostgreSQL to BigQuery or Snowflake based on any SELECT query on PostgreSQL. This command allows you to perform a pre-transform of the data on the source before syncing it to the target.
 
 1. You simply run a few SQL commands, and PeerDB takes care of all the heavy lifting to set up and maintain highly performant syncs and pre-transforms across stores.
@@ -76,3 +80,7 @@ To make it easy in your development and test environments, PeerDB also introduce
 -- drop the mirror
 DROP MIRROR real_time_cdc;
 ```
+
+### Support
+
+If you run into any issues, join our [slack channel](https://join.slack.com/t/peerdb-public/shared_invite/zt-1wo9jydev-EXInbMtCtpAKFFWdi7QvLQ) and reach out to us. You can file an issue on our [gihub repository](https://github.com/peerdb-io/peerdb) or reach out to founders@peerdb.io . We will follow up!
