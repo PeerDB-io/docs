@@ -50,7 +50,7 @@
       "group": "Use-cases",
       "pages": [
         "usecases/realtime-cdc",
-        "usecases/real-time-streaming-of-query-results",
+        "usecases/realtime-streaming-of-query-results",
         "usecases/postgres-compatible-layer-for-bigquery-and-snowflake"
       ]
     },
