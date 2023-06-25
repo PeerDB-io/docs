@@ -23,6 +23,10 @@ Suppose you have a banking application running on PostgreSQL. There are two tabl
     3. max_replication_slots: 4
 2. Enable replication access for a PostgreSQL user - ALTER USER pg_user REPLICATION;
 3. Ensure that both tables have primary keys. Composite primaries are also fine.
+4. If you are using PostgreSQL on the cloud, below links capture how to enable logical replication for each cloud:
+    1. [AWS RDS and Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.Replication.Logical.html#AuroraPostgreSQL.Replication.Logical.Configure)
+    2. [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-logical#pre-requisites-for-logical-replication-and-logical-decoding)
+    3. [GCP Cloud SQL PostgreSQL](https://cloud.google.com/sql/docs/postgres/replication/configure-logical-replication#configure-your-postgresql-instance)
 
 ### Step 1: Add Postgres and BigQuery Peers
 
@@ -47,8 +51,7 @@ With the peers set up, you can create a mirror that facilitates real-time CDC fr
 -- Real-time CDC from PostgreSQL to BigQuery
 CREATE MIRROR real_time_cdc
 FROM postgres_peer TO bigquery_peer
-WITH TABLE MAPPING transactions:transactions, users:users
-WITH OPTIONS ();
+WITH TABLE MAPPING (transactions:transactions, users:users);
 ```
 
 If you observe, **TABLE MAPPING** represents the table name mapping between Postgres and BigQuery. PeerDB automatically creates the table with suitable data type mapping on the target. PeerDB supports 30+ native data types for Postgres in CREATE MIRROR. These data types are chosen in a way that there is no loss of data (e.g., precision) as part of the real-time sync.
