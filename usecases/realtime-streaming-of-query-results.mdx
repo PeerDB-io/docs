@@ -21,7 +21,7 @@ Run the following commands to add the PostgreSQL and Snowflake Peers to PeerDB:
 ```sql
 -- Connect to PeerDB
 psql "port=9900 host=localhost password=peerdb"
- 
+
 -- Add PostgreSQL and Snowflake peers
 CREATE PEER postgres_peer FROM postgres (...);
 CREATE PEER snowflake_peer FROM snowflake (...);
@@ -35,13 +35,23 @@ With the peers set up, you can create a mirror that facilitates periodic sync fr
 
 ```sql
 -- Customizable ETL from PostgreSQL to Snowflake
-CREATE MIRROR customizable_etl
-FROM postgres_peer TO snowflake_peer FOR
-SELECT user_id, country, to_json(payload)
-FROM events JOIN users ON events.user_id = users.id
-WHERE country = 'USA' AND events.updated_at BETWEEN {{.start}} AND {{.end}}
-WITH OPTIONS (watermark = 'updated_at', watermark_table = 'events',
-mode = 'upsert', parallelism = 8, unique_key = 'user_id');
+CREATE MIRROR customizable_etl FROM
+	postgres_peer TO snowflake_peer FOR
+$$
+  SELECT * FROM events WHERE
+  updated_at >= {{.start}} AND updated_at < {{.end}}
+$$
+WITH (
+	destination_table_name = 'public.events',
+	watermark_column = 'updated_at',
+	watermark_table_name = 'public.events',
+	mode = 'upsert',
+	unique_key_columns = 'id',
+	parallelism = 64,
+	refresh_interval = 30,
+	batch_duration_timestamp = 50000,
+	sync_data_format = 'avro'
+);
 ```
 
 1. In the SELECT query, we address the scenario by choosing only a few columns, enriching some columns using the JOIN operation, and filtering based on the country.
