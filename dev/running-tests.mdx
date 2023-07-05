@@ -1,5 +1,5 @@
 ---
-title: "Running peer flow tests"
+title: "Running Flow tests"
 ---
 
 ## Getting dependencies
@@ -7,24 +7,21 @@ title: "Running peer flow tests"
 Make sure you have the following dependencies available:
 
 - A Linux, macOS, or Windows machine
-- git (used for source version control)
-- An ssh client (used to authenticate with GitHub)
-- Homebrew package manager (for mac users)
-- go and rust setup on your local machine (used by flow and nexus respectively)
+- `git` (used for source version control)
+- An `ssh` client (used to authenticate with GitHub)
+- `go` and `rust` setup on your local machine (used by `flow` and `nexus` respectively)
 
 ## Getting the source
 
 Run the following steps to set up your environment:
 
 1. Configure your machine with an SSH key that is known to github by following the directions [here](https://help.github.com/articles/generating-ssh-keys/).
-2. Clone the repo locally using ```git clone --recursive git@github.com:PeerDB-io/peerdb.git``` command.
+2. Clone the repo locally using `git clone --recursive git@github.com:PeerDB-io/peerdb.git` command.
 
 ## Setting up Postgres
 
-To setup postgres on a mac
-
-1. Run `brew install postgresql` from the terminal
-2. To start the server, `brew services start postgresql`
+1. Install and run postgres, installation depends on your platform.
+2. Check the status to ensure postgres is running.
 3. To check if postgres is installed, run `psql postgres`. To set up a dev environment, it is important to have a user named postgres because end-to-end tests use `postgres` user
 4. You can download pgadmin or any other postgres-compatible viewer for GUI-based interface.
 5. Following the [prerequisites](https://docs.peerdb.io/usecases/realtime-cdc#prerequisites) to setup real-time CDC using postgres, connect to postgres using psql CLI and run the below commands -
