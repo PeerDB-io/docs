@@ -2,8 +2,8 @@
   "$schema": "https://mintlify.com/schema.json",
   "name": "PeerDB Docs: Setup your ETL in minutes with SQL.",
   "logo": {
-    "dark": "/logo/docs-logo-dark-svg.svg",
-    "light": "/logo/docs-logo-light-svg.svg"
+    "dark": "/logo/docs-logo-dark.png",
+    "light": "/logo/docs-logo-light.png"
   },
   "favicon": "/favicon.jpg",
   "colors": {
@@ -52,6 +52,12 @@
         "usecases/realtime-cdc",
         "usecases/realtime-streaming-of-query-results",
         "usecases/postgres-compatible-layer-for-bigquery-and-snowflake"
+      ]
+    },
+    {
+      "group": "Contributing",
+      "pages": [
+        "dev/running-tests"
       ]
     },
     {
