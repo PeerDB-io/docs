@@ -3,23 +3,13 @@ title: Creating Mirrors
 description: "Guide to creating synchornization jobs in PeerDB"
 ---
 
-PeerDB allows you to create synchronization jobs between tables between different Peers.
-Currently only postgres is supported as a source.
-
-#### Supported Connectors
-|                  | Snowflake | BigQuery | Kafka | Azure Event Hubs | PostgreSQL
-|------------------|-----------|----------|-----------|----------|----------|
-| Postgres - CDC   |    ✅     |    ✅    |   ✅     |    ✅    |   ✅    |
-
-|                  | Snowflake | BigQuery | AWS S3 
-|------------------|-----------|----------|-----------|
-| Postgres - Streaming Query Result   |    ✅     |    ✅    |   ✅     
-
-
+PeerDB introduces CREATE MIRROR command for blazing fast syncs between Peers. This section captures different types of MIRRORs and how to kick them off.
 
 ## Command Reference
 
 ### MIRROR for CDC
+
+This type of MIRROR streams change feed in real-time from source peer to target peer.
 
 ```sql
 CREATE MIRROR <mirror_name>
@@ -30,6 +20,9 @@ WITH TABLE MAPPING
 ```
 
 ### MIRROR for Streaming Query Results
+
+This type of MIRROR periodically streams query results on the source peer to the target peer.
+
 
 ```sql
 CREATE MIRROR <mirror_name> FROM
@@ -62,3 +55,14 @@ The OPTIONS clause provides granular control when configuring the MIRROR:
     5. **refresh_interval (Optional)** helps configure the frequency (in minutes) at which the sync should run. If not specified, PeerDB syncs the data continuously without pauses.
     6. More details on the OPTIONs can be found [here](https://github.com/PeerDB-io/peerdb/issues/139).
 
+### Supported Connectors
+
+Currently only PostgreSQL is supported as a source for CREATE MIRROR. Below tables capture supported targets for the CREATE MIRROR command.
+
+|                  | Snowflake | BigQuery | Kafka | Azure Event Hubs | PostgreSQL
+|------------------|-----------|----------|-----------|----------|----------|
+| Postgres   |    ✅     |    ✅    |   ✅     |    ✅    |   ✅    |
+
+|                  | Snowflake | BigQuery | AWS S3 
+|------------------|-----------|----------|-----------|
+| Postgres - Streaming Query Result   |    ✅     |    ✅    |   ✅
