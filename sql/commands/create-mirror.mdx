@@ -6,39 +6,59 @@ description: "Guide to creating synchornization jobs in PeerDB"
 PeerDB allows you to create synchronization jobs between tables between different Peers.
 Currently only postgres is supported as a source.
 
-|                  | Snowflake | BigQuery |
-|------------------|-----------|----------|
-| Postgres - CDC   |    ✅     |    ✅     |
-| Postgres - Query |    🚧    |      🚧   |
+#### Supported Connectors
+|                  | Snowflake | BigQuery | Kafka | Azure Event Hubs | PostgreSQL
+|------------------|-----------|----------|-----------|----------|----------|
+| Postgres - CDC   |    ✅     |    ✅    |   ✅     |    ✅    |   ✅    |
+
+|                  | Snowflake | BigQuery | AWS S3 
+|------------------|-----------|----------|-----------|
+| Postgres - Streaming Query Result   |    ✅     |    ✅    |   ✅     
+
 
 
 ## Command Reference
 
-### For CDC
+### MIRROR for CDC
+
+```sql
+CREATE MIRROR <mirror_name>
+FROM <source_peer> TO <target_peer>
+WITH TABLE MAPPING 
+(<schema_name>.<source_table_name>:<schema_name>.<target_table_name>, 
+<schema_name>.<source_table_name>:<schema_name>.<target_table_name>);
+```
+
+### MIRROR for Streaming Query Results
 
 ```sql
 CREATE MIRROR <mirror_name> FROM
-  <peer_name>.<schema_name>.<table_name> TO
-  <peer_name>.<schema_name>.<table_name> WITH
-  (
-    <mirror_options>
-  );
+	<source_peer> TO <target_peer> FOR
+$$
+  SELECT * FROM <source_table_name> WHERE
+  <watermark_column> >= {{.start}} AND updated_at < {{.end}}
+$$
+WITH (
+	destination_table_name = '<schema_qualified_destination_table_name>',
+	watermark_column = '<watermark_column>',
+	watermark_table_name = '<table_on_source_on_which_watermark_filter_should_be_applied>',
+	mode = '<mode>',
+	unique_key_columns = '<unique_key_columns>',
+	parallelism = <parallelism>,
+	refresh_interval = <refresh_interval_in_seconds>,
+	batch_duration_timestamp = <partition_size_in_seconds>,
+	sync_data_format = '<sync_data_format>'
+);
 ```
+The OPTIONS clause provides granular control when configuring the MIRROR:
+    1. **watermark_column (Required)** represents a sequentially incrementing integer or timestamp column. PeerDB uses this column to keep track of the processed rows and the ones that need to be processed.
+    2. **watermark_table (Required)** is the table that PeerDB iterates sequentially based on the watermark_column. The fact table is a good candidate for the watermark_table.
+    3. **mode (Required)** tells PeerDB whether it should append data to the target or perform an upsert operation (update if the row exists).
+        1. If your data is append-only, a sequential ID or a created_at column can be a good watermark, and you can choose the mode **append_only.**
+        2. If your data is updated, make sure to have an "updated_at" column for PeerDB to identify the most recent version of the row. Choose the mode **upsert** to update already existing rows on the target.
+            1. **unique_key:** In the upsert mode, you need to specify a set of columns (unique_key) that uniquely identify a row. This helps perform the upsert operation.
+    4. **parallelism (Optional)** represents the number of threads used to read from the source and sync to the target. This helps with workload management on the source and target.
+        1. If you have a powerful PostgreSQL server or if it is a read-replica, you can configure a higher parallelism value. In scenarios where you want to put less load on the source, you can choose a lower value.
+    5. **refresh_interval (Optional)** helps configure the frequency (in minutes) at which the sync should run. If not specified, PeerDB syncs the data continuously without pauses.
+    6. More details on the OPTIONs can be found [here](https://github.com/PeerDB-io/peerdb/issues/139).
 
-### For Query
-
-```sql
-CREATE MIRROR <mirror_name> FROM
-  QUERY <select_query> TO
-  <peer_name>.<schema_name>.<table_name> WITH
-  (
-    <mirror_options>
-  );
-```
-
-## Mirror Options
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `sync_frequency` | How often to run the mirror | `1 hour` |
-| `max_parallelism` | How many parallel workers to use | `16` |

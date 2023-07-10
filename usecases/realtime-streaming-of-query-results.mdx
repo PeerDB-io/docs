@@ -36,7 +36,7 @@ With the peers set up, you can create a mirror that facilitates periodic sync fr
 
 ```sql
 -- Customizable ETL from PostgreSQL to Snowflake
-CREATE MIRROR customizable_etl FROM
+CREATE MIRROR streaming_query_pg_to_sf FROM
 	postgres_peer TO snowflake_peer FOR
 $$
   SELECT * FROM events WHERE
@@ -90,7 +90,7 @@ To make it easy in your development and test environments, PeerDB also introduce
 
 ```sql
 -- drop the mirror
-DROP MIRROR real_time_cdc;
+DROP MIRROR streaming_query_pg_to_sf;
 ```
 
 ### Support
