@@ -2,9 +2,9 @@
 title: "Realtime CDC from PostgreSQL"
 ---
 
-## Real-time CDC from PostgreSQL to BigQuery or Snowflake
+## Real-time CDC from PostgreSQL
 
-PeerDB introduces **CREATE MIRROR for streaming changes** to enable real-time Change Data Capture (CDC) from PostgreSQL to either Snowflake or BigQuery. 
+PeerDB introduces **CREATE MIRROR for streaming changes** to enable real-time Change Data Capture (CDC) from PostgreSQL to the Target peer. Currently we support **PostgreSQL (running anywhere)**, **Azure Eventhub**, **Kafka**, **BigQuery** and **Snowflake** as the target Peers.
 1. You just need to run a few SQL commands, and PeerDB takes care of all the heavy lifting to set up and maintain a highly performant and resilient real-time synchronization between the databases. 
 > SQL commands make it super easy and intuitive to develop data pipelines in your test, dev, and prod environments. 
 >
@@ -69,8 +69,8 @@ Through the same PeerDB's Postgres-compatible SQL interface, you can quickly val
 
 ```sql
 -- Validate the mirror
-SELECT COUNT(*) FROM bigquery_peer.events;
-SELECT COUNT(*) FROM postgres_peer.public.events;
+SELECT COUNT(*) FROM bigquery_peer.transactions;
+SELECT COUNT(*) FROM postgres_peer.public.transactions;
 ```
 
 ### Step 4: Monitor the MIRROR
