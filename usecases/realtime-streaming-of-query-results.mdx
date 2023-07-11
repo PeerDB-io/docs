@@ -11,6 +11,30 @@ Currently we support **PostgreSQL (running anywhere)**, **AWS S3**, **BigQuery**
 
 >PeerDB internally implements multiple optimizations to provide the best possible performance experience. For example, it converts data to [Avro](https://github.com/PeerDB-io/peerdb/pull/96) format during transit and enables parallelism during both reading from sync and writing to target.
 >
+
+### Demo
+
+This demo shows PeerDB syncing a table with 100 million rows from PostgreSQL to Snowflake in few minutes.
+
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/ef1584f4181d466d9e3ec40882381ade?sid=383e61bf-21c2-4272-8986-165b19805121"
+    frameBorder={0}
+    webkitallowfullscreen=""
+    mozallowfullscreen=""
+    allowFullScreen=""
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%"
+    }}
+  />
+</div>
+
+
+
 ### Scenario
 
 Let's consider a scenario where we have an "events" table and a "users" table in PostgreSQL. We want to periodically sync data from these two tables in PostgreSQL to Snowflake. However, we only want to sync a few columns filtered based on the country (USA) and create a single denormalized view of the data in Snowflake. Let's see how we can achieve this within a few minutes and a few SQL commands using PeerDB.
