@@ -65,9 +65,8 @@ Let's walk through the steps to query tables in BigQuery from your existing Post
 
 ```sql
 -- Creating PeerDB as a Foreign Server
-
-
-CREATE SERVER bigquery FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host 'localhost', port '9900');
+-- if your postgres database is not running on the same machine make sure to open up the inbound port on the vm peerdb is running. 
+CREATE SERVER bigquery FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host '<peerdb_hostname>', port '9900'); 
 
 -- Creating a user mapping
 CREATE USER MAPPING FOR postgres SERVER bigquery OPTIONS (user 'peerdb', password 'peerdb');
