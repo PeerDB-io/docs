@@ -1,0 +1,75 @@
+---
+title: "Real-time Streaming of Postgres To S3"
+---
+
+Below is a 5-minute tutorial to test [Real-time Streaming of Query results from Postgres to S3](https://docs.peerdb.io/usecases/realtime-streaming-of-query-results)
+
+This streams data from a Postgres source table to an S3 destination bucket as AVRO files.
+
+### Step 1: Write A Request To Our Flow API
+    - Streaming from Postgres to S3 is done via our Flow API.
+    - Please note that you should have an AWS S3 instance and the bucket you specify below must already exist.
+    - Rows are divided into partitions, and each partition corresponds to one .avro file in the destination bucket. You can control the number of files by tweaking the `num_rows_per_partition` parameter in the request below. 
+    - Ensure the PeerDB server is running. The endpoint for realtime streaming is:
+    http://localhost:8112/qrep/start
+    
+    The POST body for the realtime streaming endpoint of the Flow API is as follows. Feel free to change the parameters as per your needs, but make sure to keep the `sync_mode` as 1 (AVRO mode), and your query range must be as shown below.
+    ```json
+    {
+        "flow_job_name": "s3_stream",
+        "source_peer": {
+            "name": "test_pg",
+            "type": 3,
+            "postgres_config": {
+                "host": "<your-host-name>",
+                "port": "<your-port>",
+                "user": "<your-user>",
+                "password": "*******",
+                "database": "<your-database>"
+            }
+        },
+        "destination_peer": {
+            "name": "test_s3",
+            "type": 5,
+            "s3_config": {
+                "url": "s3://<your-bucket-name>/<prefix-name>",
+            }
+        },
+        "destination_table_identifier": "<destination-table-name>", // Like public.users
+        "query": "SELECT * FROM <destination-table-name> WHERE <watermark-column> >= {{.start}} AND id < {{.end}}",
+        "watermark_table": "<destination-table-name>",
+        "watermark_column": "<your-watermark-column>",
+        "initial_copy_only": false,
+        "sync_mode": 1, // this denotes AVRO mode
+        "num_rows_per_partition":2,
+        "max_parallel_workers": 16,
+        "batch_duration_seconds": 40000,
+        "write_mode": {
+            "write_type": 0
+        }
+    }
+    ```
+### Step 2: Create and populate tables on the Postgres PEER
+    Below script helps creates and populate `pgbench_history` with dummy data on your PostgreSQL peer.
+    ```sh
+    curl -O https://peerdb-sample-data.s3.us-east-2.amazonaws.com/import_data_for_tutorial.sh
+    chmod +x import_data_for_tutorial.sh
+    # "postgres://user:password@hostname:5432/dbname" 
+    # is the connection string of your PostgreSQL peer.
+    ./import_data_for_tutorial.sh "postgres://user:password@hostname:5432/dbname"
+    ```
+### Step 3: Monitor the MIRROR
+You can connect to localhost:8233 to gain full visibility into the different jobs and steps that PeerDB performs under the hood to manage the MIRROR.
+### Step 4: Validate the MIRROR
+In 1-2 minutes the MIRROR should complete syncing data. 
+
+Let's say your source table had 20 rows before you kicked off the realtime stream. In this example, the number of rows per partition was 2, which means 20/2 = 10 AVRO files must be present in your bucket.
+
+You can validate the MIRROR by checking the number of AVRO files in your bucket and the number of rows in your Postgres source table. The commands below achieve this.
+
+```sql
+SELECT count(*) FROM postgres_peer.pgbench_history;
+```
+```sh
+aws s3 ls s3://<your-bucket-name>/<prefix-name> --recursive | wc -l
+```
