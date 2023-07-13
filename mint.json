@@ -49,7 +49,8 @@
     {
       "group": "5-minute Tutorials",
       "pages": [
-        "tutorials/realtime-streaming-of-query-results"
+        "tutorials/realtime-streaming-of-query-results",
+        "tutorials/realtime-streaming-of-postgres-to-s3"
       ]
     },
     {
