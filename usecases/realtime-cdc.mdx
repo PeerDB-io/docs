@@ -9,7 +9,26 @@ PeerDB introduces **CREATE MIRROR for streaming changes** to enable real-time Ch
 > SQL commands make it super easy and intuitive to develop data pipelines in your test, dev, and prod environments. 
 >
 2. In our initial benchmarks, we observed over 10x performance gains compared to other tools. The average lag for a workload that generates 1000 transactions per second on PostgreSQL was around 30 seconds.
+### Demo
 
+This demo shows PeerDB syncing a table with 100 million rows from PostgreSQL to Snowflake in few minutes.
+
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/a872562608864995b9016e67c3221693?sid=6d342a2c-2f44-49f6-8765-1db03c133f7e"
+    frameBorder={0}
+    webkitallowfullscreen=""
+    mozallowfullscreen=""
+    allowFullScreen=""
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%"
+    }}
+  />
+</div>
 
 ### Scenario
 
