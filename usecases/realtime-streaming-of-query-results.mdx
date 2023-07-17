@@ -2,7 +2,8 @@
 title: "Real-time Streaming of Query results"
 ---
 
-PeerDB introduces the **CREATE MIRROR FOR SELECT** SQL command for continuous sync of data from PostgreSQL to BigQuery or Snowflake based on any SELECT query on PostgreSQL. This command allows you to perform a pre-transform of the data on the source before syncing it to the target.
+PeerDB introduces the **CREATE MIRROR FOR SELECT** SQL command for continuous sync of data from PostgreSQL to the desired target Peer based on any SELECT query on PostgreSQL. This command allows you to perform a pre-transform of the data on the source before syncing it to the target.
+Currently we support **PostgreSQL (running anywhere)**, **AWS S3**, **BigQuery** and **Snowflake** as the target Peers.
 
 1. You simply run a few SQL commands, and PeerDB takes care of all the heavy lifting to set up and maintain highly performant syncs and pre-transforms across stores.
 2. You can run any SELECT query that is supported by PostgreSQL for the transformation, including JOINs, function/procedure calls, GROUP BYs, and so on.
@@ -59,7 +60,7 @@ With the peers set up, you can create a mirror that facilitates periodic sync fr
 
 ```sql
 -- Customizable ETL from PostgreSQL to Snowflake
-CREATE MIRROR customizable_etl FROM
+CREATE MIRROR streaming_query_pg_to_sf FROM
 	postgres_peer TO snowflake_peer FOR
 $$
   SELECT * FROM events WHERE
@@ -88,7 +89,8 @@ WITH (
             1. **unique_key:** In the upsert mode, you need to specify a set of columns (unique_key) that uniquely identify a row. This helps perform the upsert operation.
     4. **parallelism (Optional)** represents the number of threads used to read from the source and sync to the target. This helps with workload management on the source and target.
         1. If you have a powerful PostgreSQL server or if it is a read-replica, you can configure a higher parallelism value. In scenarios where you want to put less load on the source, you can choose a lower value.
-    5. **refresh_interval (Optional)** helps configure the frequency (in minutes) at which the sync should run. If not specified, PeerDB syncs the data continuously without pauses.
+    5. **refresh_interval (Optional)** helps configure the frequency (in minutes) at which the sync should run. If not specified, PeerDB syncs the data continuously without pauses.\
+    6. More details on the OPTIONs can be found [here](https://github.com/PeerDB-io/peerdb/issues/139).
 3. `updated_at BETWEEN {{.start}} AND {{.end}}` in the SELECT statement provides input to PeerDB on which part(s) of the query should be scoped by the watermark column for the rows to be synced.
 
 ### **Step 3: Validate the Mirror**
@@ -112,7 +114,7 @@ To make it easy in your development and test environments, PeerDB also introduce
 
 ```sql
 -- drop the mirror
-DROP MIRROR real_time_cdc;
+DROP MIRROR streaming_query_pg_to_sf;
 ```
 
 ### Support
