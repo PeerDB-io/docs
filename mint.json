@@ -49,15 +49,30 @@
     {
       "group": "5-minute Tutorials",
       "pages": [
-        "tutorials/realtime-streaming-of-query-results",
-        "tutorials/realtime-streaming-of-postgres-to-s3"
+        "tutorials/realtime-streaming-of-query-results"
       ]
     },
     {
       "group": "Use-cases",
       "pages": [
-        "usecases/realtime-cdc",
-        "usecases/realtime-streaming-of-query-results",
+        {
+          "group": "From PostgreSQL",
+          "pages":[
+            "usecases/from-postgres/realtime-cdc",
+            "usecases/from-postgres/realtime-cdc-for-postgres-to-snowflake",
+            "usecases/from-postgres/realtime-streaming-of-query-results",
+            "usecases/from-postgres/realtime-streaming-of-postgres-to-s3",
+            "usecases/from-postgres/realtime-streaming-from-postgres-to-bigquery"
+          ]
+        },
+        {
+          "group": "To PostgreSQL",
+          "pages":[
+            "usecases/to-postgres/realtime-streaming-of-sqlserver-to-postgres"
+          ]
+        },
+        "usecases/realtime-cdc-for-postgres-to-postgres",
+        "usecases/realtime-streaming-from-postgres-to-postgres",
         "usecases/postgres-compatible-layer-for-bigquery-and-snowflake"
       ]
     },
