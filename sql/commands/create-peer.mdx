@@ -158,6 +158,18 @@ CREATE PEER eventhub_peer FROM EVENTHUB WITH(
 ```
 `metadata_db` must have a value of the form specified above with the 5 parameters - host, port, user, password and database specified. They can be in any order.
 
+In order to use this peer, your **Eventhub credentials must be filled** in our PeerDB docker-compose file in the environments section of the `flow-worker` service:
+```yaml
+    environment:
+      ENABLE_PROFILING: true
+      PROFILING_SERVER: 0.0.0.0:6060
+      TEMPORAL_HOST_PORT: temporalite:7233
+      AZURE_CLIENT_ID: <client-id>
+      AZURE_CLIENT_SECRET: <secret>
+      AZURE_SUBSCRIPTION_ID: <subscription-id>
+      AZURE_TENANT_ID: <tenant-id>
+```
+
 ### Known Limitations
 
 1. No query support: This peer is currently supported for realtime CDC from PostgreSQL to Eventhub only.
