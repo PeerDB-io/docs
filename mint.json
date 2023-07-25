@@ -60,7 +60,8 @@
           "pages":[
             "usecases/from-postgres/realtime-cdc",
             "usecases/from-postgres/realtime-cdc-for-postgres-to-snowflake",
-            "usecases/from-postgres/realtime-streaming-of-query-results",
+            "usecases/from-postgres/realtime-cdc-for-postgres-to-azure-eventhubs",
+            "usecases/from-postgres/realtime-streaming-of-postgres-to-snowflake",
             "usecases/from-postgres/realtime-streaming-of-postgres-to-s3",
             "usecases/from-postgres/realtime-streaming-from-postgres-to-bigquery"
           ]

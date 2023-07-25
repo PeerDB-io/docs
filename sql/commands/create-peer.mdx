@@ -10,6 +10,7 @@ PeerDB currently supports 3 types of Peers. To connect a database to PeerDB, you
 3. [PostgreSQL](#postgresql-peer)
 4. [Amazon S3](#s3-peer)
 5. [SQL Server](#sqlserver-peer)
+6. [Azure EventHubs](#eventhub-peer)
 
 ## BigQuery Peer
 
@@ -142,3 +143,21 @@ If you are connecting to a Docker SQL Server/Azure SQL Edge instance on the same
 ### Known Limitations
 
 1. No query support: This peer is currently supported for realtime query replication from SQL Server to PostgreSQL only.
+
+## Eventhub Peer
+
+This peer uses an external PostgreSQL instance to manage metadata for the mirror.
+
+```sql
+CREATE PEER eventhub_peer FROM EVENTHUB WITH(
+  namespace='<your-namespace>',
+  resource_group='<your-resource-group>',
+  location='<location>', // eg: eastus
+  metadata_db='host=<pghost> port=<pgport> user=<pguser> password=<pgpassword> database=<pgdatabase>' // PostgreSQL connection string
+);
+```
+`metadata_db` must have a value of the form specified above with the 5 parameters - host, port, user, password and database specified. They can be in any order.
+
+### Known Limitations
+
+1. No query support: This peer is currently supported for realtime CDC from PostgreSQL to Eventhub only.

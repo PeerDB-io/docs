@@ -1,14 +1,14 @@
 ---
-title: "Real-time CDC from PostgreSQL To PostgreSQL"
+title: "Real-time CDC from PostgreSQL To Azure Eventhubs"
 ---
 
-## Real-time CDC from PostgreSQL To PostgreSQL
-This is a simple usecase which is very easy to setup and does not require accounts etc. like for MIRRORs to other peers.
-Let's look at how we can seamlessly perform Change-Data Capturing (CDC) from PostgreSQL to PostgreSQL.
+## Real-time CDC from PostgreSQL To Eventhub
+
+Let's look at how we can seamlessly perform Change-Data Capturing (CDC) from PostgreSQL to topics in Azure EventHubs.
 
 ### Scenario
 
-Suppose you have a banking application running on PostgreSQL. There are two tables: "users" and "transactions." You want to sync these tables in real-time to another PostgreSQL server for analytics purposes, such as real-time fraud detection. Let's see how we can make this happen within a few minutes and a few SQL commands using PeerDB.
+Suppose you have a banking application running on PostgreSQL. There are two tables: "users" and "transactions." You want to sync these tables in real-time to Eventhubs for your customers to consume from the topics. Let's see how we can make this happen within a few minutes and a few SQL commands using PeerDB.
 
 ### Prerequisites
 
@@ -23,42 +23,39 @@ Suppose you have a banking application running on PostgreSQL. There are two tabl
     2. [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-logical#pre-requisites-for-logical-replication-and-logical-decoding)
     3. [GCP Cloud SQL PostgreSQL](https://cloud.google.com/sql/docs/postgres/replication/configure-logical-replication#configure-your-postgresql-instance)
 
-### Step 1: Create Two PostgreSQL Peers
+### Step 1: Add Postgres and Eventhub Peers
 
-Run the following commands to let PeerDB know about the existingpeers.
+Run the following commands to let PeerDB know about the existing Postgres and Eventhub Peers.
 
 ```sql
 -- Connect to PeerDB
 psql "port=9900 host=localhost password=peerdb"
 
--- Add Postgres and PostgreSQL peers
-CREATE PEER postgres_peer_1 FROM postgres (...);
-CREATE PEER postgres_peer_2 FROM postgres (...);
+-- Add Postgres and Eventhub peers
+CREATE PEER postgres_peer FROM postgres (...);
+CREATE PEER eventhub_peer FROM eventhub (...);
 ```
 
-Make sure to replace **`(…)`** with the appropriate connection details for the two PostgreSQL instances. More details on adding PEERs are available [here](https://docs.peerdb.io/sql/commands/create-peer).
+Make sure to replace **`(…)`** with the appropriate connection details for both the PostgreSQL and Eventhub instances. More details on adding PEERs are available [here](https://docs.peerdb.io/sql/commands/create-peer).
 
-### **Step 2: Real-Time CDC from PostgreSQL to PostgreSQL**
+### **Step 2: Real-Time CDC from PostgreSQL to Eventhub**
 
-With the peers set up, you can create a mirror that facilitates real-time CDC from PostgreSQL to PostgreSQL. 
+With the peers set up, you can create a mirror that facilitates real-time CDC from PostgreSQL to Eventhub. 
 
 ```sql
--- Real-time CDC between two Postgres peers
+-- Real-time CDC from PostgreSQL to Eventhub
 CREATE MIRROR real_time_cdc
-FROM postgres_peer_1 TO postgres_peer_2
+FROM postgres_peer TO eventhub_peer
 WITH TABLE MAPPING (public.transactions:public.transactions, public.users:public.users);
 ```
 
-If you observe, **TABLE MAPPING** represents the table name mapping between the two Postgres peers.
+If you observe, **TABLE MAPPING** represents the table name mapping between Postgres and Eventhub. PeerDB automatically creates the topic with suitable data type mapping on the target. PeerDB supports 30+ native data types for Postgres in CREATE MIRROR. These data types are chosen in a way that there is no loss of data (e.g., precision) as part of the real-time sync.
 
 ### **Step 3: Validate the Mirror**
 
-Through the same PeerDB's Postgres-compatible SQL interface, you can quickly validate the MIRROR (real-time CDC).
-
+Validate the mirror by checking if the number of messages in the topics matches the row count on the source table.
 ```sql
--- Validate the mirror
-SELECT COUNT(*) FROM postgres_peer_1.public.transactions;
-SELECT COUNT(*) FROM postgres_peer_2.public.transactions;
+SELECT COUNT(*) FROM postgres_peer.public.transactions;
 ```
 
 ### Step 4: Monitor the MIRROR
