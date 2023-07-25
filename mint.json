@@ -5,11 +5,11 @@
     "dark": "/logo/docs-logo-dark.png",
     "light": "/logo/docs-logo-light.png"
   },
-  "favicon": "/favicon.jpg",
+  "favicon": "/favicon.png",
   "colors": {
-    "primary": "#0069ED",
-    "light": "#4D9CFF",
-    "dark": "#0050B4"
+    "primary": "#248736",
+    "light": "#248736",
+    "dark": "#248736"
   },
   "topbarCtaButton": {
     "name": "Get Started",
