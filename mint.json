@@ -76,5 +76,10 @@
   ],
   "footerSocials": {
     "github": "https://github.com/PeerDB-io"
+  },
+  "analytics": {
+    "ga4": {
+      "measurementId": "G-1V9ZZCZMB7"
+    }
   }
 }
