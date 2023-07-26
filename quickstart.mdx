@@ -37,37 +37,37 @@ That's it! You now have PeerDB up and running on your machine, ready to query aw
 
 With PeerDB running, we can create our first peers.
 
+This script reuses the PeerDB internal Postgres instance to setup two databases, which we can use to create two peers. It also creates some tables on both databases to use later in the quickstart. Run the following commands in your terminal:
+
     ```bash
     curl -O https://peerdb-sample-data.s3.us-east-2.amazonaws.com/quickstart_prepare_peers.sh
     chmod +x quickstart_prepare_peers.sh
     ./quickstart_prepare_peers.sh
     ```
 
-This script reuses the PeerDB internal Postgres cluster to setup two databases, which we can use to create two peers. It also creates some tables on both databases to use later in the quickstart.
 
-<Warning> The connection string of another Postgres cluster can be provided as an argument to the script if needed. However, destructive DDL commands are run without any confirmation, so be wary of data loss! All commands that follow must be changed to match up with the new cluster. </Warning>
+We can now create the peers by pasting the following commands into `psql` after connecting to PeerDB by running `psql "port=9900 host=localhost password=peerdb"` in your terminal.
 
-We can now create the peers by pasting the following commands into the `psql` terminal connected to PeerDB.
 
     ```sql
-    CREATE PEER peersrc FROM POSTGRES WITH
+    CREATE PEER source FROM POSTGRES WITH
     (
         host = 'catalog',
         port = '5432',
         user = 'postgres',
         password = 'postgres',
-        database = 'peersrc'
+        database = 'source'
     );
     ```
 
     ```sql
-    CREATE PEER peerdst FROM POSTGRES WITH
+    CREATE PEER target FROM POSTGRES WITH
     (
         host = 'catalog',
         port = '5432',
         user = 'postgres',
         password = 'postgres',
-        database = 'peerdst'
+        database = 'target'
     );
     ```
 
@@ -79,16 +79,16 @@ Run the following SQL commands to set up a CDC mirror and QRep mirror between ou
 
     ```sql
     --- CDC mirrors automatically create the destination table
-    CREATE MIRROR cdc_mirror FROM peersrc TO peerdst WITH TABLE MAPPING (public.tablesrc:public.tabledst_cdc);
+    CREATE MIRROR cdc_mirror FROM source TO target WITH TABLE MAPPING (public.source:public.target_cdc);
     ```
 
     ```sql
     --- QRep mirrors require the destination table to be created beforehand, which we did in the previous step.
-    CREATE MIRROR qrep_mirror FROM peersrc TO peerdst
-    FOR $$SELECT id, c1+c2 AS c12, substring(t FROM 0 FOR 8) AS st FROM tablesrc WHERE id >= {{.start}} AND id < {{.end}}$$ WITH (
-        watermark_table_name='public.tablesrc',
+    CREATE MIRROR qrep_mirror FROM source TO target
+    FOR $$SELECT id, c1+c2 AS c12, right(t, 7) AS st FROM source WHERE id >= {{.start}} AND id < {{.end}}$$ WITH (
+        watermark_table_name='public.source',
         watermark_column='id',
-        destination_table_name='public.tabledst_qrep',
+        destination_table_name='public.target_qrep',
         mode='append',
         parallelism=2,
         batch_size_int=50000,
@@ -97,41 +97,38 @@ Run the following SQL commands to set up a CDC mirror and QRep mirror between ou
     --- 'append' mode indicates that the records in the source table are write-once and never updated. 
     ```
 
-    ```bash
-    curl -O https://peerdb-sample-data.s3.us-east-2.amazonaws.com/quickstart_load_and_monitor.sh
-    chmod +x quickstart_load_and_monitor.sh
-    ./quickstart_load_and_monitor.sh
+Now that we have our mirrors set up, they will automatically replicate data from the source table. Let's insert a row in the source table via PeerDB itself.
+
+    ```sql
+    --- Verify that the source table has zero rows
+    SELECT * FROM source.public.source;
+    --- Insert a row into the source table
+    INSERT INTO source.public.source(c1, c2, t) VALUES(1, 2, 'oathbringer');
     ```
 
-    This script begins loading data into the source table via `pgbench` for 120 seconds and then begins monitoring the source and destination tables. You can also query the tables via the PeerDB `psql` to see the data being loaded.
+With a few seconds, the row should be replicated to both the target tables. Let's verify this by running the following commands:
+
+    ```sql
+    --- CDC mirrors replicate data as-is, so the row should be identical.
+    SELECT * FROM target.public.target_cdc;
+    --- QRep mirrors replicate the results of the query, so the row should be transformed.
+    SELECT * FROM target.public.target_qrep;
+    ```
+
+The output should look like this:
 
     ```bash
-    peerdb=> SELECT * FROM peersrc.public.tablesrc ORDER BY id LIMIT 4;
-    id |   c1   |   c2   |                   t
-    ----+--------+--------+---------------------------------------
-    1 | 439939 | 826884 | pgbenchinsert6ceeef622e794c0b548c9b9a
-    2 | 789163 | 247485 | pgbenchinsert9e288b9d4064ba791d1a52c9
-    3 | 868155 | 733107 | pgbenchinsert1d98fc6105547920c8ee42a8
-    4 | 970751 | 865381 | pgbenchinsert12b200adbf2a07b507d11717
-    (4 rows)
+    peerdb=> SELECT * FROM target.public.target_cdc;
+    c1 | c2 | id |      t
+    ----+----+----+-------------
+    1 |  2 |  1 | oathbringer
+    (1 row)
 
-    peerdb=> SELECT * FROM peerdst.public.tabledst_cdc ORDER BY id LIMIT 4;
-    c2   | id |                   t                   |   c1
-    --------+----+---------------------------------------+--------
-    826884 |  1 | pgbenchinsert6ceeef622e794c0b548c9b9a | 439939
-    247485 |  2 | pgbenchinsert9e288b9d4064ba791d1a52c9 | 789163
-    733107 |  3 | pgbenchinsert1d98fc6105547920c8ee42a8 | 868155
-    865381 |  4 | pgbenchinsert12b200adbf2a07b507d11717 | 970751
-    (4 rows)
-
-    peerdb=> SELECT * FROM peerdst.public.tabledst_qrep ORDER BY id LIMIT 4;
-    id |   c12   |   st
-    ----+---------+---------
-    1 | 1266823 | pgbench
-    2 | 1036648 | pgbench
-    3 | 1601262 | pgbench
-    4 | 1836132 | pgbench
-    (4 rows)
+    peerdb=> SELECT * FROM target.public.target_qrep;
+    id | c12 |   st
+    ----+-----+---------
+    1 |   3 | bringer
+    (1 row)
     ```
 
 ### FAQ
