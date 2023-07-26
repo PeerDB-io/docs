@@ -56,24 +56,28 @@
       "group": "Use-cases",
       "pages": [
         {
-          "group": "From PostgreSQL",
+          "group": "Real-time CDC",
           "pages":[
-            "usecases/from-postgres/realtime-cdc",
-            "usecases/from-postgres/realtime-cdc-for-postgres-to-snowflake",
-            "usecases/from-postgres/realtime-cdc-for-postgres-to-azure-eventhubs",
-            "usecases/from-postgres/realtime-streaming-of-postgres-to-snowflake",
-            "usecases/from-postgres/realtime-streaming-of-postgres-to-s3",
-            "usecases/from-postgres/realtime-streaming-from-postgres-to-bigquery"
+            "usecases/Real-time CDC/overview",
+            "usecases/Real-time CDC/postgres-to-postgres",
+            "usecases/Real-time CDC/postgres-to-bigquery",
+            "usecases/Real-time CDC/postgres-to-snowflake",
+            "usecases/Real-time CDC/postgres-to-azure-eventhubs"
           ]
         },
         {
-          "group": "To PostgreSQL",
+          "group": "Streaming Query Replication",
           "pages":[
-            "usecases/to-postgres/realtime-streaming-of-sqlserver-to-postgres"
+            "usecases/Streaming Query Replication/overview",
+            "usecases/Streaming Query Replication/postgres-to-postgres",
+            "usecases/Streaming Query Replication/postgres-to-bigquery",
+            "usecases/Streaming Query Replication/postgres-to-s3",
+            "usecases/Streaming Query Replication/postgres-to-snowflake",
+            "usecases/Streaming Query Replication/sqlserver-to-postgres"
+
+
           ]
         },
-        "usecases/realtime-cdc-for-postgres-to-postgres",
-        "usecases/realtime-streaming-from-postgres-to-postgres",
         "usecases/postgres-compatible-layer-for-bigquery-and-snowflake"
       ]
     },

@@ -1,0 +1,51 @@
+---
+title: "PostgreSQL to S3"
+---
+
+PeerDB can stream your PostgreSQL data to your S3 bucket in the form of `.avro` files. Please **fill in your AWS credentials** in [PeerDB's docker-compose file](https://github.com/PeerDB-io/peerdb/blob/e9fe3e03e242abc37a7526d7132c1f7232e00e5f/docker-compose.yml#L89-L91C36) before running it. 
+
+### Step 1: CREATE Postgres and S3 Peers
+    1. [CREATE Postgres PEER](https://docs.peerdb.io/sql/commands/create-peer#postgresql-peer). Make sure it satisfies the prerequisites required for our mirror.
+    2. [CREATE S3 PEER](https://docs.peerdb.io/sql/commands/create-peer#s3-peer)
+
+### Step 2: Create and populate tables on the Postgres PEER
+    Below script helps creates and populate `peerdb_demo` with 10 rows on your PostgreSQL peer.
+    ```sh
+    curl https://gist.github.com/Amogh-Bharadwaj/64d7f6cb22e35b766e6a09b05479b201/raw --output setup.sh
+    chmod +x setup.sh
+    # "postgres://user:password@hostname:5432/dbname" 
+    # is the connection string of your PostgreSQL peer.
+    ./setup.sh "postgres://user:password@hostname:5432/dbname"
+    rm setup.sh
+    ```
+
+### Step 3: Kick off Streaming Query Replication
+    
+    ```sql
+    CREATE MIRROR postgres_to_s3_tutorial
+    FROM postgres_peer TO s3_peer FOR
+    $$SELECT * FROM peerdb_demo WHERE id BETWEEN {{.start}} AND {{.end}}$$
+    WITH (
+            watermark_column = 'id',
+            watermark_table_name = 'peerdb_demo',
+            mode = 'append',
+            parallelism = 10,
+            refresh_interval = 10,
+            sync_data_format = 'avro', // this is a must
+            destination_table_name = 'peerdb_demo',
+        num_rows_per_partition = 2
+    );
+    ```
+    
+### Step 4: Monitor the MIRROR
+You can connect to ``localhost:8233`` to gain full visibility into the different jobs and steps that PeerDB performs under the hood to manage the MIRROR.
+
+### Step 5: Validate the MIRROR
+In a few seconds the MIRROR should complete syncing data. Now validate the data on both postgres and S3 peers. The number of `.avro` files in the bucket should be equal to the number of partitions (total rows in your source table divided by `num_rows_per_partition`). In this case, there should be exactly `5` files.
+```sql
+select (count(*)/2) as no_of_avro_files from postgres_peer.peerdb_demo;
+```
+
+```shell
+aws ls <your-s3-peer-url> --recursive | wc -l
+```

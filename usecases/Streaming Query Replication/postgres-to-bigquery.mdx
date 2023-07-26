@@ -1,5 +1,5 @@
 ---
-title: "Real-time Streaming of Postgres to BigQuery"
+title: "PostgreSQL to BigQuery"
 ---
 
 ### Scenario
@@ -34,7 +34,7 @@ $$
   updated_at >= {{.start}} AND updated_at < {{.end}}
 $$
 WITH (
-	destination_table_name = 'public.events',
+	destination_table_name = 'events',
 	watermark_column = 'updated_at',
 	watermark_table_name = 'public.events',
 	mode = 'upsert',
@@ -60,15 +60,6 @@ SELECT COUNT(*) FROM bigquery_peer.events;
 You can connect to [`localhost:8233`](http://`localhost:8233`) to gain full visibility into the different jobs and steps that PeerDB performs under the hood to manage the MIRROR.
 
 ![Managing Mirror](../images/managing_mirror.png)
-
-### Step 5: DROP MIRROR
-
-To make it easy in your development and test environments, PeerDB also introduces the DROP MIRROR command. DROP MIRROR drops all the underlying objects that CREATE MIRROR generates. More details are available in this [PR](https://github.com/PeerDB-io/peerdb/pull/93).
-
-```sql
--- drop the mirror
-DROP MIRROR streaming_query_pg_to_bq;
-```
 
 ### Support
 

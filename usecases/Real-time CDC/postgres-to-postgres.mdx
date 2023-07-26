@@ -1,14 +1,12 @@
 ---
-title: "Real-time CDC from PostgreSQL To PostgreSQL"
+title: "PostgreSQL To PostgreSQL"
 ---
 
-## Real-time CDC from PostgreSQL To PostgreSQL
-This is a simple usecase which is very easy to setup and does not require accounts etc. like for MIRRORs to other peers.
 Let's look at how we can seamlessly perform Change-Data Capturing (CDC) from PostgreSQL to PostgreSQL.
 
 ### Scenario
 
-Suppose you have a banking application running on PostgreSQL. There are two tables: "users" and "transactions." You want to sync these tables in real-time to another PostgreSQL server for analytics purposes, such as real-time fraud detection. Let's see how we can make this happen within a few minutes and a few SQL commands using PeerDB.
+Suppose you have a banking application running on PostgreSQL. There are two tables: "users" and "transactions." You want to sync these tables in real-time to another PostgreSQL server. Let's see how we can make this happen within a few minutes and a few SQL commands using PeerDB.
 
 ### Prerequisites
 
@@ -46,7 +44,7 @@ With the peers set up, you can create a mirror that facilitates real-time CDC fr
 -- Real-time CDC between two Postgres peers
 CREATE MIRROR real_time_cdc
 FROM postgres_peer_1 TO postgres_peer_2
-WITH TABLE MAPPING (public.transactions:public.transactions, public.users:public.users);
+WITH TABLE MAPPING (public.transactions:public.transactions, public.users:public.users); //make sure tables are schema qualified
 ```
 
 If you observe, **TABLE MAPPING** represents the table name mapping between the two Postgres peers.
@@ -66,12 +64,3 @@ SELECT COUNT(*) FROM postgres_peer_2.public.transactions;
 You can connect to [`localhost:8233`](http://`localhost:8233`) to get full visibility into the different jobs and steps that PeerDB is taking under the covers to manage the MIRROR.
 
 ![Managing Mirror](../images/managing_mirror.png)
-
-### Step 5: DROP MIRROR
-
-To make it easy in your development and test environments, PeerDB also introduces the DROP MIRROR command. DROP MIRROR drops all the underlying objects that CREATE MIRROR generates. More details are available in this [PR](https://github.com/PeerDB-io/peerdb/pull/93).
-
-```sql
--- drop the mirror
-DROP MIRROR real_time_cdc;
-```

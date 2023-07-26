@@ -41,13 +41,12 @@ If you have a service account key, you can use that or [create a new one](https:
 
 <Info>Make sure you have the right permissions for the service account, PeerDB requires at least read permissions for querying. For MIRROR it requires both read and write.</Info>
 
-### Known Limitations
+### Considerations
 
 1. **Dataset Specific:** PeerDB only supports querying tables within a dataset. Cross dataset joins are not supported yet.
-2. **Read Only:** You can only read from a BQ peer. Writing to the BQ peer is not yet supported.
-3. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying. Record and Struct data-types are projected as JSONB. JSON datatype in BQ is not supported yet.
-4. **SQL Coverage:** Most SQL constructs in reads incl. Simple Selects, JOINs, aggregations, window functions, CTEs etc are supported. You can run both Postgres compatible and BQ compatible queries through PeerDBs interface.
-5. **Error Handling:** If a query fails on the BigQuery side because of lack of auth or query coverage or timeout, PeerDB handles that error and propagates the entire message  as a JSON text to the end-user. We also capture this ERROR message within PeerDB logs.
+2. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying. Record and Struct data-types are projected as JSONB. JSON datatype in BQ is not supported yet.
+3. **SQL Coverage:** Most SQL constructs in reads incl. Simple Selects, JOINs, aggregations, window functions, CTEs etc are supported. You can run both Postgres compatible and BQ compatible queries through PeerDBs interface.
+4. **Error Handling:** If a query fails on the BigQuery side because of lack of auth or query coverage or timeout, PeerDB handles that error and propagates the entire message  as a JSON text to the end-user. We also capture this ERROR message within PeerDB logs.
 
 
 ## Snowflake Peer
@@ -69,8 +68,6 @@ CREATE PEER sf_peer FROM SNOWFLAKE WITH
 SELECT * FROM sf_peer.<schema>.<tablename>;
 ```
 
-
-
 ### Authentication
 
 PeerDB authenticates the creation of a Snowflake peer based key pair authentication. 
@@ -79,13 +76,12 @@ Refer to this [doc](https://docs.snowflake.com/en/user-guide/key-pair-auth#confi
 <Info>Make sure you have the right permissions for the service account, PeerDB requires at least read permissions for querying. For MIRROR it requires both read and write.</Info>
 
 
-### Known Limitations
+### Considerations
 
 1. **Database Specific:** PeerDB only supports querying tables within a dataset. Cross dataset joins are not supported yet.
-2. **Read Only:** You can only read from a Snowflake peer. Writing to the Snowflake peer is not yet supported.
-3. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying.
-4. **SQL Coverage:** Most SQL constructs in reads incl. Simple Selects, JOINs, aggregations, window functions, CTEs etc are supported. You can run both Postgres compatible and SF compatible queries through PeerDBs interface.
-5. **Error Handling:** If a query fails on the Snowflake side because of lack of auth or query coverage or timeout, PeerDB handles that error and propagates the entire message  as a JSON text to the end-user. We also capture this ERROR message within PeerDB logs.
+2. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying.
+3. **SQL Coverage:** Most SQL constructs in reads incl. Simple Selects, JOINs, aggregations, window functions, CTEs etc are supported. You can run both Postgres compatible and SF compatible queries through PeerDBs interface.
+4. **Error Handling:** If a query fails on the Snowflake side because of lack of auth or query coverage or timeout, PeerDB handles that error and propagates the entire message  as a JSON text to the end-user. We also capture this ERROR message within PeerDB logs.
 
 
 ## PostgreSQL Peer
@@ -103,29 +99,27 @@ CREATE PEER postgres_peer FROM POSTGRES WITH
 -- Query away tables in Postgres
 SELECT * FROM postgres_peer.<schema>.<tablename>;
 ```
-If you are connecting to a Docker Postgres instance on the same docker network as PeerDB, then the hostname will be the service name of the Postgres server and the port will be the right-hand side port.
+If you are connecting to a Docker Postgres instance on the same docker network as PeerDB, then the hostname will be the service name of the Postgres server and the port will be `5432`.
 
-### Known Limitations
+### Considerations
 
 1. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying. We are actively addding support for other types.
 2. **Unsupported COPY command:** COPY command is not supported yet.
 
 ## S3 Peer
 
-The prefix is of your choice.
 ```sql
 CREATE PEER s3_peer FROM S3 WITH
 (
-    url = 's3://<bucket>/<prefix>'
+    url = 's3://<bucket>/<prefix-of-your-choice>'
 );
 ```
-In order to use this peer for realtime streaming, your AWS credentials must be filled in our PeerDB docker-compose file.
+In order to use this peer for streaming query replication, your AWS credentials must be filled in our PeerDB `docker-compose` file.
 
-### Known Limitations
+### Considerations
 
-1. No query support: this peer is currently supported for realtime query replication only.
-2. The bucket specified in the URL must already exist.
-3. Only `.avro` file format is currently supported.
+1. The bucket specified in the URL must already exist.
+2. Only `.avro` file format is currently supported.
 
 ## SQLServer Peer
 
@@ -138,11 +132,7 @@ CREATE PEER sqlserver_peer FROM SQLSERVER WITH(
   database='<database>'
 );
 ```
-If you are connecting to a Docker SQL Server/Azure SQL Edge instance on the same docker network as PeerDB, then the hostname will be the service name of the SQL server and the port will be the right-hand side port.
-
-### Known Limitations
-
-1. No query support: This peer is currently supported for realtime query replication from SQL Server to PostgreSQL only.
+If you are connecting to a Docker SQL Server/Azure SQL Edge instance on the same docker network as PeerDB, then the hostname will be the service name of the SQL server and the port will be `5432`.
 
 ## Eventhub Peer
 
@@ -169,7 +159,3 @@ In order to use this peer, your **Eventhub credentials must be filled** in our P
       AZURE_SUBSCRIPTION_ID: <subscription-id>
       AZURE_TENANT_ID: <tenant-id>
 ```
-
-### Known Limitations
-
-1. No query support: This peer is currently supported for realtime CDC from PostgreSQL to Eventhub only.
