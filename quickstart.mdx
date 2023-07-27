@@ -3,33 +3,159 @@ title: Quickstart Guide
 description: "Get started with PeerDB in a few simple steps."
 ---
 
-Deploying PeerDB is a simple process involving just a couple of steps.
+### Deploying PeerDB
 
-1.  **Install Docker on your workstation:** Refer to [these instructions](https://www.docker.com/products/docker-desktop) if you haven't already done so. Make sure you have the latest version of `docker-compose`.
+We currently support deploying and testing PeerDB using our Docker Compose file, support for Kubernetes and other means of deployment are in development.
 
-2.  **Run the following commands in your terminal:**
+<Info> Docker can be installed by referring to [these instructions](https://www.docker.com/products/docker-desktop). The `docker compose` tool should also be present. The Postgres client tools (specifically `psql`) are used to test the PeerDB installation. </Info>
+
+1.  **Run the following commands in your terminal:**
 
     ```bash
     git clone --recursive git@github.com:PeerDB-io/peerdb.git
     cd peerdb
     
-    # Run docker containers: peerdb-server, postgres as catalog, temporal
+    # Run docker containers: peerdb-server, postgres as catalog, temporal. It might take a few minutes
     export COMPOSE_PROJECT_NAME=peerdb-stack
     docker compose up
     ```
 
-3.  **Connect to PeerDB:**
-
+2.  **Connect to PeerDB:**
 
     ```bash
     psql "port=9900 host=localhost password=peerdb"
     ```
 
-
 That's it! You now have PeerDB up and running on your machine, ready to query away!
 
-FAQ
----
+### Quickstart
+
+<Info> The following steps assume you have PeerDB running locally. We also need the Postgres client tools (specifically `psql` and `pgbench`) installed and available on your PATH. </Info>
+
+#### Setup
+
+This script reuses the PeerDB internal Postgres instance to setup two databases, which we can use to create two peers. It also creates some tables on both databases to use later in the quickstart. Run the following commands in your terminal:
+
+    ```bash
+    curl -O https://peerdb-sample-data.s3.us-east-2.amazonaws.com/quickstart_prepare_peers.sh
+    chmod +x quickstart_prepare_peers.sh
+    ./quickstart_prepare_peers.sh
+    ```
+#### Creating Peers
+
+With PeerDB running, we can create our first peers.
+
+Connect to PeerDB via psql and run the below commands to create the `source` and `target` peers:
+    ```bash
+     psql "port=9900 host=localhost password=peerdb"
+    ```
+
+    ```sql
+    CREATE PEER source FROM POSTGRES WITH
+    (
+        host = 'catalog',
+        port = '5432',
+        user = 'postgres',
+        password = 'postgres',
+        database = 'source'
+    );
+
+    CREATE PEER target FROM POSTGRES WITH
+    (
+        host = 'catalog',
+        port = '5432',
+        user = 'postgres',
+        password = 'postgres',
+        database = 'target'
+    );
+    ```
+
+#### Real-time CDC
+
+Run the following command to kick off Change Data Capture (CDC) based streaming from source peer to target peer for the `test` table.
+    ```sql
+    --- CDC mirrors automatically create the destination table
+    CREATE MIRROR cdc_mirror FROM source TO target WITH TABLE MAPPING (public.test:public.test);
+    ```
+Now that our CDC mirror is set up, it will automatically replicate data from the source to the target peer. Let's insert a row in the source table via PeerDB itself.
+
+    ```sql
+    --- Verify that the source table has zero rows
+    SELECT id,c1,c2,t FROM source.public.test;
+    ```
+    ```sql
+    --- Insert a row into the source table
+    INSERT INTO source.public.test(c1, c2, t) VALUES(1, 2, 'oathbringer');
+    ```
+Within a few seconds, the row should be replicated to the target table. Let's verify this by running the following command:
+
+    ```sql
+    --- CDC mirrors replicate data as-is, so the row should be identical.
+    SELECT id,c1,c2,t FROM target.public.test;
+    ```
+    The output should look like this:
+
+    ```bash
+    peerdb=> SELECT id,c1,c2,t FROM target.public.test;
+    id | c1 | c2 |      t
+    ----+----+----+-------------
+    1 |  1 |  2 | oathbringer
+    (1 row)
+    ```
+The above MIRROR takes care of replicating all DML commands (INSERT, UPDATE, DELETE) from source to target.
+
+#### Streaming Query from PostgreSQL
+Run the following command to kick off query based streaming from source peer to target peer. You are able to transform data on the source before streaming them to the target
+    ```sql
+    --- Query based mirrors require the destination table to be created beforehand, which we did in one of the previous steps.
+    CREATE MIRROR qrep_mirror FROM source TO target
+    FOR $$
+        SELECT id, c1+c2 AS c12, right(t, 7) AS st FROM test WHERE id >= {{.start}} AND id < {{.end}}
+    $$ WITH (
+        watermark_table_name='public.test',
+        watermark_column='id',
+        destination_table_name='public.test_transformed',
+        mode='append',
+        parallelism=2,
+        batch_size_int=50000,
+        refresh_interval=10
+    );
+    --- 'append' mode indicates that the records in the source table are write-once and never updated. 
+    ```
+
+Now our mirror is set up. You should see the results of the above SELECT query replicated on the target peer.
+
+    ```sql
+    SELECT * FROM target.public.test_transformed;
+    ```
+The output should look like this:
+    ```sql
+    peerdb=> SELECT * FROM target.public.test_transformed;
+    id | c12 |   st
+    ----+-----+---------
+    1 |   3 | bringer
+    (1 row)
+    ```
+
+#### Mirrors are continuous
+
+As you add more rows to the `test` table on the source, the above MIRRORs take care of replicating the data to both `test` and `test_transformed` table on the target.
+
+Insert a new row on the source:
+    ```sql
+    -- insert a new row
+    INSERT INTO source.public.test(c1, c2, t) VALUES(1, 2, 'oauthereceiver');
+    -- Check data on the source
+    SELECT id,c1,c2,t FROM source.public.test;
+    ```
+Check the new row added to target tables
+    ```sql
+    -- After a few seconds, check the second row added to the target tables
+    SELECT id,c1,c2,t FROM target.public.test;
+    SELECT * FROM target.public.test_transformed;
+    ```
+
+### FAQ
 
 If you have any questions about the PeerDB setup and deployment process, don't hesitate to reach out on [Slack](https://join.slack.com/t/peerdb-public/shared_invite/zt-1wo9jydev-EXInbMtCtpAKFFWdi7QvLQ). We're more than happy to assist and answer any questions, including:
 
