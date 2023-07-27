@@ -70,11 +70,17 @@
       "group": "SQL Commands",
       "pages": [
         "sql/commands/create-peer",
-        "sql/commands/create-mirror"
+        "sql/commands/create-mirror",
+        "sql/commands/supported-connectors"
       ]
     }
   ],
   "footerSocials": {
     "github": "https://github.com/PeerDB-io"
+  },
+  "analytics": {
+    "ga4": {
+      "measurementId": "G-1V9ZZCZMB7"
+    }
   }
 }
