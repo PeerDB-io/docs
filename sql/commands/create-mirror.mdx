@@ -54,15 +54,3 @@ The OPTIONS clause provides granular control when configuring the MIRROR:
         1. If you have a powerful PostgreSQL server or if it is a read-replica, you can configure a higher parallelism value. In scenarios where you want to put less load on the source, you can choose a lower value.
     5. **refresh_interval (Optional)** helps configure the frequency (in minutes) at which the sync should run. If not specified, PeerDB syncs the data continuously without pauses.
     6. More details on the OPTIONs can be found [here](https://github.com/PeerDB-io/peerdb/issues/139).
-
-### Supported Connectors
-
-Currently only PostgreSQL is supported as a source for CREATE MIRROR. Below tables capture supported targets for the CREATE MIRROR command.
-
-|                  | Snowflake | BigQuery | Azure Event Hubs | PostgreSQL
-|------------------|-----------|----------|----------|----------|
-| Postgres   |    ✅     |    ✅    |   ✅    |   ✅    |
-
-|                  | Snowflake | BigQuery | AWS S3 
-|------------------|-----------|----------|-----------|
-| Postgres - Streaming Query Result   |    ✅     |    ✅    |   ✅
