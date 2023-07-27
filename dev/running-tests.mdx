@@ -24,7 +24,7 @@ Run the following steps to set up your environment:
 2. Check the status to ensure postgres is running.
 3. To check if postgres is installed, run `psql postgres`. To set up a dev environment, it is important to have a user named postgres because end-to-end tests use `postgres` user
 4. You can download pgadmin or any other postgres-compatible viewer for GUI-based interface.
-5. Following the [prerequisites](https://docs.peerdb.io/usecases/realtime-cdc#prerequisites) to setup real-time CDC using postgres, connect to postgres using psql CLI and run the below commands -
+5. Following the [prerequisites](/usecases/Real-time%20CDC/postgres-to-postgres#prerequisites) to setup real-time CDC using postgres, connect to postgres using psql CLI and run the below commands -
   1. To change `wal_level` to logical, run `ALTER SYSTEM SET wal_level = 'logical'`
   2. To change `max_wal_senders`, run `ALTER SYSTEM SET max_wal_senders = 10`
   3. To change `max_replication_slots`, run `ALTER SYSTEM SET max_replication_slots = 4`
