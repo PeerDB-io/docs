@@ -1,0 +1,72 @@
+---
+title: "PostgreSQL To Azure Event Hubs"
+---
+
+Let's look at how we can seamlessly perform Change-Data Capturing (CDC) from PostgreSQL to topics in Azure EventHubs.
+
+### Scenario
+
+Suppose you have a banking application running on PostgreSQL. There are two tables: "users" and "transactions." You want to sync these tables in real-time to Event Hubs topics. Let's see how we can make this happen within a few minutes and a few SQL commands using PeerDB.
+
+### Prerequisites
+
+1. Enable logical decoding in PostgreSQL. Ensure that the following settings/GUCs are properly configured:
+    1. wal_level: logical
+    2. max_wal_senders: >1
+    3. max_replication_slots: 4
+2. Enable replication access for a PostgreSQL user - ALTER USER pg_user REPLICATION;
+3. Ensure that both tables have primary keys. Composite primaries are also fine.
+4. If you are using PostgreSQL on the cloud, below links capture how to enable logical replication for each cloud:
+    1. [AWS RDS and Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.Replication.Logical.html#AuroraPostgreSQL.Replication.Logical.Configure)
+    2. [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-logical#pre-requisites-for-logical-replication-and-logical-decoding)
+    3. [GCP Cloud SQL PostgreSQL](https://cloud.google.com/sql/docs/PostgreSQL/replication/configure-logical-replication#configure-your-postgresql-instance)
+
+### Step 1: Add PostgreSQL and Event Hubs Peers
+
+Run the following commands to let PeerDB know about the existing PostgreSQL and Event Hubs Peers.
+
+```sql
+-- Connect to PeerDB
+psql "port=9900 host=localhost password=peerdb"
+
+-- Add PostgreSQL and Event Hubs peers
+CREATE PEER postgres_peer FROM PostgreSQL (...);
+CREATE PEER eventhub_peer FROM eventhub (...);
+```
+
+Make sure to replace **`(…)`** with the appropriate connection details for both the PostgreSQL and Event Hubs instances. More details on adding PEERs are available [here](https://docs.peerdb.io/sql/commands/create-peer).
+
+### **Step 2: Real-Time CDC from PostgreSQL to Event Hubs**
+
+With the peers set up, you can create a mirror that facilitates real-time CDC from PostgreSQL to Event Hubs. 
+
+```sql
+-- Real-time CDC from PostgreSQL to Event Hubs
+CREATE MIRROR real_time_cdc
+FROM postgres_peer TO eventhub_peer
+WITH TABLE MAPPING (public.transactions:public.transactions, public.users:public.users);
+```
+
+If you observe, **TABLE MAPPING** represents the table name mapping between PostgreSQL and Event Hubs. PeerDB automatically creates the topic with suitable data type mapping on the target. PeerDB supports 30+ native data types for PostgreSQL in CREATE MIRROR. These data types are chosen in a way that there is no loss of data (e.g., precision) as part of the real-time sync.
+
+### **Step 3: Validate the Mirror**
+
+Validate the mirror by checking if the number of messages in the topics matches the row count on the source table.
+```sql
+SELECT COUNT(*) FROM postgres_peer.public.transactions;
+```
+
+### Step 4: Monitor the MIRROR
+
+You can connect to [`localhost:8233`](http://`localhost:8233`) to get full visibility into the different jobs and steps that PeerDB is taking under the covers to manage the MIRROR.
+
+![Managing Mirror](../images/managing_mirror.png)
+
+### Step 5: DROP MIRROR
+
+To make it easy in your development and test environments, PeerDB also introduces the DROP MIRROR command. DROP MIRROR drops all the underlying objects that CREATE MIRROR generates. More details are available in this [PR](https://github.com/PeerDB-io/peerdb/pull/93).
+
+```sql
+-- drop the mirror
+DROP MIRROR real_time_cdc;
+```

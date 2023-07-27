@@ -1,31 +1,31 @@
 ---
-title: "Streaming Query Replication of PostgreSQL To Snowflake"
+title: "PostgreSQL to PostgreSQL"
 ---
 
-Below is a 5-minute tutorial to test [Streaming Query Replication from Postgres to Snowflake](https://docs.peerdb.io/usecases/realtime-streaming-of-query-results)
+### Step 1: CREATE Two Postgres Peers
+    There is a guide available for creating a PostgreSQL peer here: [CREATE Postgres PEER](https://docs.peerdb.io/sql/commands/create-peer#postgresql-peer)
 
-### Step 1: CREATE Postgres and Snowflake Peers
-    1. [CREATE Postgres PEER](https://docs.peerdb.io/sql/commands/create-peer#postgresql-peer)
-    2. [Create Snowflake PEER](https://docs.peerdb.io/sql/commands/create-peer#snowflake-peer)
-### Step 2: Create and populate tables on the Postgres PEER
+### Step 2: Create and populate tables on the source Postgres PEER
     Below script helps creates and populate `pgbench_history` with dummy data on your PostgreSQL peer.
     ```sh
     curl -O https://peerdb-sample-data.s3.us-east-2.amazonaws.com/import_data_for_tutorial.sh
     chmod +x import_data_for_tutorial.sh
     # "postgres://user:password@hostname:5432/dbname" 
-    # is the connection string of your PostgreSQL peer.
+    # is the connection string of your source PostgreSQL peer.
     ./import_data_for_tutorial.sh "postgres://user:password@hostname:5432/dbname"
     ```
-### Step 3: Create pgbench_history table on the destination (snowflake) PEER
+
+### Step 3: Create pgbench_history table on the destination PEER
     ```sql
     CREATE TABLE pgbench_history (tid integer, bid integer, 
     aid integer, delta integer, mtime timestampntz, filler text);
     ```
+
 ### Step 4: Kick off MIRROR with 8 threads and batch size of 10 seconds
     
     ```sql
-    CREATE MIRROR postgres_to_snowflake_tutorial
-    FROM postgres_peer TO snowflake_peer FOR
+    CREATE MIRROR postgres_to_postgres_tutorial
+    FROM postgres_peer_source TO postgres_peer_destination FOR
     $$SELECT * FROM public.pgbench_history WHERE mtime >={{.start}} AND mtime < {{.end}}$$
     WITH (
     	watermark_column = 'mtime',
@@ -33,17 +33,16 @@ Below is a 5-minute tutorial to test [Streaming Query Replication from Postgres 
     	mode = 'append',
     	parallelism = 8,
     	refresh_interval = 10,
-    	batch_duration_timestamp = 10,
-    	sync_data_format = 'avro',
-    	destination_table_name = 'public.pgbench_history'
+    	destination_table_name = 'public.pgbench_history',
+        batch_duration_seconds = 40000
     );
     ```
     
 ### Step 5: Monitor the MIRROR
 You can connect to `localhost:8233` to gain full visibility into the different jobs and steps that PeerDB performs under the hood to manage the MIRROR.
 ### Step 6: Validate the MIRROR
-In 1-2 minutes the MIRROR should complete syncing data. Now validate the data on both postgres and snowflake peers. Number of rows should match
+In 1-2 minutes the MIRROR should complete syncing data. Now validate the data on both postgres peers. Number of rows should match on both sides.
 ```sql
-SELECT count(*) FROM postgres_peer.pgbench_history;
-SELECT count(*) FROM snowflake_peer.public.pgbench_history;
+SELECT count(*) FROM postgres_peer_1.pgbench_history;
+SELECT count(*) FROM postgres_peer_2.pgbench_history;
 ```
