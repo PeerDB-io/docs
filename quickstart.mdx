@@ -12,10 +12,11 @@ We currently support deploying and testing PeerDB using our Docker Compose file,
 1.  **Run the following commands in your terminal:**
 
     ```bash
-    git clone --recursive git@github.com:PeerDB-io/peerdb.git
+    git clone --recursive https://github.com/PeerDB-io/peerdb.git
     cd peerdb
     
-    # Run docker containers: peerdb-server, postgres as catalog, temporal. It might take a few minutes
+    # Run docker containers: peerdb-server, postgres as catalog, temporal. 
+    # This might take a few minutes, so get a cup of coffee! :)
     export COMPOSE_PROJECT_NAME=peerdb-stack
     docker compose up
     ```
@@ -75,7 +76,8 @@ Connect to PeerDB via psql and run the below commands to create the `source` and
 Run the following command to kick off Change Data Capture (CDC) based streaming from source peer to target peer for the `test` table.
     ```sql
     --- CDC mirrors automatically create the destination table
-    CREATE MIRROR cdc_mirror FROM source TO target WITH TABLE MAPPING (public.test:public.test);
+    CREATE MIRROR cdc_mirror FROM source TO target 
+    WITH TABLE MAPPING (public.test:public.test);
     ```
 Now that our CDC mirror is set up, it will automatically replicate data from the source to the target peer. Let's insert a row in the source table via PeerDB itself.
 
@@ -105,22 +107,22 @@ Within a few seconds, the row should be replicated to the target table. Let's ve
 The above MIRROR takes care of replicating all DML commands (INSERT, UPDATE, DELETE) from source to target.
 
 #### Streaming Query from PostgreSQL
-Run the following command to kick off query based streaming from source peer to target peer. You are able to transform data on the source before streaming them to the target
+Run the following command to kick off query based streaming from source peer to target peer. You are able to mask `c1`,`c2` and `t` columns by hashing them prior to streaming them to the target.
     ```sql
-    --- Query based mirrors require the destination table to be created beforehand, which we did in one of the previous steps.
+    /*Query based mirrors require the destination table to be created beforehand 
+    which we did in one of the previous steps.*/
     CREATE MIRROR qrep_mirror FROM source TO target
     FOR $$
-        SELECT id, c1+c2 AS c12, right(t, 7) AS st FROM test WHERE id >= {{.start}} AND id < {{.end}}
+        SELECT id, hashint4(c1) hash_c1, hashint4(c2) hash_c2, md5(t) AS hash_t 
+        FROM test WHERE id >= {{.start}} AND id < {{.end}}
     $$ WITH (
         watermark_table_name='public.test',
         watermark_column='id',
         destination_table_name='public.test_transformed',
-        mode='append',
-        parallelism=2,
-        batch_size_int=50000,
-        refresh_interval=10
+        mode='append'
     );
-    --- 'append' mode indicates that the records in the source table are write-once and never updated. 
+    /*'append' mode indicates that the records in the source 
+    table are write-once and never updated.*/
     ```
 
 Now our mirror is set up. You should see the results of the above SELECT query replicated on the target peer.
@@ -130,11 +132,11 @@ Now our mirror is set up. You should see the results of the above SELECT query r
     ```
 The output should look like this:
     ```sql
-    peerdb=> SELECT * FROM target.public.test_transformed;
-    id | c12 |   st
-    ----+-----+---------
-    1 |   3 | bringer
-    (1 row)
+   peerdb=> SELECT * FROM target.public.test_transformed;
+   id |   hash_c1   |  hash_c2   |              hash_t
+   --+-------------+------------+----------------------------------
+   1 | -1905060026 | 1134484726 | 0e6014773782cbc514100d54328da18f
+   (1 row)
     ```
 
 #### Mirrors are continuous
@@ -159,7 +161,7 @@ Check the new row added to target tables
 
 If you have any questions about the PeerDB setup and deployment process, don't hesitate to reach out on [Slack](https://join.slack.com/t/peerdb-public/shared_invite/zt-1wo9jydev-EXInbMtCtpAKFFWdi7QvLQ). We're more than happy to assist and answer any questions, including:
 
-*   How long does it take to set up PeerDB?
+*   What is the performance I can expect during CDC and query based replication?
 *   How do I know my data sync is successful?
 *   Can I set a specific time to start my data sync?
 
