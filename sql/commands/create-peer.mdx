@@ -3,7 +3,7 @@ title: Creating Peers
 description: "Guide to creating Peers in PeerDB"
 ---
 
-PeerDB currently supports 3 types of Peers. To connect a database to PeerDB, you need to create a Peer. A Peer is a connection to a database that PeerDB can query. Peers are created using the `CREATE PEER` command.
+PeerDB currently supports the below types of Peers. To connect a database to PeerDB, you need to create a Peer. A Peer is a connection to a database that PeerDB can query. Peers are created using the `CREATE PEER` command.
 
 1. [BigQuery](#bigquery-peer)
 2. [Snowflake](#snowflake-peer)
@@ -120,6 +120,7 @@ In order to use this peer for streaming query replication, your AWS credentials 
 
 1. The bucket specified in the URL must already exist.
 2. Only `.avro` file format is currently supported.
+3. Currently only data-movement is supported for this type of peer. Querying this peer from PeerDB's interface is not supported.
 
 ## SQLServer Peer
 
@@ -133,6 +134,9 @@ CREATE PEER sqlserver_peer FROM SQLSERVER WITH(
 );
 ```
 If you are connecting to a Docker SQL Server/Azure SQL Edge instance on the same docker network as PeerDB, then the hostname will be the service name of the SQL server and the port will be `5432`.
+
+### Considerations
+1. Currently only data-movement is supported for this type of peer. Querying this peer from PeerDB's interface is not supported.
 
 ## Eventhub Peer
 
@@ -159,3 +163,5 @@ In order to use this peer, your **Eventhub credentials must be filled** in our P
       AZURE_SUBSCRIPTION_ID: <subscription-id>
       AZURE_TENANT_ID: <tenant-id>
 ```
+### Considerations
+1. Currently only data-movement is supported for this type of peer. Querying this peer from PeerDB's interface is not supported.
