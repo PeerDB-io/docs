@@ -42,10 +42,17 @@ With the peers set up, you can create a mirror that facilitates real-time CDC fr
 -- Real-time CDC from PostgreSQL to BigQuery
 CREATE MIRROR real_time_cdc
 FROM postgres_peer TO bigquery_peer
-WITH TABLE MAPPING (transactions:transactions, users:users);
+WITH TABLE MAPPING (public.transactions:transactions, public.users:users)
+WITH (
+  do_initial_copy = true,
+  snapshot_sync_mode='avro',
+  snapshot_num_rows_per_partition = 500000,
+  snapshot_max_parallel_workers = 4,
+  snapshot_num_tables_in_parallel = 4
+);
 ```
 
-If you observe, **TABLE MAPPING** represents the table name mapping between Postgres and BigQuery. PeerDB automatically creates the table with suitable data type mapping on the target. PeerDB supports 30+ native data types for Postgres in CREATE MIRROR. These data types are chosen in a way that there is no loss of data (e.g., precision) as part of the real-time sync.
+If you observe, **TABLE MAPPING** represents the table name mapping between the two Postgres peers. The final `WITH` clause captures if you wanted to include initial snapshot as a part of the MIRROR. If you don't include that `WITH`, peerdb assumes that you don't want to perform an initial snapshot. If just reads the slot and replays the changes to the target.
 
 1. Data type mapping between [Postgres and BigQuery](https://github.com/PeerDB-io/peerdb/pull/89#issue-1737252747).
 2. If you want additional types to be supported or want to alter the existing data type mapping, please reach out to us. We can aim to support that within a few days. Also, PeerDB is [fully open source](https://github.com/PeerDB-io/peerdb), so feel free to submit a PR.
@@ -65,9 +72,9 @@ SELECT COUNT(*) FROM postgres_peer.public.transactions;
 
 ### Step 4: Monitor the MIRROR
 
-You can connect to [`localhost:8233`](http://`localhost:8233`) to get full visibility into the different jobs and steps that PeerDB is taking under the covers to manage the MIRROR.
+You can connect to [`localhost:8085`](http://`localhost:8085`) to get full visibility into the different jobs and steps that PeerDB is taking under the covers to manage the MIRROR.
 
-![Managing Mirror](../images/managing_mirror.png)
+![Managing Mirror](../../images/managing_mirror.png)
 
 ### Coming Soon
 

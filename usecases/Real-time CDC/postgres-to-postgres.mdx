@@ -42,12 +42,20 @@ With the peers set up, you can create a mirror that facilitates real-time CDC fr
 
 ```sql
 -- Real-time CDC between two Postgres peers
+-- Make sure tables are schema qualified
 CREATE MIRROR real_time_cdc
 FROM postgres_peer_1 TO postgres_peer_2
-WITH TABLE MAPPING (public.transactions:public.transactions, public.users:public.users); //make sure tables are schema qualified
+WITH TABLE MAPPING (public.transactions:public.transactions, public.users:public.users)
+WITH (
+  do_initial_copy = true,
+  snapshot_sync_mode='default',
+  snapshot_num_rows_per_partition = 500000,
+  snapshot_max_parallel_workers = 4,
+  snapshot_num_tables_in_parallel = 4
+); 
 ```
 
-If you observe, **TABLE MAPPING** represents the table name mapping between the two Postgres peers.
+If you observe, **TABLE MAPPING** represents the table name mapping between the two Postgres peers. The final `WITH` clause captures if you wanted to include initial snapshot as a part of the MIRROR. If you don't include that `WITH`, peerdb assumes that you don't want to perform an initial snapshot. If just reads the slot and replays the changes to the target.
 
 ### **Step 3: Validate the Mirror**
 
@@ -61,6 +69,6 @@ SELECT COUNT(*) FROM postgres_peer_2.public.transactions;
 
 ### Step 4: Monitor the MIRROR
 
-You can connect to [`localhost:8233`](http://`localhost:8233`) to get full visibility into the different jobs and steps that PeerDB is taking under the covers to manage the MIRROR.
+You can connect to [`localhost:8085`](http://`localhost:8085`) to get full visibility into the different jobs and steps that PeerDB is taking under the covers to manage the MIRROR.
 
-![Managing Mirror](../images/managing_mirror.png)
+![Managing Mirror](../../images/managing_mirror.png)
