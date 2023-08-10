@@ -16,8 +16,21 @@ CREATE MIRROR <mirror_name>
 FROM <source_peer> TO <target_peer>
 WITH TABLE MAPPING 
 (<schema_name>.<source_table_name>:<schema_name>.<target_table_name>, 
-<schema_name>.<source_table_name>:<schema_name>.<target_table_name>);
+<schema_name>.<source_table_name>:<schema_name>.<target_table_name>)
+WITH (
+  do_initial_copy = <include_initial_copy>,
+  snapshot_sync_mode='<default_or_avro>',
+  snapshot_num_rows_per_partition = <500000>,
+  snapshot_max_parallel_workers = <number_of_threads_per_table>,
+  snapshot_num_tables_in_parallel = <number_of_tables_in_parallel>,
+  
+);
 ```
+1. **do_initial_copy**: `true` if you want to include initial snapshot of tables as a part of the MIRROR, else `false`.
+2. **snapshot_sync_mode**: `default` uses csv format and `avro` converts data to avro format before syncing to target. Both use the COPY command under the covers.
+3. **snapshot_num_tables_in_parallel**: In the initial snapshot, number of tables to be snapshotted at parallely.
+4. **snapshot_max_parallel_workers**: In the initial snapshot, number of threads used per table. Max number of concurrent connections on source will be `snapshot_num_tables_in_parallel*snapshot_max_parallel_workers`
+5. **snapshot_num_rows_per_partition**: In the initial snapshot, number of rows per table streamed in a given batch.
 
 ### MIRROR for Streaming Query Results
 
