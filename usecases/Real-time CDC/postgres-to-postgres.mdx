@@ -48,7 +48,7 @@ FROM postgres_peer_1 TO postgres_peer_2
 WITH TABLE MAPPING (public.transactions:public.transactions, public.users:public.users)
 WITH (
   do_initial_copy = true,
-  snapshot_sync_mode='default',
+  snapshot_sync_mode='sql',
   snapshot_num_rows_per_partition = 500000,
   snapshot_max_parallel_workers = 4,
   snapshot_num_tables_in_parallel = 4

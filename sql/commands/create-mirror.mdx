@@ -19,18 +19,28 @@ WITH TABLE MAPPING
 <schema_name>.<source_table_name>:<schema_name>.<target_table_name>)
 WITH (
   do_initial_copy = <include_initial_copy>,
-  snapshot_sync_mode='<default_or_avro>',
+  snapshot_sync_mode='<sql_or_avro>',
   snapshot_num_rows_per_partition = <500000>,
   snapshot_max_parallel_workers = <number_of_threads_per_table>,
-  snapshot_num_tables_in_parallel = <number_of_tables_in_parallel>,
-  
+  snapshot_num_tables_in_parallel = <number_of_tables_in_parallel>
 );
 ```
 1. **do_initial_copy**: `true` if you want to include initial snapshot of tables as a part of the MIRROR, else `false`.
-2. **snapshot_sync_mode**: `default` uses csv format and `avro` converts data to avro format before syncing to target. Both use the COPY command under the covers.
+2. **snapshot_sync_mode**: `sql` uses a multi-insert command and `avro` converts data to avro format before syncing to target. Both use the COPY command under the covers.
 3. **snapshot_num_tables_in_parallel**: In the initial snapshot, number of tables to be snapshotted at parallely.
 4. **snapshot_max_parallel_workers**: In the initial snapshot, number of threads used per table. Max number of concurrent connections on source will be `snapshot_num_tables_in_parallel*snapshot_max_parallel_workers`
 5. **snapshot_num_rows_per_partition**: In the initial snapshot, number of rows per table streamed in a given batch.
+
+#### CDC Modes for Mirror
+We also support the `sql` and `avro` modes for CDC for some destinations such as BigQuery and Snowflake. This can be configured with:
+```
+
+  cdc_sync_mode = 'avro' // or 'sql'
+  cdc_staging_path = '<stage>' // Needed for AVRO mode only
+```
+The stage depends on your destination peer:
+- For BigQuery, it would be your GCS bucket.
+- For Snowflake, it would be either your S3 bucket URL or an empty string for PeerDB to stage AVRO files internally.
 
 ### MIRROR for Streaming Query Results
 

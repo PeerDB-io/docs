@@ -71,11 +71,20 @@ WITH (
   snapshot_sync_mode='avro',
   snapshot_num_rows_per_partition = 500000,
   snapshot_max_parallel_workers = 4,
-  snapshot_num_tables_in_parallel = 4
+  snapshot_num_tables_in_parallel = 4,
+  snapshot_staging_path = ''
 );
 ```
+Since no CDC sync mode has been specified above, CDC will be performed in `sql` mode.
 
-If you observe, **TABLE MAPPING** represents the table name mapping between the two Postgres peers. The final `WITH` clause captures if you wanted to include initial snapshot as a part of the MIRROR. If you don't include that `WITH`, peerdb assumes that you don't want to perform an initial snapshot. If just reads the slot and replays the changes to the target.
+To perform CDC via `AVRO mode`, you must set the following:
+```
+  cdc_sync_mode = 'avro'
+  cdc_staging_path = '<stage>'
+```
+You must set the staging path to be an existing S3 bucket URL, or an empty string for PeerDB to stage the AVRO files internally.
+
+If you observe, **TABLE MAPPING** represents the table name mapping between the two Postgres peers. The final `WITH` clause captures if you wanted to include initial snapshot as a part of the MIRROR. If you don't include that `WITH`, PeerDB assumes that you don't want to perform an initial snapshot. If just reads the slot and replays the changes to the target.
 1. Data type mapping between [Postgres and Snowflake can be found here](https://github.com/PeerDB-io/peerdb/pull/104).
 2. If you want additional types to be supported or want to alter the existing data type mapping, please reach out to us. We can aim to support that within a few days. Also, PeerDB is [fully open source](https://github.com/PeerDB-io/peerdb), so feel free to submit a PR.
 
