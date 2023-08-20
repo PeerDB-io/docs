@@ -4,6 +4,26 @@ title: "PostgreSQL To PostgreSQL"
 
 Let's look at how we can seamlessly perform Change-Data Capturing (CDC) from PostgreSQL to PostgreSQL.
 
+### Demo
+
+This demo shows PeerDB syncing a table with 100 million rows from PostgreSQL to PostgreSQL in few minutes using parallelized initial load and change data capture.
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/c2a3191efaed4c1abe399ddd08600076?sid=5a465aa5-4dd4-4b9c-91cc-f3074d22ca2d"
+    frameBorder={0}
+    webkitallowfullscreen=""
+    mozallowfullscreen=""
+    allowFullScreen=""
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%"
+    }}
+  />
+</div>
+
 ### Scenario
 
 Suppose you have a banking application running on PostgreSQL. There are two tables: "users" and "transactions." You want to sync these tables in real-time to another PostgreSQL server. Let's see how we can make this happen within a few minutes and a few SQL commands using PeerDB.
