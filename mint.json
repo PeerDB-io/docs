@@ -56,7 +56,7 @@
       "group": "Use-cases",
       "pages": [
         {
-          "group": "Real-time CDC Initial Load",
+          "group": "Real-time CDC Parallelized Initial Load",
           "pages":[
             "usecases/Real-time CDC/overview",
             "usecases/Real-time CDC/postgres-to-postgres",
