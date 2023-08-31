@@ -1,0 +1,21 @@
+---
+title: "Native Metrics"
+---
+
+PeerDB provides native tables with all the information about ongoing Change-Data Capture and Streaming Query Replication mirrors.
+These tables can be found in your PeerDB instance's `peerdb_stats` schema. Each of those tables are explained below.
+
+#### peerdb_stats.cdc_batch_tables
+This is a table which contains information about how many rows are *to be* synced to the destination for each of the tables, of each mirror.
+
+### peerdb_stats.cdc_batches
+This is a table which contains information about batches of rows of each mirror - how many rows are in them, when the sync for each batch was started and ended, and so on.
+
+### peerdb_stats.cdc_flows
+This is a table which shows the latest LSN (Log Sequence Number - an integer denoting the position in the WAL) at the source and at the destination for every mirror.
+
+### peerdb_stats.qrep_partitions
+A highly informative table showing everything you need to know about your Query Replication run. This is crucial for both streaming query replication mirrors as well as snapshot (inital load) flows. It shows how many rows are in each partition of the job, timestamps, run ID for the partition and how many times a partition retried, among many other fields.
+
+### peerdb_stats.qrep_run
+This table tells you when each individual clone job was started and ended along with their run IDs.
