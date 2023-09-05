@@ -1,21 +1,58 @@
 ---
-title: "Native Metrics"
+title: "Table-based Metrics"
 ---
 
-PeerDB provides native tables with all the information about ongoing Change-Data Capture and Streaming Query Replication mirrors.
-These tables can be found in your PeerDB instance's `peerdb_stats` schema. Each of those tables are explained below.
+PeerDB periodically logs information about each running CDC or query replication mirror to a set of tables which can be queried via `psql`.
 
-#### peerdb_stats.cdc_batch_tables
-This is a table which contains information about how many rows are *to be* synced to the destination for each of the tables, of each mirror.
+All these tables can be found in your PeerDB instance's `peerdb_stats` schema. Each of those tables are explained below.
 
-### peerdb_stats.cdc_batches
-This is a table which contains information about batches of rows of each mirror - how many rows are in them, when the sync for each batch was started and ended, and so on.
+## Tables for CDC mirror metrics
 
 ### peerdb_stats.cdc_flows
 This is a table which shows the latest LSN (Log Sequence Number - an integer denoting the position in the WAL) at the source and at the destination for every mirror.
 
-### peerdb_stats.qrep_partitions
-A highly informative table showing everything you need to know about your Query Replication run. This is crucial for both streaming query replication mirrors as well as snapshot (inital load) flows. It shows how many rows are in each partition of the job, timestamps, run ID for the partition and how many times a partition retried, among many other fields.
+### peerdb_stats.cdc_batches
+This is a table which contains information about batches of rows of each mirror - how many rows are in them, when the sync for each batch was started and ended, and so on.
 
-### peerdb_stats.qrep_run
-This table tells you when each individual clone job was started and ended along with their run IDs.
+### peerdb_stats.cdc_batch_table
+This is a table which contains information about how many rows are synced to the destination for each of the tables, for every batch of the mirror.
+
+## Tables for query replication mirror metrics
+
+### peerdb_stats.qrep_runs
+This table stores metrics for both streaming query replication mirrors as well as snapshot (inital load) flows. This table tells you when each individual query replication job was started and ended along with their run IDs.
+
+### peerdb_stats.qrep_partitions
+It shows how many rows are in each partition of the query replication job, timestamps, run ID for the partition and how many attempts it took for partition to replicate successfully, among other fields.
+
+## Example Queries
+
+1. Getting the average number of rows synced per second for a CDC mirror.
+
+    ```bash
+    peerdb=> SELECT batch_id,rows_in_batch,start_time,end_time FROM peerdb_stats.cdc_batches WHERE flow_name='cdc_mirror' LIMIT 5;
+    batch_id | rows_in_batch |         start_time         |          end_time
+    ----------+---------------+----------------------------+----------------------------
+            1 |        100000 | 2023-09-05 17:36:41.807732 | 2023-09-05 17:36:59.826121
+            2 |         54100 | 2023-09-05 17:36:59.934245 | 2023-09-05 17:37:10.792035
+            3 |         53167 | 2023-09-05 17:37:10.909707 | 2023-09-05 17:37:21.749772
+            4 |        100000 | 2023-09-05 17:37:21.862199 | 2023-09-05 17:37:42.665820
+            5 |        100000 | 2023-09-05 17:37:42.785463 | 2023-09-05 17:38:03.992210
+    (5 rows)
+
+    peerdb=> select SUM(rows_in_batch), AVG(rows_in_batch / EXTRACT(epoch FROM end_time - start_time)) from peerdb_stats.cdc_batches;
+    sum   |          avg
+    ---------+-----------------------
+    2659249 | 4547.9120292677780351
+    (1 row)
+    ```
+
+2. Getting the average time spent pulling and syncing records for a query replication mirror.
+
+    ```bash
+    peerdb=> SELECT AVG(EXTRACT(epoch FROM pull_end_time - start_time)) AS pull_time,AVG(EXTRACT(epoch FROM end_time - pull_end_time)) AS sync_time from peerdb_stats.qrep_partitions;
+        pull_time        |       sync_time
+    ------------------------+------------------------
+    0.76264825000000000000 | 1.22982825000000000000
+    (1 row)
+    ```
