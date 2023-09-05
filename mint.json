@@ -74,8 +74,6 @@
             "usecases/Streaming Query Replication/postgres-to-s3",
             "usecases/Streaming Query Replication/postgres-to-snowflake",
             "usecases/Streaming Query Replication/sqlserver-to-postgres"
-
-
           ]
         },
         "usecases/postgres-compatible-layer-for-bigquery-and-snowflake"
@@ -85,6 +83,12 @@
       "group": "Contributing",
       "pages": [
         "dev/running-tests"
+      ]
+    },
+    {
+      "group": "Metrics",
+      "pages": [
+        "metrics/native-metrics"
       ]
     },
     {
