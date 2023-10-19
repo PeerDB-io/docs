@@ -14,9 +14,16 @@ This type of MIRROR streams change feed in real-time from source peer to target 
 ```sql
 CREATE MIRROR <mirror_name>
 FROM <source_peer> TO <target_peer>
-WITH TABLE MAPPING 
-(<schema_name>.<source_table_name>:<schema_name>.<target_table_name>, 
-<schema_name>.<source_table_name>:<schema_name>.<target_table_name>)
+WITH TABLE MAPPING
+(
+  <schema_name>.<source_table_name>:<schema_name>.<target_table_name>,
+  <schema_name>.<source_table_name>:<schema_name>.<target_table_name>,
+  {
+    from: <schema_name>.<source_table_name>,
+    to: <schema_name>.<target_table_name>,
+    key: <partition_key>
+  }
+)
 WITH (
   do_initial_copy = <include_initial_copy>,
   snapshot_sync_mode='<sql_or_avro>',
@@ -25,27 +32,32 @@ WITH (
   snapshot_num_tables_in_parallel = <number_of_tables_in_parallel>
 );
 ```
+
 1. **do_initial_copy**: `true` if you want to include initial snapshot of tables as a part of the MIRROR, else `false`.
 2. **snapshot_sync_mode**: `sql` uses a multi-insert command and `avro` converts data to avro format before syncing to target. Both use the COPY command under the covers.
 3. **snapshot_num_tables_in_parallel**: In the initial snapshot, number of tables to be snapshotted at parallely.
 4. **snapshot_max_parallel_workers**: In the initial snapshot, number of threads used per table. Max number of concurrent connections on source will be `snapshot_num_tables_in_parallel*snapshot_max_parallel_workers`
 5. **snapshot_num_rows_per_partition**: In the initial snapshot, number of rows per table streamed in a given batch.
+6. If **key** is specified, the table will be partitioned on the target peer based on the partition_key. If not specified, the table will be partitioned on the target peer based on the `ctid` column.
 
 #### CDC Modes for Mirror
+
 We also support the `sql` and `avro` modes for CDC for some destinations such as BigQuery and Snowflake. This can be configured with:
+
 ```
 
   cdc_sync_mode = 'avro' // or 'sql'
   cdc_staging_path = '<stage>' // Needed for AVRO mode only
 ```
+
 The stage depends on your destination peer:
+
 - For BigQuery, it would be your GCS bucket.
 - For Snowflake, it would be either your S3 bucket URL or an empty string for PeerDB to stage AVRO files internally.
 
 ### MIRROR for Streaming Query Results
 
 This type of MIRROR periodically streams query results on the source peer to the target peer.
-
 
 ```sql
 CREATE MIRROR <mirror_name> FROM
@@ -66,14 +78,16 @@ WITH (
 	sync_data_format = '<sync_data_format>'
 );
 ```
-The OPTIONS clause provides granular control when configuring the MIRROR:
-    1. **watermark_column (Required)** represents a sequentially incrementing integer or timestamp column. PeerDB uses this column to keep track of the processed rows and the ones that need to be processed.
-    2. **watermark_table (Required)** is the table that PeerDB iterates sequentially based on the watermark_column. The fact table is a good candidate for the watermark_table.
-    3. **mode (Required)** tells PeerDB whether it should append data to the target or perform an upsert operation (update if the row exists).
-        1. If your data is append-only, a sequential ID or a created_at column can be a good watermark, and you can choose the mode **append_only.**
-        2. If your data is updated, make sure to have an "updated_at" column for PeerDB to identify the most recent version of the row. Choose the mode **upsert** to update already existing rows on the target.
-            1. **unique_key:** In the upsert mode, you need to specify a set of columns (unique_key) that uniquely identify a row. This helps perform the upsert operation.
-    4. **parallelism (Optional)** represents the number of threads used to read from the source and sync to the target. This helps with workload management on the source and target.
-        1. If you have a powerful PostgreSQL server or if it is a read-replica, you can configure a higher parallelism value. In scenarios where you want to put less load on the source, you can choose a lower value.
-    5. **refresh_interval (Optional)** helps configure the frequency (in minutes) at which the sync should run. If not specified, PeerDB syncs the data continuously without pauses.
-    6. More details on the OPTIONs can be found [here](https://github.com/PeerDB-io/peerdb/issues/139).
+
+The `OPTIONS` clause provides granular control when configuring the MIRROR:
+
+1. **watermark_column (Required)** represents a sequentially incrementing integer or timestamp column. PeerDB uses this column to keep track of the processed rows and the ones that need to be processed.
+2. **watermark_table (Required)** is the table that PeerDB iterates sequentially based on the watermark_column. The fact table is a good candidate for the watermark_table.
+3. **mode (Required)** tells PeerDB whether it should append data to the target or perform an upsert operation (update if the row exists).
+   1. If your data is append-only, a sequential ID or a created_at column can be a good watermark, and you can choose the mode **append_only.**
+   2. If your data is updated, make sure to have an "updated_at" column for PeerDB to identify the most recent version of the row. Choose the mode **upsert** to update already existing rows on the target.
+      1. **unique_key:** In the upsert mode, you need to specify a set of columns (unique_key) that uniquely identify a row. This helps perform the upsert operation.
+4. **parallelism (Optional)** represents the number of threads used to read from the source and sync to the target. This helps with workload management on the source and target.
+   1. If you have a powerful PostgreSQL server or if it is a read-replica, you can configure a higher parallelism value. In scenarios where you want to put less load on the source, you can choose a lower value.
+5. **refresh_interval (Optional)** helps configure the frequency (in minutes) at which the sync should run. If not specified, PeerDB syncs the data continuously without pauses.
+6. More details on the OPTIONs can be found [here](https://github.com/PeerDB-io/peerdb/issues/139).
