@@ -57,14 +57,15 @@ If you have a service account key, you can use that or [create a new one](https:
 ```sql
 CREATE PEER sf_peer FROM SNOWFLAKE WITH
 (
-  account_id = 'LC83243.us-east-2.aws',
-  username = 'saipeerdb',
+  account_id = '<snowflake_account_identifier>',
+  username = '<user_name>',
   private_key ='<private_key>',
-  database = '<db name>',
+  password = '<password>' -- only provide when the private key is encrypted
+  database = '<database_name>',
   schema = '<schema>',
-  warehouse = '<WARE_HOUSE>',
+  warehouse = '<ware_house>',
   role = '<role>',
-  query_timeout = '<query_timeout_in_seconds'
+  query_timeout = '<query_timeout_in_seconds>'
 );
 
 -- Query away tables in Snowflake
@@ -73,18 +74,12 @@ SELECT * FROM sf_peer.<schema>.<tablename>;
 
 ### Authentication
 
-PeerDB authenticates the creation of a Snowflake peer based key pair authentication.
+PeerDB authenticates the creation of a Snowflake peer based key pair authentication. Encrypted private keys are also supported.
 Refer to this [doc](https://docs.snowflake.com/en/user-guide/key-pair-auth#configuring-key-pair-authentication) to create key pair, assign them to the right role and help populate the above fields.
-
-<Info>
-  Make sure you have the right permissions for the service account, PeerDB
-  requires at least read permissions for querying. For MIRROR it requires both
-  read and write.
-</Info>
 
 ### Considerations
 
-1. **Database Specific:** PeerDB only supports querying tables within a dataset. Cross dataset joins are not supported yet.
+1. **Database Specific:** PeerDB only supports querying tables within a database. Cross database joins are not supported yet.
 2. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying.
 3. **SQL Coverage:** Most SQL constructs in reads incl. Simple Selects, JOINs, aggregations, window functions, CTEs etc are supported. You can run both Postgres compatible and SF compatible queries through PeerDBs interface.
 4. **Error Handling:** If a query fails on the Snowflake side because of lack of auth or query coverage or timeout, PeerDB handles that error and propagates the entire message as a JSON text to the end-user. We also capture this ERROR message within PeerDB logs.
