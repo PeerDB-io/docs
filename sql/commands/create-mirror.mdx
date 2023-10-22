@@ -12,7 +12,7 @@ PeerDB introduces CREATE MIRROR command for blazing fast syncs between Peers. Th
 This type of MIRROR streams change feed in real-time from source peer to target peer.
 
 ```sql
-CREATE MIRROR <mirror_name>
+CREATE MIRROR [IF NOT EXISTS] <mirror_name>
 FROM <source_peer> TO <target_peer>
 WITH TABLE MAPPING
 (
@@ -39,6 +39,7 @@ WITH (
 4. **snapshot_max_parallel_workers**: In the initial snapshot, number of threads used per table. Max number of concurrent connections on source will be `snapshot_num_tables_in_parallel*snapshot_max_parallel_workers`
 5. **snapshot_num_rows_per_partition**: In the initial snapshot, number of rows per table streamed in a given batch.
 6. If **key** is specified, the table will be partitioned on the target peer based on the partition_key. If not specified, the table will be partitioned on the target peer based on the `ctid` column.
+7. `if_not_exists`: If specified, the MIRROR will be created only if it does not exist.
 
 #### CDC Modes for Mirror
 
@@ -60,7 +61,7 @@ The stage depends on your destination peer:
 This type of MIRROR periodically streams query results on the source peer to the target peer.
 
 ```sql
-CREATE MIRROR <mirror_name> FROM
+CREATE MIRROR <mirror_name> [IF NOT EXISTS] FROM
 	<source_peer> TO <target_peer> FOR
 $$
   SELECT * FROM <source_table_name> WHERE
@@ -91,3 +92,22 @@ The `OPTIONS` clause provides granular control when configuring the MIRROR:
    1. If you have a powerful PostgreSQL server or if it is a read-replica, you can configure a higher parallelism value. In scenarios where you want to put less load on the source, you can choose a lower value.
 5. **refresh_interval (Optional)** helps configure the frequency (in minutes) at which the sync should run. If not specified, PeerDB syncs the data continuously without pauses.
 6. More details on the OPTIONs can be found [here](https://github.com/PeerDB-io/peerdb/issues/139).
+7. `if_not_exists`: If specified, the MIRROR will be created only if it does not exist.
+
+#### XMIN Query Replication
+PeerDB supports `xmin` as watermark column. The query needs typecasting like below to work with `xmin` column. Note that DELETEs are not supported in XMIN Query Replication.
+
+```sql
+CREATE MIRROR xmin_mirror_1 FROM pg_test_peer TO sf_test_peer FOR
+$$ SELECT * FROM users WHERE xmin::text::bigint BETWEEN {{.start}} AND {{.end}} $$
+WITH (
+	destination_table_name = 'public.users',
+	watermark_column = 'xmin',
+	watermark_table_name = 'public.users',
+	mode = 'append', -- upsert (only updates) and overwrite are also supported
+	parallelism = 10,
+	refresh_interval = 30,
+	num_rows_per_partition = 100,
+	sync_data_format = 'avro'
+);
+```
