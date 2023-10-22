@@ -35,7 +35,7 @@ Suppose you have a banking application running on PostgreSQL. There are two tabl
     2. max_wal_senders: >1
     3. max_replication_slots: 4
 2. Enable replication access for a PostgreSQL user - ALTER USER pg_user REPLICATION;
-3. Ensure that both tables have primary keys. Composite primaries are also fine.
+3. Ensure that both tables have primary keys. Composite primaries are also fine. If not, make sure your tables have REPLICA IDENTITY FULL.
 4. If you are using PostgreSQL on the cloud, below links capture how to enable logical replication for each cloud:
     1. [AWS RDS and Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.Replication.Logical.html#AuroraPostgreSQL.Replication.Logical.Configure)
     2. [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-logical#pre-requisites-for-logical-replication-and-logical-decoding)

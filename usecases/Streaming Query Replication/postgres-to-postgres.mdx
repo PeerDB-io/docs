@@ -46,3 +46,12 @@ In 1-2 minutes the MIRROR should complete syncing data. Now validate the data on
 SELECT count(*) FROM postgres_peer_1.pgbench_history;
 SELECT count(*) FROM postgres_peer_2.pgbench_history;
 ```
+
+### Step 5: DROP MIRROR
+
+To make it easy in your development and test environments, PeerDB also introduces the DROP MIRROR command. DROP MIRROR drops all the underlying objects that CREATE MIRROR generates. More details are available in this [PR](https://github.com/PeerDB-io/peerdb/pull/93).
+
+```sql
+-- drop the mirror
+DROP MIRROR <mirror_name>;
+```

@@ -112,16 +112,36 @@ If you are connecting to a Docker Postgres instance on the same docker network a
 1. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying. We are actively addding support for other types.
 2. **Unsupported COPY command:** COPY command is not supported yet.
 
-## S3 Peer
 
+## Storage Peers - S3 and GCS
+For CDC, you would require a PostgreSQL instance to use as an external metadata store.
+The CREATE PEER command for S3/GCS depends on how you set the following parameters.
 ```sql
-CREATE PEER s3_peer FROM S3 WITH
+CREATE PEER storage_peer FROM S3 WITH
 (
-    url = 's3://<bucket>/<prefix-of-your-choice>'
+    url = 's3://<gcs/s3_bucket_name>/<prefix>', -- bucket should exist
+    access_key_id = '<hmac_key>', -- or AWS equivalent
+    secret_access_key = '<hmac_secret>', -- or AWS equivalent
+    region = 'auto', -- for S3, use the region of your bucket
+    endpoint = 'https://storage.googleapis.com', -- or empty for S3
+    metadata_db = 'host=<host> port=<port> user=<user> password=<password> database=<database>'
 );
 ```
-
-In order to use this peer for streaming query replication, your AWS credentials must be filled in our PeerDB `docker-compose` file.
+ Note that if you leave any of these parameters empty, PeerDB will use the corresponding Docker compose environment variable instead:
+```yaml
+x-flow-worker-env: &flow-worker-env
+  ...
+  # For GCS, these will be your HMAC keys instead
+  # For more information:
+  # https://cloud.google.com/storage/docs/authentication/managing-hmackeys
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+  # For GCS, set this to "auto" without the quotes
+  AWS_REGION: ${AWS_REGION:-}
+  # For GCS, set this as: https://storage.googleapis.com
+  AWS_ENDPOINT: ${AWS_ENDPOINT:-}
+  ...
+```
 
 ### Considerations
 
