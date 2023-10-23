@@ -62,7 +62,7 @@ WITH (
 	unique_key_columns = 'id',
 	parallelism = 64,
 	refresh_interval = 30,
-	batch_duration_timestamp = 50000,
+	num_rows_per_partition = 50000,
 	sync_data_format = 'avro'
 );
 ```

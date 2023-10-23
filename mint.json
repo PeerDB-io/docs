@@ -53,6 +53,12 @@
       ]
     },
     {
+      "group": "Features",
+      "pages": [
+        "features/schema-changes"
+      ]
+    },
+    {
       "group": "Use-cases",
       "pages": [
         {

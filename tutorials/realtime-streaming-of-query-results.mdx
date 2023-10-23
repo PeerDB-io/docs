@@ -21,7 +21,7 @@ Below is a 5-minute tutorial to test [Streaming Query Replication from Postgres 
     CREATE TABLE pgbench_history (tid integer, bid integer, 
     aid integer, delta integer, mtime timestampntz, filler text);
     ```
-### Step 4: Kick off MIRROR with 8 threads and batch size of 10 seconds
+### Step 4: Kick off MIRROR with 8 threads and 50000 rows per partition
     
     ```sql
     CREATE MIRROR postgres_to_snowflake_tutorial
@@ -33,7 +33,7 @@ Below is a 5-minute tutorial to test [Streaming Query Replication from Postgres 
     	mode = 'append',
     	parallelism = 8,
     	refresh_interval = 10,
-    	batch_duration_timestamp = 10,
+    	num_rows_per_partition = 50000,
     	sync_data_format = 'avro',
     	destination_table_name = 'public.pgbench_history'
     );
