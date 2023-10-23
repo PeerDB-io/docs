@@ -135,6 +135,7 @@ Run the following command to kick off query based streaming from source peer to 
   $$ WITH (
       watermark_table_name='public.test',
       watermark_column='id',
+      num_rows_per_partition = 10000,
       destination_table_name='public.test_transformed',
       mode='append'
   );

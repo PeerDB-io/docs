@@ -32,7 +32,7 @@ Now switch over to `peerone` and create some sample tables.
 
 All done! Keep this terminal open though, we'll come to it later.
 
-Now coming back to the terminal where we are connected to PeerDB itself, we run the following commands to create two Postgres peers. 
+Now coming back to the terminal where we are connected to PeerDB itself, we run the following commands to create two Postgres peers.
 
     ```bash
     kevin=> CREATE PEER peerone FROM POSTGRES WITH
@@ -200,13 +200,13 @@ We need to first create the table that the results are replicated to, keeping in
 Now in the PeerDB terminal, we kickoff the QRep mirror.
 
     ```bash
-    kevin=> CREATE MIRROR qrep_mirror FROM peerone TO peertwo FOR $$SELECT one.id, one.c1+two.c3 AS c13, one.c2+two.c4 AS c24 FROM public.tableone AS one JOIN public.tabletwo AS two ON one.id=two.id WHERE one.id >= {{.start}} AND one.id < {{.end}}$$ WITH (watermark_column='id', watermark_table_name='public.tableone', mode='append', parallelism=2, refresh_interval=30, batch_size_int=100000, destination_table_name='public.qrep_dst');
+    kevin=> CREATE MIRROR qrep_mirror FROM peerone TO peertwo FOR $$SELECT one.id, one.c1+two.c3 AS c13, one.c2+two.c4 AS c24 FROM public.tableone AS one JOIN public.tabletwo AS two ON one.id=two.id WHERE one.id BETWEEN {{.start}} AND {{.end}}$$ WITH (watermark_column='id', watermark_table_name='public.tableone', mode='append', parallelism=2, refresh_interval=30, num_rows_per_partition=100000, destination_table_name='public.qrep_dst');
     CREATE MIRROR qrep_mirror
     ```
 
-Note that this QRep mirror is operating in 'append' mode, where rows are inserted once and changes to them are not tracked. This is fine for our purposes because we are only tracking rows that don't change. 
+Note that this QRep mirror is operating in 'append' mode, where rows are inserted once and changes to them are not tracked. This is fine for our purposes because we are only tracking rows that don't change.
 
-Within a few seconds, you should see the existing data in `peerone` and `peertwo` in the table we created. 
+Within a few seconds, you should see the existing data in `peerone` and `peertwo` in the table we created.
 
     ```bash
     kevin=> SELECT SUM(one.c1+two.c3), SUM(one.c2+two.c4) FROM peerone.public.tableone AS one JOIN peerone.public.tabletwo AS two ON one.id=two.id;

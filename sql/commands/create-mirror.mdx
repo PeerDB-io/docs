@@ -65,7 +65,7 @@ CREATE MIRROR <mirror_name> [IF NOT EXISTS] FROM
 	<source_peer> TO <target_peer> FOR
 $$
   SELECT * FROM <source_table_name> WHERE
-  <watermark_column> >= {{.start}} AND updated_at < {{.end}}
+  <watermark_column> BETWEEN {{.start}} AND {{.end}}
 $$
 WITH (
 	destination_table_name = '<schema_qualified_destination_table_name>',
