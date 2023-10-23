@@ -12,7 +12,7 @@ CREATE TABLE source_table (watermark_column...)
 ```
 
 ### Step 3: Kick off MIRROR with 8 threads and batch size of 10 seconds
-    
+
     ```sql
     CREATE MIRROR postgres_to_sqlserver_tutorial
     FROM sqlserver_peer TO postgres_peer FOR
@@ -24,10 +24,10 @@ CREATE TABLE source_table (watermark_column...)
     	parallelism = 8,
     	refresh_interval = 10,
     	destination_table_name = 'public.pgbench_history',
-        num_rows_per_partition = 10
+      num_rows_per_partition = 10
     );
     ```
-    
+
 ### Step 4: Monitor the MIRROR
 You can connect to `localhost:8233` to gain full visibility into the different jobs and steps that PeerDB performs under the hood to manage the MIRROR.
 

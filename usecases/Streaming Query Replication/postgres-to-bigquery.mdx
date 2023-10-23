@@ -31,7 +31,7 @@ CREATE MIRROR streaming_query_pg_to_bq FROM
 	postgres_peer TO bigquery_peer FOR
 $$
   SELECT * FROM events WHERE
-  updated_at >= {{.start}} AND updated_at < {{.end}}
+  updated_at BETWEEN {{.start}} AND {{.end}}
 $$
 WITH (
 	destination_table_name = 'events',

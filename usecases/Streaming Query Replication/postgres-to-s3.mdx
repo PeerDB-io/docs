@@ -2,7 +2,7 @@
 title: "PostgreSQL to S3"
 ---
 
-PeerDB can stream your PostgreSQL data to your S3 bucket in the form of `.avro` files. Please **fill in your AWS credentials** in [PeerDB's docker-compose file](https://github.com/PeerDB-io/peerdb/blob/e9fe3e03e242abc37a7526d7132c1f7232e00e5f/docker-compose.yml#L89-L91C36) before running it. 
+PeerDB can stream your PostgreSQL data to your S3 bucket in the form of `.avro` files. Please **fill in your AWS credentials** in [PeerDB's docker-compose file](https://github.com/PeerDB-io/peerdb/blob/e9fe3e03e242abc37a7526d7132c1f7232e00e5f/docker-compose.yml#L89-L91C36) before running it.
 
 ### Step 1: CREATE Postgres and S3 Peers
     1. [CREATE Postgres PEER](/sql/commands/create-peer#postgresql-peer). Make sure it satisfies the prerequisites required for our mirror.
@@ -13,30 +13,30 @@ PeerDB can stream your PostgreSQL data to your S3 bucket in the form of `.avro` 
     ```sh
     curl https://gist.github.com/Amogh-Bharadwaj/64d7f6cb22e35b766e6a09b05479b201/raw --output setup.sh
     chmod +x setup.sh
-    # "postgres://user:password@hostname:5432/dbname" 
+    # "postgres://user:password@hostname:5432/dbname"
     # is the connection string of your PostgreSQL peer.
     ./setup.sh "postgres://user:password@hostname:5432/dbname"
     rm setup.sh
     ```
 
 ### Step 3: Kick off Streaming Query Replication
-    
+
     ```sql
     CREATE MIRROR postgres_to_s3_tutorial
     FROM postgres_peer TO s3_peer FOR
     $$SELECT * FROM peerdb_demo WHERE id BETWEEN {{.start}} AND {{.end}}$$
     WITH (
-            watermark_column = 'id',
-            watermark_table_name = 'peerdb_demo',
-            mode = 'append',
-            parallelism = 10,
-            refresh_interval = 10,
-            sync_data_format = 'avro', // this is a must
-            destination_table_name = 'peerdb_demo',
+        watermark_column = 'id',
+        watermark_table_name = 'peerdb_demo',
+        mode = 'append',
+        parallelism = 10,
+        refresh_interval = 10,
+        sync_data_format = 'avro', // this is a must
+        destination_table_name = 'peerdb_demo',
         num_rows_per_partition = 2
     );
     ```
-    
+
 ### Step 4: Monitor the MIRROR
 You can connect to ``localhost:8233`` to gain full visibility into the different jobs and steps that PeerDB performs under the hood to manage the MIRROR.
 
