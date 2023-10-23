@@ -32,7 +32,7 @@ Below is a 5-minute tutorial to test [Streaming Query Replication from Postgres 
     ```sql
     CREATE MIRROR postgres_to_snowflake_tutorial
     FROM postgres_peer TO snowflake_peer FOR
-    $$SELECT * FROM public.pgbench_history WHERE mtime BETWEEN{{.start}} AND {{.end}}$$
+    $$SELECT * FROM public.pgbench_history WHERE mtime BETWEEN {{.start}} AND {{.end}}$$
     WITH (
     	watermark_column = 'mtime',
     	watermark_table_name = 'pgbench_history',
