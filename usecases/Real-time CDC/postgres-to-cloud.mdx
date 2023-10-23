@@ -1,12 +1,12 @@
 ---
-title: "PostgreSQL To Azure Event Hubs"
+title: "PostgreSQL To AWS S3 And Google Cloud Storage"
 ---
 
-Let's look at how we can seamlessly perform Change-Data Capturing (CDC) from PostgreSQL to topics in Azure EventHubs.
+PeerDB support Change-Data-Capture (CDC) from PostgreSQL to S3 and GCS buckets in the form of AVRO files in the destination.
+We utilise the interoperability between GCS and S3 here.
 
 ### Scenario
-
-Suppose you have a banking application running on PostgreSQL. There are two tables: "users" and "transactions." You want to sync these tables in real-time to Event Hubs topics. Let's see how we can make this happen within a few minutes and a few SQL commands using PeerDB.
+Suppose you have a banking application running on PostgreSQL. There are two tables: "users" and "transactions." You want to sync these tables in real-time to AVRO files in your S3 or GCS buckets which other services or clients can pick up.
 
 ### Prerequisites
 
@@ -20,10 +20,11 @@ Suppose you have a banking application running on PostgreSQL. There are two tabl
    1. [AWS RDS and Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.Replication.Logical.html#AuroraPostgreSQL.Replication.Logical.Configure)
    2. [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-logical#pre-requisites-for-logical-replication-and-logical-decoding)
    3. [GCP Cloud SQL PostgreSQL](https://cloud.google.com/sql/docs/PostgreSQL/replication/configure-logical-replication#configure-your-postgresql-instance)
+5. Ensure you have an existing bucket to use.
+6. For GCS, you must [create a HMAC key-pair](https://cloud.google.com/storage/docs/authentication/managing-hmackeys) and use this for `ACCESS_KEY_ID` and `SECRET_ACCESS_KEY` in the Docker compose file.  
+### Step 1: Add PostgreSQL and S3/GCS Peers
 
-### Step 1: Add PostgreSQL and Event Hubs Peers
-
-Run the following commands to let PeerDB know about the existing PostgreSQL and Event Hubs Peers.
+Run the following commands to let PeerDB know about the existing PostgreSQL and S3.
 
 ```sql
 -- Connect to PeerDB
@@ -31,27 +32,25 @@ psql "port=9900 host=localhost password=peerdb"
 
 -- Add PostgreSQL and Event Hubs peers
 CREATE PEER postgres_peer FROM PostgreSQL (...);
-CREATE PEER eventhub_peer FROM EVENTHUB (...);
-CREATE PEER eventhub_group_peer FROM EVENTHUBGROUP (...);
+CREATE PEER s3_peer FROM S3 (...);
+-- Or, CREATE PEER gcs_peer FROM S3 (...);
 ```
 
-Make sure to replace **`(…)`** with the appropriate connection details for both the PostgreSQL and Event Hubs instances. More details on adding PEERs are available [here](/sql/commands/create-peer).
+Please refer to our CREATE PEER documentation for [storage peers](/sql/commands/create-peer#storage-peers-s3-and-gcs).
 
-### **Step 2: Real-Time CDC from PostgreSQL to Event Hubs**
+### **Step 2: Real-Time CDC from PostgreSQL to S3/GCS**
 
-To facilitate real-time Change Data Capture (CDC) from PostgreSQL to Event Hubs, set up your peers and then create a mirror using the following SQL syntax:
+To facilitate real-time Change Data Capture (CDC) from PostgreSQL to S3 or GCS, set up your peers and then create a mirror using the following SQL syntax:
 
 ```sql
 CREATE MIRROR IF NOT EXISTS <mirror-name>
-FROM <postgres-peer-name> TO <eventhubgroup-peer-name>
+FROM <postgres-peer-name> TO <storage-peer-name>
 WITH TABLE MAPPING(
-    <source-schema>.<table>:<eh-group-member>.<destination-schema>.<table>,
+    <source-schema>.<table>:<destination_name>,
     ... -- Repeat as required for multiple tables
 )
 WITH(
     max_batch_size = <number>,
-    push_batch_size = <number>,
-    push_parallelism = <number>,
     publication_name = '<publication-name>'
 );
 ```
@@ -59,17 +58,15 @@ WITH(
 Example:
 
 ```sql
-CREATE MIRROR IF NOT EXISTS test_eh_mirror
-FROM test_pg_peer TO test_eh_peer
+CREATE MIRROR IF NOT EXISTS test_mirror_interop
+FROM test_pg_peer TO test_gcs_peer
 WITH TABLE MAPPING(
-    schema1.table1:eh_group_member_1.hub1.table1,
-    schema1.table2:eh_group_member_1.hub1.table2
+    schema1.table1:dest_table1,
+    schema1.table2:dest_table2
     -- Add more tables as required
 )
 WITH(
     max_batch_size = 300000,
-    push_batch_size = 300000,
-    push_parallelism = 32,
     publication_name = 'test_publication'
 );
 ```
@@ -78,10 +75,8 @@ Parameters:
 
 - **`mirror-name`**: Desired name for the mirror.
 - **`postgres-peer-name`**: Name of the PostgreSQL peer.
-- **`eventhubgroup-peer-name`**: Name of the Event Hubs group peer.
+- **`storage-peer-name`**: Name of the S3/GCS peer.
 - **max_batch_size**: Maximum number of records in a batch.
-- **push_batch_size**: Number of records to push in a batch.
-- **push_parallelism**: Degree of parallelism for data pushes.
 - **publication_name**: Name of the publication.
 
 Remember to adjust placeholder values (\<...\>) with your specific details and preferences.
@@ -89,11 +84,7 @@ The example above has been abbreviated for clarity; ensure you provide all the n
 
 ### **Step 3: Validate the Mirror**
 
-Validate the mirror by checking if the number of messages in the topics matches the row count on the source table.
-
-```sql
-SELECT COUNT(*) FROM postgres_peer.public.transactions;
-```
+Validate the mirror by checking if the number of files in the bucket.
 
 ### Step 4: Monitor the MIRROR
 
@@ -107,5 +98,5 @@ To make it easy in your development and test environments, PeerDB also introduce
 
 ```sql
 -- drop the mirror
-DROP MIRROR real_time_cdc;
+DROP MIRROR test_mirror_interop;
 ```

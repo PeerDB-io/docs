@@ -61,6 +61,15 @@ You can connect to [`localhost:8233`](http://`localhost:8233`) to gain full visi
 
 ![Managing Mirror](../images/managing_mirror.png)
 
+### Step 5: DROP MIRROR
+
+To make it easy in your development and test environments, PeerDB also introduces the DROP MIRROR command. DROP MIRROR drops all the underlying objects that CREATE MIRROR generates. More details are available in this [PR](https://github.com/PeerDB-io/peerdb/pull/93).
+
+```sql
+-- drop the mirror
+DROP MIRROR <mirror_name>;
+```
+
 ### Support
 
 If you run into any issues, join our [slack channel](https://join.slack.com/t/peerdb-public/shared_invite/zt-1wo9jydev-EXInbMtCtpAKFFWdi7QvLQ) and reach out to us. You can file an issue on our [github repository](https://github.com/peerdb-io/peerdb) or reach out to founders@peerdb.io . We will follow up!

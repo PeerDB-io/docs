@@ -68,7 +68,8 @@
             "usecases/Real-time CDC/postgres-to-postgres",
             "usecases/Real-time CDC/postgres-to-bigquery",
             "usecases/Real-time CDC/postgres-to-snowflake",
-            "usecases/Real-time CDC/postgres-to-azure-eventhubs"
+            "usecases/Real-time CDC/postgres-to-azure-eventhubs",
+            "usecases/Real-time CDC/postgres-to-cloud"
           ]
         },
         {

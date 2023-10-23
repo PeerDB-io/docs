@@ -52,7 +52,7 @@ CREATE MIRROR streaming_query_pg_to_sf FROM
 	postgres_peer TO snowflake_peer FOR
 $$
   SELECT * FROM events WHERE
-  updated_at >= {{.start}} AND updated_at < {{.end}}
+  updated_at BETWEEN {{.start}} AND {{.end}}
 $$
 WITH (
 	destination_table_name = 'public.events',
