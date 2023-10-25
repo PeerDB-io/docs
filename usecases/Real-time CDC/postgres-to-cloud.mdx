@@ -8,6 +8,26 @@ We utilise the interoperability between GCS and S3 here.
 ### Scenario
 Suppose you have a banking application running on PostgreSQL. There are two tables: "users" and "transactions." You want to sync these tables in real-time to AVRO files in your S3 or GCS buckets which other services or clients can pick up.
 
+### Demo
+Let's look at a short video showcasing CDC from PostgreSQL to Google Cloud Storage with initial load.
+
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/c0eedb0355ed44f6a9edd86a3defd8a0?sid=880445dd-8b45-4100-82a2-f6da65f3945a"
+    frameBorder={0}
+    webkitallowfullscreen=""
+    mozallowfullscreen=""
+    allowFullScreen=""
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%"
+    }}
+  />
+</div>
+
 ### Prerequisites
 
 1. Enable logical decoding in PostgreSQL. Ensure that the following settings/GUCs are properly configured:
@@ -22,6 +42,7 @@ Suppose you have a banking application running on PostgreSQL. There are two tabl
    3. [GCP Cloud SQL PostgreSQL](https://cloud.google.com/sql/docs/PostgreSQL/replication/configure-logical-replication#configure-your-postgresql-instance)
 5. Ensure you have an existing bucket to use.
 6. For GCS, you must [create a HMAC key-pair](https://cloud.google.com/storage/docs/authentication/managing-hmackeys) and use this for `ACCESS_KEY_ID` and `SECRET_ACCESS_KEY` in the Docker compose file.  
+
 ### Step 1: Add PostgreSQL and S3/GCS Peers
 
 Run the following commands to let PeerDB know about the existing PostgreSQL and S3.
