@@ -86,11 +86,11 @@ CREATE PEER target FROM POSTGRES WITH
 #### Real-time CDC
 
 Run the following command to kick off Change Data Capture (CDC) based streaming from source peer to target peer for the `test` table.
-`sql
-    --- CDC mirrors automatically create the destination table
-    CREATE MIRROR cdc_mirror FROM source TO target
-    WITH TABLE MAPPING (public.test:public.test);
-    `
+```sql
+--- CDC mirrors automatically create the destination table
+CREATE MIRROR cdc_mirror FROM source TO target
+WITH TABLE MAPPING (public.test:public.test);
+```
 Now that our CDC mirror is set up, it will automatically replicate data from the source to the target peer. Let's insert a row in the source table via PeerDB itself.
 
 ```sql
