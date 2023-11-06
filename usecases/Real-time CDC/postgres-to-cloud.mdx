@@ -1,0 +1,123 @@
+---
+title: "PostgreSQL To AWS S3 And Google Cloud Storage"
+---
+
+PeerDB support Change-Data-Capture (CDC) from PostgreSQL to S3 and GCS buckets in the form of AVRO files in the destination.
+We utilise the interoperability between GCS and S3 here.
+
+### Scenario
+Suppose you have a banking application running on PostgreSQL. There are two tables: "users" and "transactions." You want to sync these tables in real-time to AVRO files in your S3 or GCS buckets which other services or clients can pick up.
+
+### Demo
+Let's look at a short video showcasing CDC from PostgreSQL to Google Cloud Storage with initial load.
+
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/c0eedb0355ed44f6a9edd86a3defd8a0?sid=880445dd-8b45-4100-82a2-f6da65f3945a"
+    frameBorder={0}
+    webkitallowfullscreen=""
+    mozallowfullscreen=""
+    allowFullScreen=""
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%"
+    }}
+  />
+</div>
+
+### Prerequisites
+
+1. Enable logical decoding in PostgreSQL. Ensure that the following settings/GUCs are properly configured:
+   1. wal_level: logical
+   2. max_wal_senders: >1
+   3. max_replication_slots: 4
+2. Enable replication access for a PostgreSQL user - ALTER USER pg_user REPLICATION;
+3. Ensure that both tables have primary keys. Composite primaries are also fine. If not, make sure your tables have REPLICA IDENTITY FULL.
+4. If you are using PostgreSQL on the cloud, below links capture how to enable logical replication for each cloud:
+   1. [AWS RDS and Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.Replication.Logical.html#AuroraPostgreSQL.Replication.Logical.Configure)
+   2. [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-logical#pre-requisites-for-logical-replication-and-logical-decoding)
+   3. [GCP Cloud SQL PostgreSQL](https://cloud.google.com/sql/docs/PostgreSQL/replication/configure-logical-replication#configure-your-postgresql-instance)
+5. Ensure you have an existing bucket to use.
+6. For GCS, you must [create a HMAC key-pair](https://cloud.google.com/storage/docs/authentication/managing-hmackeys) and use this for `ACCESS_KEY_ID` and `SECRET_ACCESS_KEY` in the Docker compose file.  
+
+### Step 1: Add PostgreSQL and S3/GCS Peers
+
+Run the following commands to let PeerDB know about the existing PostgreSQL and S3.
+
+```sql
+-- Connect to PeerDB
+psql "port=9900 host=localhost password=peerdb"
+
+-- Add PostgreSQL and Event Hubs peers
+CREATE PEER postgres_peer FROM PostgreSQL (...);
+CREATE PEER s3_peer FROM S3 (...);
+-- Or, CREATE PEER gcs_peer FROM S3 (...);
+```
+
+Please refer to our CREATE PEER documentation for [storage peers](/sql/commands/create-peer#storage-peers-s3-and-gcs).
+
+### **Step 2: Real-Time CDC from PostgreSQL to S3/GCS**
+
+To facilitate real-time Change Data Capture (CDC) from PostgreSQL to S3 or GCS, set up your peers and then create a mirror using the following SQL syntax:
+
+```sql
+CREATE MIRROR IF NOT EXISTS <mirror-name>
+FROM <postgres-peer-name> TO <storage-peer-name>
+WITH TABLE MAPPING(
+    <source-schema>.<table>:<destination_name>,
+    ... -- Repeat as required for multiple tables
+)
+WITH(
+    max_batch_size = <number>,
+    publication_name = '<publication-name>'
+);
+```
+
+Example:
+
+```sql
+CREATE MIRROR IF NOT EXISTS test_mirror_interop
+FROM test_pg_peer TO test_gcs_peer
+WITH TABLE MAPPING(
+    schema1.table1:dest_table1,
+    schema1.table2:dest_table2
+    -- Add more tables as required
+)
+WITH(
+    max_batch_size = 300000,
+    publication_name = 'test_publication'
+);
+```
+
+Parameters:
+
+- **`mirror-name`**: Desired name for the mirror.
+- **`postgres-peer-name`**: Name of the PostgreSQL peer.
+- **`storage-peer-name`**: Name of the S3/GCS peer.
+- **max_batch_size**: Maximum number of records in a batch.
+- **publication_name**: Name of the publication.
+
+Remember to adjust placeholder values (\<...\>) with your specific details and preferences.
+The example above has been abbreviated for clarity; ensure you provide all the necessary mappings and configurations in practice.
+
+### **Step 3: Validate the Mirror**
+
+Validate the mirror by checking if the number of files in the bucket.
+
+### Step 4: Monitor the MIRROR
+
+You can connect to [`localhost:8233`](http://`localhost:8233`) to get full visibility into the different jobs and steps that PeerDB is taking under the covers to manage the MIRROR.
+
+![Managing Mirror](../images/managing_mirror.png)
+
+### Step 5: DROP MIRROR
+
+To make it easy in your development and test environments, PeerDB also introduces the DROP MIRROR command. DROP MIRROR drops all the underlying objects that CREATE MIRROR generates. More details are available in this [PR](https://github.com/PeerDB-io/peerdb/pull/93).
+
+```sql
+-- drop the mirror
+DROP MIRROR test_mirror_interop;
+```

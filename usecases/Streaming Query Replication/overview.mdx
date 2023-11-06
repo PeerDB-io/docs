@@ -1,0 +1,35 @@
+---
+title: "Overview"
+---
+
+PeerDB introduces the **CREATE MIRROR FOR SELECT** SQL command for continuous sync of data from PostgreSQL to the desired target Peer based on any SELECT query on PostgreSQL. This command allows you to perform a pre-transform of the data on the source before syncing it to the target.
+Currently we support **PostgreSQL (running anywhere)**, **AWS S3**, **BigQuery** and **Snowflake** as the target Peers.
+
+1. You simply run a few SQL commands, and PeerDB takes care of all the heavy lifting to set up and maintain highly performant syncs and pre-transforms across stores.
+2. You can run any SELECT query that is supported by PostgreSQL for the transformation, including JOINs, function/procedure calls, GROUP BYs, and so on.
+3. The SQL command provides various options such as batch size, parallelism, and refresh interval, which give you granular control when configuring the MIRROR.
+
+>PeerDB internally implements multiple optimizations to provide the best possible performance experience. For example, it converts data to [Avro](https://github.com/PeerDB-io/peerdb/pull/96) format during transit and enables parallelism during both reading from sync and writing to target.
+>
+
+### Demo
+
+This demo shows PeerDB syncing a table with 100 million rows from PostgreSQL to Snowflake in few minutes.
+
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/ef1584f4181d466d9e3ec40882381ade?sid=383e61bf-21c2-4272-8986-165b19805121"
+    frameBorder={0}
+    webkitallowfullscreen=""
+    mozallowfullscreen=""
+    allowFullScreen=""
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%"
+    }}
+  />
+</div>
+

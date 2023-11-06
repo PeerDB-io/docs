@@ -1,0 +1,111 @@
+---
+title: "PostgreSQL To Azure Event Hubs"
+---
+
+Let's look at how we can seamlessly perform Change-Data Capturing (CDC) from PostgreSQL to topics in Azure EventHubs.
+
+### Scenario
+
+Suppose you have a banking application running on PostgreSQL. There are two tables: "users" and "transactions." You want to sync these tables in real-time to Event Hubs topics. Let's see how we can make this happen within a few minutes and a few SQL commands using PeerDB.
+
+### Prerequisites
+
+1. Enable logical decoding in PostgreSQL. Ensure that the following settings/GUCs are properly configured:
+   1. wal_level: logical
+   2. max_wal_senders: >1
+   3. max_replication_slots: 4
+2. Enable replication access for a PostgreSQL user - ALTER USER pg_user REPLICATION;
+3. Ensure that both tables have primary keys. Composite primaries are also fine. If not, make sure your tables have REPLICA IDENTITY FULL.
+4. If you are using PostgreSQL on the cloud, below links capture how to enable logical replication for each cloud:
+   1. [AWS RDS and Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.Replication.Logical.html#AuroraPostgreSQL.Replication.Logical.Configure)
+   2. [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-logical#pre-requisites-for-logical-replication-and-logical-decoding)
+   3. [GCP Cloud SQL PostgreSQL](https://cloud.google.com/sql/docs/PostgreSQL/replication/configure-logical-replication#configure-your-postgresql-instance)
+
+### Step 1: Add PostgreSQL and Event Hubs Peers
+
+Run the following commands to let PeerDB know about the existing PostgreSQL and Event Hubs Peers.
+
+```sql
+-- Connect to PeerDB
+psql "port=9900 host=localhost password=peerdb"
+
+-- Add PostgreSQL and Event Hubs peers
+CREATE PEER postgres_peer FROM PostgreSQL (...);
+CREATE PEER eventhub_peer FROM EVENTHUB (...);
+CREATE PEER eventhub_group_peer FROM EVENTHUBGROUP (...);
+```
+
+Make sure to replace **`(…)`** with the appropriate connection details for both the PostgreSQL and Event Hubs instances. More details on adding PEERs are available [here](/sql/commands/create-peer).
+
+### **Step 2: Real-Time CDC from PostgreSQL to Event Hubs**
+
+To facilitate real-time Change Data Capture (CDC) from PostgreSQL to Event Hubs, set up your peers and then create a mirror using the following SQL syntax:
+
+```sql
+CREATE MIRROR IF NOT EXISTS <mirror-name>
+FROM <postgres-peer-name> TO <eventhubgroup-peer-name>
+WITH TABLE MAPPING(
+    <source-schema>.<table>:<eh-group-member>.<destination-schema>.<table>,
+    ... -- Repeat as required for multiple tables
+)
+WITH(
+    max_batch_size = <number>,
+    push_batch_size = <number>,
+    push_parallelism = <number>,
+    publication_name = '<publication-name>'
+);
+```
+
+Example:
+
+```sql
+CREATE MIRROR IF NOT EXISTS test_eh_mirror
+FROM test_pg_peer TO test_eh_peer
+WITH TABLE MAPPING(
+    schema1.table1:eh_group_member_1.hub1.table1,
+    schema1.table2:eh_group_member_1.hub1.table2
+    -- Add more tables as required
+)
+WITH(
+    max_batch_size = 300000,
+    push_batch_size = 300000,
+    push_parallelism = 32,
+    publication_name = 'test_publication'
+);
+```
+
+Parameters:
+
+- **`mirror-name`**: Desired name for the mirror.
+- **`postgres-peer-name`**: Name of the PostgreSQL peer.
+- **`eventhubgroup-peer-name`**: Name of the Event Hubs group peer.
+- **max_batch_size**: Maximum number of records in a batch.
+- **push_batch_size**: Number of records to push in a batch.
+- **push_parallelism**: Degree of parallelism for data pushes.
+- **publication_name**: Name of the publication.
+
+Remember to adjust placeholder values (\<...\>) with your specific details and preferences.
+The example above has been abbreviated for clarity; ensure you provide all the necessary mappings and configurations in practice.
+
+### **Step 3: Validate the Mirror**
+
+Validate the mirror by checking if the number of messages in the topics matches the row count on the source table.
+
+```sql
+SELECT COUNT(*) FROM postgres_peer.public.transactions;
+```
+
+### Step 4: Monitor the MIRROR
+
+You can connect to [`localhost:8233`](http://`localhost:8233`) to get full visibility into the different jobs and steps that PeerDB is taking under the covers to manage the MIRROR.
+
+![Managing Mirror](../images/managing_mirror.png)
+
+### Step 5: DROP MIRROR
+
+To make it easy in your development and test environments, PeerDB also introduces the DROP MIRROR command. DROP MIRROR drops all the underlying objects that CREATE MIRROR generates. More details are available in this [PR](https://github.com/PeerDB-io/peerdb/pull/93).
+
+```sql
+-- drop the mirror
+DROP MIRROR real_time_cdc;
+```

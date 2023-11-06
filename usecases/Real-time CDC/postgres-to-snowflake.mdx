@@ -1,0 +1,117 @@
+---
+title: "PostgreSQL To Snowflake"
+---
+
+Let's look at how we can seamlessly perform Change-Data Capturing (CDC) from PostgreSQL to Snowflake.
+
+### Scenario
+
+Suppose you have a banking application running on PostgreSQL. There are two tables: "users" and "transactions." You want to sync these tables in real-time to Snowflake for analytics purposes, such as real-time fraud detection. Let's see how we can make this happen within a few minutes and a few SQL commands using PeerDB.
+
+### Demo
+
+This demo shows PeerDB syncing a table with 100 million rows from PostgreSQL to Snowflake in few minutes.
+
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/a872562608864995b9016e67c3221693?sid=6d342a2c-2f44-49f6-8765-1db03c133f7e"
+    frameBorder={0}
+    webkitallowfullscreen=""
+    mozallowfullscreen=""
+    allowFullScreen=""
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%"
+    }}
+  />
+</div>
+
+### Prerequisites
+
+1. Enable logical decoding in Postgres. Ensure that the following settings/GUCs are properly configured:
+    1. wal_level: logical
+    2. max_wal_senders: >1
+    3. max_replication_slots: 4
+2. Enable replication access for a PostgreSQL user - ALTER USER pg_user REPLICATION;
+3. Ensure that both tables have primary keys. Composite primaries are also fine. If not, make sure your tables have REPLICA IDENTITY FULL.
+4. If you are using PostgreSQL on the cloud, below links capture how to enable logical replication for each cloud:
+    1. [AWS RDS and Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.Replication.Logical.html#AuroraPostgreSQL.Replication.Logical.Configure)
+    2. [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-logical#pre-requisites-for-logical-replication-and-logical-decoding)
+    3. [GCP Cloud SQL PostgreSQL](https://cloud.google.com/sql/docs/postgres/replication/configure-logical-replication#configure-your-postgresql-instance)
+
+### Step 1: Add Postgres and Snowflake Peers
+
+Run the following commands to let PeerDB know about the existing Postgres and Snowflake Peers.
+
+```sql
+-- Connect to PeerDB
+psql "port=9900 host=localhost password=peerdb"
+
+-- Add Postgres and Snowflake peers
+CREATE PEER postgres_peer FROM postgres (...);
+CREATE PEER snowflake_peer FROM snowflake (...);
+```
+
+Make sure to replace **`(…)`** with the appropriate connection details for both the PostgreSQL and Snowflake instances. More details on adding PEERs are available [here](/sql/commands/create-peer).
+
+### **Step 2: Real-Time CDC from PostgreSQL to Snowflake**
+
+With the peers set up, you can create a mirror that facilitates real-time CDC from PostgreSQL to Snowflake. 
+
+```sql
+-- Real-time CDC from PostgreSQL to Snowflake
+CREATE MIRROR real_time_cdc
+FROM postgres_peer TO snowflake_peer
+WITH TABLE MAPPING (public.transactions:public.transactions, public.users:public.users) -- make sure tables are schema qualified
+WITH (
+  do_initial_copy = true,
+  snapshot_sync_mode='avro',
+  snapshot_num_rows_per_partition = 500000,
+  snapshot_max_parallel_workers = 4,
+  snapshot_num_tables_in_parallel = 4,
+  snapshot_staging_path = ''
+);
+```
+Since no CDC sync mode has been specified above, CDC will be performed in `sql` mode.
+
+To perform CDC via `AVRO mode`, you must set the following:
+```
+  cdc_sync_mode = 'avro'
+  cdc_staging_path = '<stage>'
+```
+You must set the staging path to be an existing S3 bucket URL, or an empty string for PeerDB to stage the AVRO files internally.
+
+If you observe, **TABLE MAPPING** represents the table name mapping between the two Postgres peers. The final `WITH` clause captures if you wanted to include initial snapshot as a part of the MIRROR. If you don't include that `WITH`, PeerDB assumes that you don't want to perform an initial snapshot. If just reads the slot and replays the changes to the target.
+1. Data type mapping between [Postgres and Snowflake can be found here](https://github.com/PeerDB-io/peerdb/pull/104).
+2. If you want additional types to be supported or want to alter the existing data type mapping, please reach out to us. We can aim to support that within a few days. Also, PeerDB is [fully open source](https://github.com/PeerDB-io/peerdb), so feel free to submit a PR.
+
+> **PeerDB also supports replicating TOAST columns very efficiently**. Unlike most CDC tools, you don't need to set up REPLICA IDENTITY FULL for replicating TOAST columns. This [PR](https://github.com/PeerDB-io/peerdb/pull/111) captures the infrastructural optimizations that PeerDB takes to support TOAST columns.
+> 
+
+### **Step 3: Validate the Mirror**
+
+Through the same PeerDB's Postgres-compatible SQL interface, you can quickly validate the MIRROR (real-time CDC).
+
+```sql
+-- Validate the mirror
+SELECT COUNT(*) FROM snowflake_peer.transactions;
+SELECT COUNT(*) FROM postgres_peer.transactions;
+```
+
+### Step 4: Monitor the MIRROR
+
+You can connect to [`localhost:8085`](http://`localhost:8085`) to get full visibility into the different jobs and steps that PeerDB is taking under the covers to manage the MIRROR.
+
+![Managing Mirror](../../images/managing_mirror.png)
+
+### Step 5: DROP MIRROR
+
+To make it easy in your development and test environments, PeerDB also introduces the DROP MIRROR command. DROP MIRROR drops all the underlying objects that CREATE MIRROR generates. More details are available in this [PR](https://github.com/PeerDB-io/peerdb/pull/93).
+
+```sql
+-- drop the mirror
+DROP MIRROR real_time_cdc;
+```

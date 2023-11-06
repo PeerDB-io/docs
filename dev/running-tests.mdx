@@ -1,0 +1,163 @@
+---
+title: "Running Flow tests"
+---
+
+## Getting dependencies
+
+Make sure you have the following dependencies available:
+
+- A Linux, macOS, or Windows machine
+- `git` (used for source version control)
+- An `ssh` client (used to authenticate with GitHub)
+- `go` and `rust` setup on your local machine (used by `flow` and `nexus` respectively)
+
+## Getting the source
+
+Run the following steps to set up your environment:
+
+1. Configure your machine with an SSH key that is known to github by following the directions [here](https://help.github.com/articles/generating-ssh-keys/).
+2. Clone the repo locally using `git clone --recursive git@github.com:PeerDB-io/peerdb.git` command.
+
+## Setting up Postgres
+
+1. Install and run postgres, installation depends on your platform.
+2. Check the status to ensure postgres is running.
+3. To check if postgres is installed, run `psql postgres`. To set up a dev environment, it is important to have a user named postgres because end-to-end tests use `postgres` user
+4. You can download pgadmin or any other postgres-compatible viewer for GUI-based interface.
+5. Following the [prerequisites](/usecases/Real-time%20CDC/postgres-to-postgres#prerequisites) to setup real-time CDC using postgres, connect to postgres using psql CLI and run the below commands -
+  1. To change `wal_level` to logical, run `ALTER SYSTEM SET wal_level = 'logical'`
+  2. To change `max_wal_senders`, run `ALTER SYSTEM SET max_wal_senders = 10`
+  3. To change `max_replication_slots`, run `ALTER SYSTEM SET max_replication_slots = 4`
+6. Restart the postgres instance using `brew services restart postgresql` to reload the configuration for the changes to take effect.
+7. To verify the information, run the following commands -
+  1. Check if `wal_level` has been set to logical, run `SHOW wal_level;`
+  2. Check if `max_wal_senders` has been set to 10, run `SHOW max_wal_senders;`
+  3. Check if `max_replication_slots` has been set to 4, run `SHOW max_replication_slots;`
+
+## Setting up Bigquery
+
+You should have a GCP account and Project set up. The Project should be associated with a billing account. If you don't have a credit card, you can set up the bigquery sandbox by following the instructions [here](https://cloud.google.com/bigquery/docs/sandbox). We will be using a Service Account and Key file to authenticate bigquery from our local machine.
+
+### Creating a Service Account
+
+1. From the [Google Cloud Platform Console](https://console.cloud.google.com/) click on the options menu (three bars in the upper left corner), Select IAM & Admin and then [Service Accounts](https://console.cloud.google.com/projectselector2/iam-admin/serviceaccounts) from the fly-out menu.
+ ![](../images/dev/google_bq_service_account_creation.png)
+1. Click on the Create Service Account button.
+2. Fill in the service account name. The Service account ID will be generated based on the service account name. Click the Create and Continue button.
+3. Add the below roles:
+  1. BigQuery Connection User: This will allow your external application to make connections
+  2. BigQuery User: This will provide access to run queries, create datasets, read dataset metadata, and list tables
+  3. BigQuery Data Viewer: This will provide access to view datasets and all of their contents.
+  4. BigQuery Job User: This will provide access to run jobs
+4. When done Click Continue button.
+
+### Creating a Key File
+
+1. Once the service account has been created, all of the service accounts will be listed. Click on the account just created on the list.
+2. Click on the tab for KEYS. Then click the Add Key button. Then click on the Create new key option.
+ ![](../images/dev/google_bq_key_creation.png)
+1. Choose the JSON file type and click the CREATE button.
+2. The Key File will be generated and then your web browser will prompt you for download.
+3. Open the xxxx.json in a text editor, and change the "type": "service\_account" into "auth\_type": "service\_account".
+4. Add the line "dataset\_id": "e2e\_test\_dataset" at the end to run e2e tests for peerdb.
+5. Rename the json file to bq-creds.json
+
+After all the edits, the bq-creds.json file should look something like this -
+
+```json
+{
+  "auth_type": "service_account",
+  "project_id": "xxxx",
+  "private_key_id": "xxxxx",
+  "private_key": "-----BEGIN PRIVATE KEY-----xx-----END PRIVATE KEY-----\n",
+  "client_email": "xxx@xxx.iam.gserviceaccount.com",
+  "client_id": "xxx",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/github-cixxxx",
+  "universe_domain": "googleapis.com",
+  "dataset_id": "e2e_test_dataset"
+ }
+```
+
+### Configuring BQ as a peer
+
+To configure bigquery as a peer, you will have to modify the environment variable `TEST_BQ_CREDS` to point to the path of the JSON file. If you are using VSCode, you can add the below entry under settings.json file.
+
+```json
+"go.testEnvVars": {
+  "TEST_BQ_CREDS": "/Users/xxxx/peerdb/bq-creds.json",
+ }
+```
+
+
+## Setting up Snowflake
+
+You should have a Snowflake account and warehouse set up. If you don't you can sign up for a free-trial and create an account with Snowflake. Your role should have enough permissions to create a database, schema and tables. PeerDB uses snowflake's key pair authentication. Please follow the steps below -
+
+### Configuring Key Pair Authentication
+
+1. To generate a private key in p8 format, run
+ ```openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt```
+2. To generate a public key with respect to the above private key, run
+ ```openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub```
+3. Copy the generated public key into the keyboard, either using pbcopy or manual copy-paste.
+ ```pbcopy < rsa_key.pub```
+4. To assign the public key to a snowflake user, run,
+ ```ALTER USER jsmith SET RSA_PUBLIC_KEY='MIIBIjANBgkqh...';```
+5. Verify the user's public key fingerprint,
+ ```DESC USER jsmith;```
+
+For more information, please follow the official link [here](https://docs.snowflake.com/en/user-guide/key-pair-auth#supported-snowflake-clients)
+
+### Creating a Key File JSON
+
+The JSON used to authenticate snowflake from inside peerDB is of the below format -
+
+1. `account_id`: `<organization_name>-<account_name>`. You can find this information under Admin Page -> Accounts.
+![](../images/dev/snowflake_key_creation.png)
+2. `username`: `<user_name>`. Go to Admin -> Users & Roles -> Users, find the relevant user_name
+3. `private_key`: \<string\_private\_key\>
+
+    The rsa\_key.p8 file generated in the above step needs to be converted to string, which means all new lines should be converted to the "\n" symbol.
+4. `database`: "peerdb". Create a new database. You can use an existing one, but make sure your role does have permissions to read/write to the database.
+5. `schema`: "peerdb"
+6. `warehouse`: "COMPUTE\_WH" or whatever is available under Admin -> Warehouses
+7. `role`: "ACCOUNTADMIN" or whatever is available under Admin -> Users & Roles -> Role
+8. `query_timeout`: 300
+
+Save the above json file into sf-creds.json. After all the edits, the bq-creds.json file should look something like this -
+
+```json
+{
+"account_id": "iyrtvcb-ec18828",
+"username": "tlodaya",
+"private_key": "-----BEGIN PRIVATE KEY-----\nMIIxxxxfhI=\n-----END PRIVATE KEY-----",
+"database": "PEERDB",
+"schema": "TPCH_SF1",
+"warehouse": "COMPUTE_WH",
+"role": "ACCOUNTADMIN",
+"query_timeout": 300
+ }
+```
+
+### Configuring SnowFlake as a peer
+
+To configure snowflake as a peer, you will have to modify the environment variable `TEST_SF_CREDS` to point to the path of the JSON file. If you are using VSCode, you can add the below entry under settings.json file.
+
+```json
+"go.testEnvVars": {
+"TEST_SF_CREDS": "/Users/xxxx/peerdb/sf-creds.json",
+ }
+```
+
+## Configuring go.test timeout
+
+You can run go tests, but before that, keep a timeout of 300s or higher. If you are using vscode, the default timeout is 60s, which will make the test fail.
+
+In vscode, change the settings.json to have an entry
+
+`"go.testTimeout": "300s"`
+
+You are all set! Start testing the code and contributing!

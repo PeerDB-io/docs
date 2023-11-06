@@ -2,14 +2,14 @@
   "$schema": "https://mintlify.com/schema.json",
   "name": "PeerDB Docs: Setup your ETL in minutes with SQL.",
   "logo": {
-    "dark": "/logo/docs-logo-dark-svg.svg",
-    "light": "/logo/docs-logo-light-svg.svg"
+    "dark": "/logo/docs-logo-dark.png",
+    "light": "/logo/docs-logo-light.png"
   },
-  "favicon": "/favicon.jpg",
+  "favicon": "/favicon.png",
   "colors": {
-    "primary": "#0069ED",
-    "light": "#4D9CFF",
-    "dark": "#0050B4"
+    "primary": "#248736",
+    "light": "#248736",
+    "dark": "#248736"
   },
   "topbarCtaButton": {
     "name": "Get Started",
@@ -47,22 +47,72 @@
       ]
     },
     {
+      "group": "5-minute Tutorials",
+      "pages": [
+        "tutorials/realtime-streaming-of-query-results"
+      ]
+    },
+    {
+      "group": "Features",
+      "pages": [
+        "features/schema-changes"
+      ]
+    },
+    {
       "group": "Use-cases",
       "pages": [
-        "usecases/realtime-cdc",
-        "usecases/realtime-streaming-of-query-results",
+        {
+          "group": "Real-time CDC Parallelized Initial Load",
+          "pages":[
+            "usecases/Real-time CDC/overview",
+            "usecases/Real-time CDC/postgres-to-postgres",
+            "usecases/Real-time CDC/postgres-to-bigquery",
+            "usecases/Real-time CDC/postgres-to-snowflake",
+            "usecases/Real-time CDC/postgres-to-azure-eventhubs",
+            "usecases/Real-time CDC/postgres-to-cloud"
+          ]
+        },
+        {
+          "group": "Streaming Query Replication",
+          "pages":[
+            "usecases/Streaming Query Replication/overview",
+            "usecases/Streaming Query Replication/postgres-to-postgres",
+            "usecases/Streaming Query Replication/postgres-to-bigquery",
+            "usecases/Streaming Query Replication/postgres-to-s3",
+            "usecases/Streaming Query Replication/postgres-to-snowflake",
+            "usecases/Streaming Query Replication/sqlserver-to-postgres"
+          ]
+        },
         "usecases/postgres-compatible-layer-for-bigquery-and-snowflake"
+      ]
+    },
+    {
+      "group": "Contributing",
+      "pages": [
+        "dev/running-tests"
+      ]
+    },
+    {
+      "group": "Metrics",
+      "pages": [
+        "metrics/native-metrics"
       ]
     },
     {
       "group": "SQL Commands",
       "pages": [
         "sql/commands/create-peer",
-        "sql/commands/create-mirror"
+        "sql/commands/create-mirror",
+        "sql/commands/supported-connectors"
       ]
     }
   ],
   "footerSocials": {
     "github": "https://github.com/PeerDB-io"
+  },
+  "analytics": {
+    "ga4": {
+      "measurementId": "G-1V9ZZCZMB7"
+    }
   }
 }

@@ -3,11 +3,14 @@ title: Creating Peers
 description: "Guide to creating Peers in PeerDB"
 ---
 
-PeerDB currently supports 3 types of Peers. To connect a database to PeerDB, you need to create a Peer. A Peer is a connection to a database that PeerDB can query. Peers are created using the `CREATE PEER` command.
+PeerDB currently supports the below types of Peers. To connect a database to PeerDB, you need to create a Peer. A Peer is a connection to a database that PeerDB can query. Peers are created using the `CREATE PEER` command.
 
-1. [BigQuery](#bigquery-peer) (Stable)
-2. [Snowflake](#snowflake-peer) (Under development)
-3. [PostgreSQL](#postgresql-peer) (Under development)
+1. [BigQuery](#bigquery-peer)
+2. [Snowflake](#snowflake-peer)
+3. [PostgreSQL](#postgresql-peer)
+4. [Amazon S3](#s3-peer)
+5. [SQL Server](#sqlserver-peer)
+6. [Azure EventHubs](#eventhub-peer)
 
 ## BigQuery Peer
 
@@ -36,54 +39,50 @@ SELECT * FROM bq_peer.test_table;
 PeerDB authenticates the creation of a BigQuery peer based on the service account. All the fields within the `CREATE PEER` command can be acquired from a service account JSON.
 If you have a service account key, you can use that or [create a new one](https://cloud.google.com/iam/docs/keys-create-delete) dedicated for PeerDB.
 
-<Info>Make sure you have the right permissions for the service account, PeerDB requires at least read permissions for querying. For MIRROR it requires both read and write.</Info>
+<Info>
+  Make sure you have the right permissions for the service account, PeerDB
+  requires at least read permissions for querying. For MIRROR it requires both
+  read and write.
+</Info>
 
-### Known Limitations
+### Considerations
 
 1. **Dataset Specific:** PeerDB only supports querying tables within a dataset. Cross dataset joins are not supported yet.
-2. **Read Only:** You can only read from a BQ peer. Writing to the BQ peer is not yet supported.
-3. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying. Record and Struct data-types are projected as JSONB. JSON datatype in BQ is not supported yet.
-4. **SQL Coverage:** Most SQL constructs in reads incl. Simple Selects, JOINs, aggregations, window functions, CTEs etc are supported. You can run both Postgres compatible and BQ compatible queries through PeerDBs interface.
-5. **Error Handling:** If a query fails on the BigQuery side because of lack of auth or query coverage or timeout, PeerDB handles that error and propagates the entire message  as a JSON text to the end-user. We also capture this ERROR message within PeerDB logs.
-
+2. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying. Record and Struct data-types are projected as JSONB. JSON datatype in BQ is not supported yet.
+3. **SQL Coverage:** Most SQL constructs in reads incl. Simple Selects, JOINs, aggregations, window functions, CTEs etc are supported. You can run both Postgres compatible and BQ compatible queries through PeerDBs interface.
+4. **Error Handling:** If a query fails on the BigQuery side because of lack of auth or query coverage or timeout, PeerDB handles that error and propagates the entire message as a JSON text to the end-user. We also capture this ERROR message within PeerDB logs.
 
 ## Snowflake Peer
 
 ```sql
 CREATE PEER sf_peer FROM SNOWFLAKE WITH
 (
-  account_id = 'LC83243.us-east-2.aws',
-  username = 'saipeerdb',
+  account_id = '<snowflake_account_identifier>',
+  username = '<user_name>',
   private_key ='<private_key>',
-  database = '<db name>',
+  password = '<password>' -- only provide when the private key is encrypted
+  database = '<database_name>',
   schema = '<schema>',
-  warehouse = '<WARE_HOUSE>',
+  warehouse = '<ware_house>',
   role = '<role>',
-  query_timeout = '<query_timeout_in_seconds'
+  query_timeout = '<query_timeout_in_seconds>'
 );
 
 -- Query away tables in Snowflake
 SELECT * FROM sf_peer.<schema>.<tablename>;
 ```
 
-
-
 ### Authentication
 
-PeerDB authenticates the creation of a Snowflake peer based key pair authentication. 
+PeerDB authenticates the creation of a Snowflake peer based key pair authentication. Encrypted private keys are also supported.
 Refer to this [doc](https://docs.snowflake.com/en/user-guide/key-pair-auth#configuring-key-pair-authentication) to create key pair, assign them to the right role and help populate the above fields.
 
-<Info>Make sure you have the right permissions for the service account, PeerDB requires at least read permissions for querying. For MIRROR it requires both read and write.</Info>
+### Considerations
 
-
-### Known Limitations
-
-1. **Database Specific:** PeerDB only supports querying tables within a dataset. Cross dataset joins are not supported yet.
-2. **Read Only:** You can only read from a Snowflake peer. Writing to the Snowflake peer is not yet supported.
-3. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying.
-4. **SQL Coverage:** Most SQL constructs in reads incl. Simple Selects, JOINs, aggregations, window functions, CTEs etc are supported. You can run both Postgres compatible and SF compatible queries through PeerDBs interface.
-5. **Error Handling:** If a query fails on the Snowflake side because of lack of auth or query coverage or timeout, PeerDB handles that error and propagates the entire message  as a JSON text to the end-user. We also capture this ERROR message within PeerDB logs.
-
+1. **Database Specific:** PeerDB only supports querying tables within a database. Cross database joins are not supported yet.
+2. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying.
+3. **SQL Coverage:** Most SQL constructs in reads incl. Simple Selects, JOINs, aggregations, window functions, CTEs etc are supported. You can run both Postgres compatible and SF compatible queries through PeerDBs interface.
+4. **Error Handling:** If a query fails on the Snowflake side because of lack of auth or query coverage or timeout, PeerDB handles that error and propagates the entire message as a JSON text to the end-user. We also capture this ERROR message within PeerDB logs.
 
 ## PostgreSQL Peer
 
@@ -101,7 +100,124 @@ CREATE PEER postgres_peer FROM POSTGRES WITH
 SELECT * FROM postgres_peer.<schema>.<tablename>;
 ```
 
-### Known Limitations
+If you are connecting to a Docker Postgres instance on the same docker network as PeerDB, then the hostname will be the service name of the Postgres server and the port will be `5432`.
+
+### Considerations
 
 1. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying. We are actively addding support for other types.
 2. **Unsupported COPY command:** COPY command is not supported yet.
+
+
+## Storage Peers - S3 and GCS
+For CDC, you would require a PostgreSQL instance to use as an external metadata store.
+The CREATE PEER command for S3/GCS depends on how you set the following parameters.
+```sql
+CREATE PEER storage_peer FROM S3 WITH
+(
+    url = 's3://<gcs/s3_bucket_name>/<prefix>', -- bucket should exist
+    access_key_id = '<hmac_key>', -- or AWS equivalent
+    secret_access_key = '<hmac_secret>', -- or AWS equivalent
+    region = 'auto', -- for S3, use the region of your bucket
+    endpoint = 'https://storage.googleapis.com', -- or empty for S3
+    metadata_db = 'host=<host> port=<port> user=<user> password=<password> database=<database>'
+);
+```
+ Note that if you leave any of these parameters empty, PeerDB will use the corresponding Docker compose environment variable instead:
+```yaml
+x-flow-worker-env: &flow-worker-env
+  ...
+  # For GCS, these will be your HMAC keys instead
+  # For more information:
+  # https://cloud.google.com/storage/docs/authentication/managing-hmackeys
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+  # For GCS, set this to "auto" without the quotes
+  AWS_REGION: ${AWS_REGION:-}
+  # For GCS, set this as: https://storage.googleapis.com
+  AWS_ENDPOINT: ${AWS_ENDPOINT:-}
+  ...
+```
+
+### Considerations
+
+1. The bucket specified in the URL must already exist.
+2. Only `.avro` file format is currently supported.
+3. Currently only data-movement is supported for this type of peer. Querying this peer from PeerDB's interface is not supported.
+
+## SQLServer Peer
+
+```sql
+CREATE PEER sqlserver_peer FROM SQLSERVER WITH(
+  server='<your-hostname>',
+  port='<your-port>',
+  user='<user>',
+  password='<password>',
+  database='<database>'
+);
+```
+
+If you are connecting to a Docker SQL Server/Azure SQL Edge instance on the same docker network as PeerDB, then the hostname will be the service name of the SQL server and the port will be `5432`.
+
+### Considerations
+
+1. Currently only data-movement is supported for this type of peer. Querying this peer from PeerDB's interface is not supported.
+
+## Eventhub Support
+
+### EventHub Peer
+
+This peer uses an external PostgreSQL instance to manage metadata for the mirror. To create an EVENTHUB peer, use the following SQL syntax:
+
+```sql
+CREATE PEER <eh_peer_name> FROM EVENTHUB WITH (
+  subscription_id = '<subscription-id>',
+  resource_group = '<resource-group-name>',
+  namespace = '<namespace-name>',
+  location = '<location>',  -- eg: eastus
+  partition_count = '<number-of-partitions>',
+  message_retention_in_days = '<retention-days>'
+);
+```
+
+**Parameters:**
+
+- `subscription_id`: The ID of the Azure subscription.
+- `resource_group`: The name of the Azure resource group.
+- `namespace`: The namespace for the EVENTHUB.
+- `location`: The location of the EVENTHUB instance, e.g., eastus.
+- `partition_count`: The number of partitions for the EVENTHUB.
+- `message_retention_in_days`: The number of days the messages will be retained.
+
+### EventHubGroup Peer
+
+You will need to wrap multiple EVENTHUB peers in an EVENTHUBGROUP peer to create a mirror. To create an EVENTHUBGROUP peer, use the following SQL syntax:
+
+```sql
+CREATE PEER <eh_group_name> FROM EVENTHUBGROUP WITH (
+  mq_test_peer_7 = true, -- enable this member
+  metadata_db = 'host=<hostname> user=<username> port=<port-number> password=<password> database=<database-name>',
+  unnest_columns = '<column-names>'
+);
+```
+
+**Parameters:**
+
+- `mq_test_peer_7`: Enable this EVENTHUB member in the group. You can enable multiple EVENTHUB peers in the group.
+- `metadata_db`: The PostgreSQL connection string for the metadata database. Ensure it includes host, user, port, password, and database details.
+- `unnest_columns`: Specifies the columns you'd like to unnest in the EVENTHUBGROUP.
+
+In order to use this peer, your **Azure credentials must be filled** in our PeerDB docker-compose file in the environments section of the `flow-worker` service:
+
+```yaml
+environment:
+  ENABLE_PROFILING: true
+  PROFILING_SERVER: 0.0.0.0:6060
+  TEMPORAL_HOST_PORT: temporalite:7233
+  AZURE_CLIENT_ID: <client-id>
+  AZURE_CLIENT_SECRET: <secret>
+  AZURE_TENANT_ID: <tenant-id>
+```
+
+### Considerations
+
+1. Currently only data-movement is supported for this type of peer. Querying this peer from PeerDB's interface is not supported.
