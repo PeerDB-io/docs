@@ -63,7 +63,8 @@ With Airbyte, we already knew from their numbers that a run could take multiple 
 
 After an initial failure because of hitting a [timeout (of 72 hours)](https://github.com/airbytehq/airbyte/issues/7525#issuecomment-959778866), Airbyte completed successfully. It took **83 hours** to move the table to Snowflake.
 
-<img src="images/airbyte-snowflake.jpg" />
+![airbyte snowflake](../images/airbyte-snowflake.jpg)
+
 
 ### PeerDB
 
@@ -77,7 +78,7 @@ Airbyte does not support parallelism at the moment. We decided to do an addition
 
 Airbyte took **83 hours** to move a 1.5TB table from Postgres to Snowflake. With a parallelism of 32 threads, PeerDB took 5 hours to do the same job. So PeerDB was **16x** faster. Even considering a single-threaded run, PeerDB is **~2x** faster. We felt that a comparison with Fivetran was out of scope for this article. Airbyte had already shown that Fivetran was slower than Airbyte and we could expect a full refresh to take **150+ hours**.
 
-<img src="images/results.jpg" />
+![results](../images/results.jpgg)
 
 ## What makes PeerDB faster?
 
@@ -85,7 +86,8 @@ Airbyte took **83 hours** to move a 1.5TB table from Postgres to Snowflake. With
 
 One of the more obvious reasons is our early adoption of parallelism for long-running operations such as moving large tables from Postgres to Snowflake. We do this by logically partitioning the large table based on internal tuple identifiers (CTID) and parallelly streaming those partitions to Snowflake. The implementation is inspired by this DuckDb [**blog**](https://duckdb.org/2022/09/30/postgres-scanner.html#parallel). Based on the load you can put on the source Postgres database, you can [**configure**](https://docs.peerdb.io/sql/commands/create-mirror#mirror-for-cdc) the parallelism for the sync. More details can be found in [this](https://blog.peerdb.io/parallelized-initial-load-for-cdc-based-streaming-from-postgres) blog
 
-<img src="images/parallel-initial-load.jpg" />
+![results](../images/parallel-initial-load.jpg)
+
 Large table logically partitioned based on CTID ranges and streamed in parallel, reliably and efficiently to the target data-store. During the initial load, a snapshot connection needs to be maintained to ensure data consistency on the target.
 
 ### Batching
