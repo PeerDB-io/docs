@@ -78,7 +78,7 @@ Airbyte does not support parallelism at the moment. We decided to do an addition
 
 Airbyte took **83 hours** to move a 1.5TB table from Postgres to Snowflake. With a parallelism of 32 threads, PeerDB took 5 hours to do the same job. So PeerDB was **16x** faster. Even considering a single-threaded run, PeerDB is **~2x** faster. We felt that a comparison with Fivetran was out of scope for this article. Airbyte had already shown that Fivetran was slower than Airbyte and we could expect a full refresh to take **150+ hours**.
 
-![results](../images/results.jpgg)
+![results](../images/results.jpg)
 
 ## What makes PeerDB faster?
 
