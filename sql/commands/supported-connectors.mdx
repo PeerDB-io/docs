@@ -1,11 +1,12 @@
 
 Below table shows supported source and target connectors for [Real-time Change Data Capture](/usecases/Real-time%20CDC/overview) and [Streaming Query Replication](/usecases/Streaming%20Query%20Replication/overview). ✅ means supported. ⚠️  means beta. 🛑 means unsupported
-| Source       | Target          | Real-time CDC | Streaming Query Replication | Guides |
+| Source       | Target          | Real-time Change Data Capture (CDC) | Streaming Query or Watermark Based Replication | Guides |
 |--------------|-----------------|---------------|----------------------------|----------------------------|
 | PostgreSQL   | Snowflake       |       ✅       |            ✅              |[CDC](/usecases/Real-time%20CDC/postgres-to-snowflake),[Streaming Query Replication](/usecases/Streaming%20Query%20Replication/postgres-to-snowflake)|
 | PostgreSQL   | BigQuery        |       ✅       |            ✅              |[CDC](/usecases/Real-time%20CDC/postgres-to-bigquery),[Streaming Query Replication](/usecases/Streaming%20Query%20Replication/postgres-to-bigquery)|
 | PostgreSQL   | PostgreSQL     |       ✅       |            ✅              |[CDC](/usecases/Real-time%20CDC/postgres-to-postgres),[Streaming Query Replication](/usecases/Streaming%20Query%20Replication/postgres-to-postgres)|
-| PostgreSQL   | S3              |      🛑      |            ✅              |[Streaming Query Replication](/usecases/Streaming%20Query%20Replication/postgres-to-s3)|
+| PostgreSQL   | S3              |       ✅       |            ✅              |[CDC](/usecases/Real-time%20CDC/postgres-to-cloud),[Streaming Query Replication](/usecases/Streaming%20Query%20Replication/postgres-to-s3)|
+| PostgreSQL   | GCS              |       ✅       |            ✅              |[CDC](/usecases/Real-time%20CDC/postgres-to-cloud),[Streaming Query Replication](/usecases/Streaming%20Query%20Replication/postgres-to-s3)|
 | PostgreSQL   | Azure EventHubs |      ✅      |            🛑             |[CDC](/usecases/Real-time%20CDC/postgres-to-azure-eventhubs)|
 | PostgreSQL   | Kafka          |      ⚠️      |            🛑             | Coming soon ! |
 | SQL Server   | PostgreSQL     |      🛑      |            ✅             |[Streaming Query Replication](/usecases/Streaming%20Query%20Replication/sqlserver-to-postgres)|

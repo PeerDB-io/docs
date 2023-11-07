@@ -1,0 +1,62 @@
+# Why use Partitioned Tables in Postgres?
+
+[Table partitioning](https://www.postgresql.org/docs/current/ddl-partitioning.html) in PostgreSQL is used to improve query performance and manage large datasets efficiently by dividing a table into smaller, more manageable segments, or partitions. It allows for faster data access and maintenance, as well as optimizing specific operations like archiving or purging old data:
+
+1. **Faster queries** - through partition pruning, queries with partition column filter are scoped to a subset of data rather than scanning the whole table
+    
+2. **Efficient data expiry** - for tables partitioned on time, to expire older data you could just DROP the older partitions rather than running a DELETE command and incurring table bloat.
+    
+
+# Table Partitioning in Postgres is becoming a given
+
+Over the past 5 years, the Table Partitioning feature is [constantly evolving](https://www.2ndquadrant.com/en/blog/partitioning-evolution-postgresql-11/) and its usage is only increasing. A reason for this is that Postgres is able to support a multitude of high-scale use cases such as Timeseries, IoT, and multi-tenant SaaS, where there is a natural dimension to partition data. Table Partitioning enhances the performance and scalability of Postgres for such use cases. Just to share some numbers, out of all the Postgres customers we are working with, close to 50% of them use partitioned tables.
+
+# Change Data Capture (CDC) for Partitioned Tables is more relevant than ever
+
+With the increased adoption of the Table partitioning feature and the [numerous use cases](https://medium.com/event-driven-utopia/8-practical-use-cases-of-change-data-capture-8f059da4c3b7) that rely on CDC from Postgres, it is important for a data movement tool to comprehensively support CDC for Partitioned tables. This includes streaming real-time changes from Partitioned tables to Data Warehouses, Queues, or Storage, and managing various scenarios like adding new partitions, dropping partitions, adding or dropping columns, and ensuring compatibility with different Postgres versions.
+
+# PeerDB for replicating Partitioned Tables in Postgres
+
+At PeerDB, we are building a specialized data-movement tool for Postgres. With that spirit, we took a [step forward](https://github.com/PeerDB-io/peerdb/pull/581) to add extensive support for Real-time Change Data Capture (CDC) for Partitioned Tables. Below is a list of the various scenarios that we handled:
+
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/bd622150edd046aea4d6ca66d38f0eb9?sid=cfbc354d-b818-4464-a26f-d1dcbeb10cd4"
+    frameBorder={0}
+    webkitallowfullscreen=""
+    mozallowfullscreen=""
+    allowFullScreen=""
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%"
+    }}
+  />
+</div>
+
+Demo of replicating a partitioned table in Postgres to Snowflake. It covers various scenarios such as adding new partitions, adding columns, dropping partitions and so on.
+
+1. **Just specify the parent table for replication** - While kicking off the [MIRROR](https://docs.peerdb.io/sql/commands/create-mirror#mirror-for-cdc) (a.k.a. replication) you just need to specify the name of the partitioned table (the parent) that you want to replicate. You don't need to specify the names of each partition. PeerDB takes care of a) Taking the initial snapshot of data across all the partitions and applying it to the target and b) Replaying CDC in real-time across all the partitions to the target table.
+    
+2. **New partitions can be created and replicated** - As new partitions are created and data is added to them, PeerDB automatically replicates that data to the target table.
+    
+3. **New columns can be added and replicated** - PeerDB supports [replicating schema changes](https://github.com/PeerDB-io/peerdb/pull/368) where you add a new column (ADD COLUMN). This works as expected for Partitioned Tables.
+    
+4. **Dropping partitions doesn't delete data on the target** - If you drop a partition to expire data, we don't propagate that to the target (ex: Snowflake) i.e. we don't delete data matching that partition. We made this design choice based on customer feedback - users don't want to delete data in their data warehouse. If you require a better way to handle this scenario, you can create an issue on [Github](https://github.com/PeerDB-io/peerdb) or submit a PR! :)
+    
+5. **Support Postgres versions 12 to 16** **\-** Replicating partitioned tabled should be supported for all Postgres versions starting from 12 to 16. Postgres 12 required the publication to be created for all tables. Whereas with the rest of the versions, you can create the publication just for the partitioned table with [publish\_via\_partition\_root](https://amitlan.com/writing/pg/partition-logical-replication/) set to true.
+    
+
+# Conclusion
+
+It was a common concern from our customers that existing generalized data movement tools either lacked features or were not reliable in handling partitioned tables. So, we decided to spend time adding extensive Change Data Capture (CDC) support for partitioned tables. If you want to give PeerDB a try on your existing Postgres partitioned tables, these links should prove useful: :)
+
+1. [**Quickstart**](https://docs.peerdb.io/quickstart)
+    
+2. [**PeerDB's Github repo**](https://github.com/PeerDB-io/peerdb)
+    
+3. [**Join PeerDB's Slack community**](https://join.slack.com/t/peerdb-public/shared_invite/zt-1wo9jydev-EXInbMtCtpAKFFWdi7QvLQ)
+    
+4. [**PeerDB docs**](https://docs.peerdb.io/introduction)

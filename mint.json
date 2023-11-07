@@ -55,14 +55,16 @@
     {
       "group": "Features",
       "pages": [
-        "features/schema-changes"
+        "features/schema-changes",
+        "features/replicating-partitioned-tables",
+        "features/feature-matrix"
       ]
     },
     {
       "group": "Use-cases",
       "pages": [
         {
-          "group": "Real-time CDC Parallelized Initial Load",
+          "group": "Real-time Change Data Capture from Postgres",
           "pages":[
             "usecases/Real-time CDC/overview",
             "usecases/Real-time CDC/postgres-to-postgres",
@@ -84,6 +86,12 @@
           ]
         },
         "usecases/postgres-compatible-layer-for-bigquery-and-snowflake"
+      ]
+    },
+    {
+      "group": "Benchmarks",
+      "pages": [
+        "benchmarks/benchmarking-Postgres-Replication:-PeerDB-vs-Airbyte"
       ]
     },
     {
