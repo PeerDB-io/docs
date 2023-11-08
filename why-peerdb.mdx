@@ -1,0 +1,62 @@
+---
+title: "Why choose PeerDB over other tools?"
+---
+
+At [**PeerDB**](http://peerdb.io/), our mission is to create a Postgres-first data-movement platform that provides the world's best experience for replicating data from Postgres to Data Warehouses, Queues and Storage. Our laser focus on Postgres helps us surpass other data-movement tools (Fivetran, AirByte, DMS, Debezium etc.) in speed, features and usability.
+
+## Performance
+
+### 2x to 16x faster large data loads
+
+When you are moving larger datasets (10s of GB to a few TB) from Postgres to any supported targets, PeerDB can 2x to 16x faster than other tools. This helps faster initial loads in [WAL-based replication](https://docs.peerdb.io/usecases/Real-time%20CDC/overview) and faster [Query or Watermark based replication](https://docs.peerdb.io/usecases/Streaming%20Query%20Replication/overview). Below are the throughput limits you can expect
+
+**With PeerDB**, 10MBPS to 80MBPS
+
+**Most other tools** cap at 5-6MBPS
+
+This [blog](https://blog.peerdb.io/benchmarking-postgres-replication-peerdb-vs-airbyte) captures official benchmarks that we published recently.
+
+### Change Data Capture (CDC) with 5s to 60s lag on target
+
+Our infrastructure is designed for real-time streaming from Postgres. If your application is latency sensitive you can configure refresh intervals as low as a few seconds. The below table captures the latency you can expect for an average use case
+
+| Tool | Source | Target | Throughput | Lag/Latency |
+| --- | --- | --- | --- | --- |
+| PeerDB | Postgres | Data Warehouses and Storage | 5K TPS | 30s-1min |
+| PeerDB | Postgres | Queues | 5K TPS | 1s-5s |
+| Other tools such as Fivetran, DMS etc. | Postgres | Data Warehouses, Queues and Storage | 5K TPS | At least 5mins. A few tools degrade over increasing lag to a few hours |
+
+## Postgres native features
+
+PeerDB has comprehensive support for multiple Postgres native features that are lacking in other tools. Below are a few examples:
+
+1. **Support of advanced data types** - PeerDB supports natively replicating advanced data types incl. ARRAYs, JSON/JSONB, HSTORE, ENUMs, Geospatial etc from Postgres. Most other tools either don't support a few of these types or default to the TEXT/STRING column on the target.
+    
+2. **Comprehensive support of Partitioned Tables -** PeerDB has comprehensive support for [replicating partitioned tables](https://blog.peerdb.io/real-time-change-data-capture-for-postgres-partitioned-tables). We handle various scenarios like adding new partitions, dropping partitions, adding or dropping columns, and ensuring compatibility with different Postgres versions. It was a common concern from our customers that other data movement tools either lacked features or were not reliable in handling partitioned tables.
+    
+3. **Efficient replication TOAST (large) columns** - Other tools require you to set `REPLICA IDENTITY FULL` on your tables to reliably stream TOAST columns. This can affect the source Postgres database by increasing the resource (compute and IO) utilization. [Postgres](https://www.postgresql.org/docs/current/logical-replication-publication.html) also recommends this approach as a last fallback option. With PeerDB, we implemented a [caching mechanism](https://github.com/PeerDB-io/peerdb/pull/111) which eliminates the need of setting `REPLICA IDENTITY FULL` to replicate TOAST columns. This avoids additional load on the source, making it significantly safer than the former approach.
+    
+
+## Usability- Simple UI or a Powerful SQL Layer
+
+Along with a simple UI to create PEERs and kick off MIRRORs, PeerDB provides a Postgres compatible SQL layer for data movement. This makes the life of data engineers much easier. They can develop pipelines using a framework they are familiar with, without needing to deal with custom UIs and REST APIs. They can use Postgres' 100s of integrations to build and manage data movement.
+
+None of the other tools provide a Postgres compatible SQL layer to manage data movement.
+
+Compared to Debezium, PeerDB is significantly [simpler to set up and manage](https://news.ycombinator.com/item?id=36910908). More on this topic coming soon!
+
+## Save Costs, up to 80% cost reduction
+
+By implementing the below optimizations/strategies, we are able to cut up to 80% of costs for customers:
+
+1. **State of art engineering:** Our engineering focus revolves around cost efficiency and hardware optimization. You can go through [our architecture](https://docs.peerdb.io/architecture) and [engineering blog](https://blog.peerdb.io/) for a deeper dive into our design tradeoffs for building a highly opti
+    
+2. **Transparent pricing:** Our pricing is based on compute usage rather than the amount of data transferred. Based on the volume of data you move, we will come up with the number of **cores and memory** needed for your use case. You will know that in advance and can scale up and down based on what you wish. We take premiums only over compute costs. Network and storage will be charged at cost. If you are running PeerDB in the same cloud provider as the peers, you can anticipate minimal network costs. With this approach of pricing, **you'll clearly know your expenses beforehand, with no surprises in the future!**
+    
+3. **PeerDB CostControl:** PeerDB already has mechanisms in place to reduce activity and costs on your Data Warehouse.
+    
+    1. If there is no activity on Postgres, PeerDB has in-built mechanisms to pause the replication and incur zero load on the Warehouse.
+        
+    2. You can configure the refresh interval and batch size based on how frequently you want PeerDB to query the Data Warehouse. For example, to save costs you can configure a larger refresh interval / batch size.
+        
+    3. We are actively working on other mechanisms to further reduce the costs of your Data Warehouse. More on this soon!
