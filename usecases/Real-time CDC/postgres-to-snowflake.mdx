@@ -61,6 +61,8 @@ Make sure to replace **`(…)`** with the appropriate connection details for bot
 
 With the peers set up, you can create a mirror that facilitates real-time CDC from PostgreSQL to Snowflake. 
 
+#### Create MIRROR using SQL
+
 ```sql
 -- Real-time CDC from PostgreSQL to Snowflake
 CREATE MIRROR real_time_cdc
@@ -90,6 +92,28 @@ If you observe, **TABLE MAPPING** represents the table name mapping between the 
 
 > **PeerDB also supports replicating TOAST columns very efficiently**. Unlike most CDC tools, you don't need to set up REPLICA IDENTITY FULL for replicating TOAST columns. This [PR](https://github.com/PeerDB-io/peerdb/pull/111) captures the infrastructural optimizations that PeerDB takes to support TOAST columns.
 > 
+
+#### Create MIRROR using UI
+
+If you prefere a UI, you can easily create a mirror using the PeerDB UI. Refer to the below video:
+
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/81d40e8dae854ef5ab8c97c7eeda5e2e?sid=268af7c2-a8dc-465f-9ceb-a61e52ab7b1e"
+    frameBorder={0}
+    webkitallowfullscreen=""
+    mozallowfullscreen=""
+    allowFullScreen=""
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%"
+    }}
+  />
+</div>
+
 
 ### **Step 3: Validate the Mirror**
 
