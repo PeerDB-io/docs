@@ -24,7 +24,7 @@ Our infrastructure is designed for real-time streaming from Postgres. If your ap
 | --- | --- | --- | --- | --- |
 | PeerDB | Postgres | Data Warehouses and Storage | 5K TPS | 30s-1min |
 | PeerDB | Postgres | Queues | 5K TPS | 1s-5s |
-| Other tools such as Fivetran, DMS etc. | Postgres | Data Warehouses, Queues and Storage | 5K TPS | At least 5mins. A few tools degrade over increasing lag to a few hours |
+| Other tools such as Fivetran, DMS etc. | Postgres | Data Warehouses, Queues and Storage | 5K TPS | At least 5mins. A few tools degrade over time and lag can grow to multiple hours |
 
 ## Postgres native features
 
@@ -49,7 +49,7 @@ Compared to Debezium, PeerDB is significantly [simpler to set up and manage](htt
 
 By implementing the below optimizations/strategies, we are able to cut up to 80% of costs for customers:
 
-1. **State of art engineering:** Our engineering focus revolves around cost efficiency and hardware optimization. You can go through [our architecture](https://docs.peerdb.io/architecture) and [engineering blog](https://blog.peerdb.io/) for a deeper dive into our design tradeoffs for building a highly opti
+1. **State of art engineering:** Our engineering focus revolves around cost efficiency and hardware optimization. You can go through [our architecture](https://docs.peerdb.io/architecture) and [engineering blog](https://blog.peerdb.io/) for a deep dive into our design tradeoffs to build the most optimal data movement solution for Postgres.
     
 2. **Transparent pricing:** Our pricing is based on compute usage rather than the amount of data transferred. Based on the volume of data you move, we will come up with the number of **cores and memory** needed for your use case. You will know that in advance and can scale up and down based on what you wish. We take premiums only over compute costs. Network and storage will be charged at cost. If you are running PeerDB in the same cloud provider as the peers, you can anticipate minimal network costs. With this approach of pricing, **you'll clearly know your expenses beforehand, with no surprises in the future!**
     
