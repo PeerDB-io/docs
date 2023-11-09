@@ -127,7 +127,44 @@ SELECT COUNT(*) FROM postgres_peer.transactions;
 
 ### Step 4: Monitor the MIRROR
 
-You can connect to [`localhost:8085`](http://`localhost:8085`) to get full visibility into the different jobs and steps that PeerDB is taking under the covers to manage the MIRROR.
+You can use the UI (localhost:3001) to monitor the status of the initial load. Refer to the below video:
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/74589a20661d42b88bdc82d0368b44cd?sid=96804563-5126-45d6-b4f2-8cdbc34ba442"
+    frameBorder={0}
+    webkitallowfullscreen=""
+    mozallowfullscreen=""
+    allowFullScreen=""
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%"
+    }}
+  />
+</div>
+
+You can use the UI (localhost:3001) to monitor the status of the Change Data Capture (CDC). Refer to the below video:
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/75e95b2d0a404c66add26ef82c129f54?sid=284b1198-a854-4e6a-a660-6ae5a0fa898a"
+    frameBorder={0}
+    webkitallowfullscreen=""
+    mozallowfullscreen=""
+    allowFullScreen=""
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%"
+    }}
+  />
+</div>
+
+
+For deeper monitoring, you can connect to [`localhost:8085`](http://`localhost:8085`) to get full visibility into the different jobs and steps that PeerDB is taking under the covers to manage the MIRROR.
 
 ![Managing Mirror](../../images/managing_mirror.png)
 
