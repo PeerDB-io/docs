@@ -151,6 +151,29 @@ If you are connecting to a Docker Postgres instance on the same docker network a
 
 
 ## Storage Peers - S3 and GCS
+
+### Create Peer using UI
+Using the PeerDB UI (localhost:3001), create the Snowflake Peer. See below video as reference:
+
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/321a0d0becc249c9ab3478e1ea0bad33?sid=737eebc9-e019-4772-9b6b-4cf47d428a95"
+    frameBorder={0}
+    webkitallowfullscreen=""
+    mozallowfullscreen=""
+    allowFullScreen=""
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%"
+    }}
+  />
+</div>
+
+### Create Peer using connection string
+
 For CDC, you would require a PostgreSQL instance to use as an external metadata store.
 The CREATE PEER command for S3/GCS depends on how you set the following parameters.
 ```sql

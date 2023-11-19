@@ -30,6 +30,8 @@ Let's look at a short video showcasing CDC from PostgreSQL to Google Cloud Stora
 
 ### Prerequisites
 
+#### Postgres Peer
+
 1. Enable logical decoding in PostgreSQL. Ensure that the following settings/GUCs are properly configured:
    1. wal_level: logical
    2. max_wal_senders: >1
@@ -40,8 +42,43 @@ Let's look at a short video showcasing CDC from PostgreSQL to Google Cloud Stora
    1. [AWS RDS and Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.Replication.Logical.html#AuroraPostgreSQL.Replication.Logical.Configure)
    2. [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-logical#pre-requisites-for-logical-replication-and-logical-decoding)
    3. [GCP Cloud SQL PostgreSQL](https://cloud.google.com/sql/docs/PostgreSQL/replication/configure-logical-replication#configure-your-postgresql-instance)
-5. Ensure you have an existing bucket to use.
-6. For GCS, you must [create a HMAC key-pair](https://cloud.google.com/storage/docs/authentication/managing-hmackeys) and use this for `ACCESS_KEY_ID` and `SECRET_ACCESS_KEY` in the Docker compose file.  
+
+#### S3 peer
+1. Ensure you have an existing bucket to use.
+2. For PeerDB to access the S3 Peer, you can either use an existing AWS user or create a new AWS user.
+3. Create access keys for that user through [AWS Console](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey) or [AWS CLI](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey_CLIAPI) or [AWS API](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey_API)
+4. For the same user, create and attach a policy as below using JSON editor. Sharing [AWS docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-create-and-attach-iam-policy.html) for reference. PeerDB requires `s3:ListAllMyBuckets`, `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` and `s3:DeleteObject` on that bucket.
+    
+     ```json
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Action": "s3:ListAllMyBuckets",
+                    "Resource": "*"
+                },
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "s3:GetObject",
+                        "s3:PutObject",
+                        "s3:ListBucket",
+                        "s3:DeleteObject"
+                    ],
+                    "Resource": [
+                        "arn:aws:s3:::<your-bucket-name>",
+                        "arn:aws:s3:::<your-bucket-name>/*"
+                    ]
+                }
+            ]
+        }
+        ```
+  
+
+#### GCS peer
+1. Ensure you have an existing bucket to use.
+2. For GCS, you must [create a HMAC key-pair](https://cloud.google.com/storage/docs/authentication/managing-hmackeys) and use this for `ACCESS_KEY_ID` and `SECRET_ACCESS_KEY` in the Docker compose file.
 
 ### Step 1: Add PostgreSQL and S3/GCS Peers
 
@@ -59,7 +96,30 @@ CREATE PEER s3_peer FROM S3 (...);
 
 Please refer to our CREATE PEER documentation for [storage peers](/sql/commands/create-peer#storage-peers-s3-and-gcs).
 
-### **Step 2: Real-Time CDC from PostgreSQL to S3/GCS**
+### **Step 2: Real-Time CDC from PostgreSQL to S3/GCS by creating a MIRROR**
+
+#### Create MIRROR using UI
+
+If you prefer a UI, you can easily create a mirror using the PeerDB UI. Refer to the below video:
+
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/6c563a158f5e483b8c49e51eac1b1d7c?sid=e3622f0b-a86f-4554-9cce-c00420f6fb01"
+    frameBorder={0}
+    webkitallowfullscreen=""
+    mozallowfullscreen=""
+    allowFullScreen=""
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%"
+    }}
+  />
+</div>
+
+#### Create MIRROR using SQL
 
 To facilitate real-time Change Data Capture (CDC) from PostgreSQL to S3 or GCS, set up your peers and then create a mirror using the following SQL syntax:
 
@@ -103,11 +163,7 @@ Parameters:
 Remember to adjust placeholder values (\<...\>) with your specific details and preferences.
 The example above has been abbreviated for clarity; ensure you provide all the necessary mappings and configurations in practice.
 
-### **Step 3: Validate the Mirror**
-
-Validate the mirror by checking if the number of files in the bucket.
-
-### Step 4: Monitor the MIRROR
+### Step 3: Monitor the MIRROR
 
 You can connect to [`localhost:8085`](http://`localhost:8085`) to get full visibility into the different jobs and steps that PeerDB is taking under the covers to manage the MIRROR.
 
