@@ -102,8 +102,9 @@
       ]
     },
     {
-      "group": "Metrics",
+      "group": "Metrics and Tuning",
       "pages": [
+        "metrics/important_cdc_configs",
         "metrics/native-metrics"
       ]
     },
