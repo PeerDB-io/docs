@@ -95,7 +95,7 @@ The `OPTIONS` clause provides granular control when configuring the MIRROR:
 5. **refresh_interval (Optional)** helps configure the frequency (in seconds) at which the sync should run. If not specified, PeerDB attempts to sync new rows every **10** seconds.
 6. **initial_copy_only (Optional)**: If only a one-time copy needs to be done, this can be set to true. The mirror stops after a one-time data load. Apart from specifying **append** or **upsert** modes, a new mode **overwrite** can be specified when this option is set to true. This truncates all destination tables before starting the mirror, and is functionally identical to **append** otherwise.
 7. **num_rows_per_parition (Required)**: PeerDB internally splits a table into partitions of a certain size which it distributes amongst the worker threads. This option allows you to tune the size of each partition based on memory or network requirements.
-8 **setup_watermark_table_on_destination (Optional)**: If set to true, a table with the same schema as the watermark table is created on the destination peer. Its name will be set to **destination_table_name**.
+8. **setup_watermark_table_on_destination (Optional)**: If set to true, a table with the same schema as the watermark table is created on the destination peer. Its name will be set to **destination_table_name**.
 6. More details on the OPTIONs can be found [here](https://github.com/PeerDB-io/peerdb/issues/139).
 7. `if_not_exists`: If specified, the MIRROR will be created only if it does not exist.
 
