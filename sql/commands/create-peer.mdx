@@ -14,6 +14,28 @@ PeerDB currently supports the below types of Peers. To connect a database to Pee
 
 ## BigQuery Peer
 
+### Create Peer using UI
+Using the PeerDB UI (localhost:3000), create the Snowflake Peer. See below video as reference:
+
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+  <iframe
+    src="https://www.loom.com/embed/4919db8f165a40e583dcde18b0ffe6a1?sid=ae95b635-5726-42a9-b60d-801d7777a8e2"
+    frameBorder={0}
+    webkitallowfullscreen=""
+    mozallowfullscreen=""
+    allowFullScreen=""
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%"
+    }}
+  />
+</div>
+
+### Create Peer using connection string
+
 ```sql
 CREATE PEER bq_peer FROM BIGQUERY WITH
 (
@@ -55,7 +77,7 @@ If you have a service account key, you can use that or [create a new one](https:
 ## Snowflake Peer
 
 ### Create Peer using UI
-Using the PeerDB UI (localhost:3001), create the Snowflake Peer. See below video as reference:
+Using the PeerDB UI (localhost:3000), create the Snowflake Peer. See below video as reference:
 
 <div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
   <iframe
@@ -108,7 +130,7 @@ Refer to this [doc](https://docs.snowflake.com/en/user-guide/key-pair-auth#confi
 
 ## PostgreSQL Peer
 ### Create Peer using UI
-Using the PeerDB UI (localhost:3001), create the Postgres Peer. See below video as reference:
+Using the PeerDB UI (localhost:3000), create the Postgres Peer. See below video as reference:
 
 <div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
   <iframe
@@ -153,7 +175,7 @@ If you are connecting to a Docker Postgres instance on the same docker network a
 ## Storage Peers - S3 and GCS
 
 ### Create Peer using UI
-Using the PeerDB UI (localhost:3001), create the Snowflake Peer. See below video as reference:
+Using the PeerDB UI (localhost:3000), create the Snowflake Peer. See below video as reference:
 
 <div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
   <iframe
