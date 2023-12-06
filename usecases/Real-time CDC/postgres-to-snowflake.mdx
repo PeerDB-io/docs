@@ -41,7 +41,7 @@ This demo shows PeerDB syncing a table with 100 million rows from PostgreSQL to 
     1. [AWS RDS and Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.Replication.Logical.html#AuroraPostgreSQL.Replication.Logical.Configure)
     2. [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-logical#pre-requisites-for-logical-replication-and-logical-decoding)
     3. [GCP Cloud SQL PostgreSQL](https://cloud.google.com/sql/docs/postgres/replication/configure-logical-replication#configure-your-postgresql-instance)
-
+5. Ensure that permissions for the Snowflake user and database you wish to use is properly configured. More details are available [here](/sql/commands/create-peer#granting-permissions). 
 ### Step 1: Add Postgres and Snowflake Peers
 
 Run the following commands to let PeerDB know about the existing Postgres and Snowflake Peers.
