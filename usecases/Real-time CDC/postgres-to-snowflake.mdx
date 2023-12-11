@@ -41,7 +41,7 @@ This demo shows PeerDB syncing a table with 100 million rows from PostgreSQL to 
     1. [AWS RDS and Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.Replication.Logical.html#AuroraPostgreSQL.Replication.Logical.Configure)
     2. [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/azure/postgresql/flexible-server/concepts-logical#pre-requisites-for-logical-replication-and-logical-decoding)
     3. [GCP Cloud SQL PostgreSQL](https://cloud.google.com/sql/docs/postgres/replication/configure-logical-replication#configure-your-postgresql-instance)
-
+5. Ensure that permissions for the Snowflake user and database you wish to use is properly configured. More details are available [here](/sql/commands/create-peer#granting-permissions).
 ### Step 1: Add Postgres and Snowflake Peers
 
 Run the following commands to let PeerDB know about the existing Postgres and Snowflake Peers.
@@ -59,7 +59,7 @@ Make sure to replace **`(…)`** with the appropriate connection details for bot
 
 ### **Step 2: Real-Time CDC from PostgreSQL to Snowflake**
 
-With the peers set up, you can create a mirror that facilitates real-time CDC from PostgreSQL to Snowflake. 
+With the peers set up, you can create a mirror that facilitates real-time CDC from PostgreSQL to Snowflake.
 
 #### Create MIRROR using SQL
 
@@ -91,7 +91,7 @@ If you observe, **TABLE MAPPING** represents the table name mapping between the 
 2. If you want additional types to be supported or want to alter the existing data type mapping, please reach out to us. We can aim to support that within a few days. Also, PeerDB is [fully open source](https://github.com/PeerDB-io/peerdb), so feel free to submit a PR.
 
 > **PeerDB also supports replicating TOAST columns very efficiently**. Unlike most CDC tools, you don't need to set up REPLICA IDENTITY FULL for replicating TOAST columns. This [PR](https://github.com/PeerDB-io/peerdb/pull/111) captures the infrastructural optimizations that PeerDB takes to support TOAST columns.
-> 
+>
 
 #### Create MIRROR using UI
 

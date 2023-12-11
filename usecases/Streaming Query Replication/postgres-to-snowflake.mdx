@@ -39,6 +39,7 @@ psql "port=9900 host=localhost password=peerdb"
 CREATE PEER postgres_peer FROM postgres (...);
 CREATE PEER snowflake_peer FROM snowflake (...);
 ```
+Ensure that [permissions for the Snowflake](/sql/commands/create-peer#granting-permissions) user and database you wish to use is properly configured.
 
 Make sure to replace `(…)` with the appropriate connection details for both the PostgreSQL and Snowflake instances. More details on adding peers are available [here](/sql/commands/create-peer).
 
