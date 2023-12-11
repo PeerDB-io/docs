@@ -115,7 +115,14 @@ CREATE PEER sf_peer FROM SNOWFLAKE WITH
 -- Query away tables in Snowflake
 SELECT * FROM sf_peer.<schema>.<tablename>;
 ```
-
+### Granting permissions
+PeerDB needs to be able to create, read and write to objects in the database you provide. The following commands ensure a smooth mirror:
+```sql
+GRANT ALL PRIVILEGES ON DATABASE <dbname> TO ROLE <role_used_while_creating_peer>;
+GRANT USAGE ON SCHEMA <schema> TO <role_used_while_creating_peer>;
+GRANT ALL ON SCHEMA <schema> TO <role_used_while_creating_peer>;
+```
+More information can be found [here](https://docs.snowflake.com/en/user-guide/security-access-control-configure#label-security-custom-role).
 ### Authentication
 
 PeerDB authenticates the creation of a Snowflake peer based key pair authentication. Encrypted private keys are also supported.
