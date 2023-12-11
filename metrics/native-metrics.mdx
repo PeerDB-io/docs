@@ -5,7 +5,7 @@ title: "Native Metrics"
 PeerDB provides native tables with all the information about ongoing Change-Data Capture and Streaming Query Replication mirrors.
 These tables can be found in your PeerDB instance's `peerdb_stats` schema. Each of those tables are explained below.
 
-#### peerdb_stats.cdc_batch_tables
+#### peerdb_stats.cdc_batch_table
 This is a table which contains information about how many rows are *to be* synced to the destination for each of the tables, of each mirror.
 
 ### peerdb_stats.cdc_batches
@@ -19,3 +19,6 @@ A highly informative table showing everything you need to know about your Query 
 
 ### peerdb_stats.qrep_run
 This table tells you when each individual clone job was started and ended along with their run IDs.
+
+### peerdb_stats.peer_slot_size
+A table providing information about your source PostgreSQL peer's replication slot. Among various fields, it periodically shows (updates) the replication slot size/lag as the difference of current LSN and flushed LSN.
