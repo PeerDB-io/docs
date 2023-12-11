@@ -19,7 +19,7 @@
     {
       "name": "SQL Reference",
       "icon": "rectangle-terminal",
-      "url": "/sql/reference"
+      "url": "sql"
     },
     {
       "name": "GitHub",
@@ -66,7 +66,7 @@
       "pages": [
         {
           "group": "Real-time Change Data Capture from Postgres",
-          "pages":[
+          "pages": [
             "usecases/Real-time CDC/overview",
             "usecases/Real-time CDC/postgres-to-postgres",
             "usecases/Real-time CDC/postgres-to-bigquery",
@@ -77,7 +77,7 @@
         },
         {
           "group": "Streaming Query Replication",
-          "pages":[
+          "pages": [
             "usecases/Streaming Query Replication/overview",
             "usecases/Streaming Query Replication/postgres-to-postgres",
             "usecases/Streaming Query Replication/postgres-to-bigquery",
@@ -111,6 +111,7 @@
     {
       "group": "SQL Commands",
       "pages": [
+        "sql/reference",
         "sql/commands/create-peer",
         "sql/commands/create-mirror",
         "sql/commands/supported-connectors"
