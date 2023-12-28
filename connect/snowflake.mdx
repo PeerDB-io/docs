@@ -181,8 +181,21 @@ begin;
 
 ### PeerDB UI
 
+In the PeerDB UI, after selecting Snowflake as the source, you can configure the connection details as follows:
+
+<Frame caption="Configure PeerDB UI with Snowflake Connection details">
+  <img src="/images/setup/sf-peerdb-ui.png" />
+</Frame>
+
+Validate the connection and create the Peer!
+
+<Info>
+  `SELECT CURRENT_ACCOUNT();` in Snowflake will give you the account identifier.
+</Info>
+
 <Warning>
-  Work in progress
+  `password` is NOT the account password. It is the password used to encrypt the
+  private key, if using an encrypted private key.
 </Warning>
 
 ### PeerDB SQL
