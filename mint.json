@@ -48,6 +48,12 @@
       ]
     },
     {
+      "group": "Setup",
+      "pages": [
+        "connect/snowflake"
+      ]
+    },
+    {
       "group": "5-minute Tutorials",
       "pages": [
         "tutorials/realtime-streaming-of-query-results"

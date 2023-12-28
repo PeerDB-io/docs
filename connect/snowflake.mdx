@@ -1,0 +1,223 @@
+---
+title: "PeerDB Snowflake Setup Guide"
+---
+
+## Prerequisites
+
+To connect Snowflake to PeerDB, you need a Snowflake account with the appropriate permissions to create a user and warehouse for PeerDB.
+
+We have provided a script that you can use to create a user and warehouse for PeerDB. The script also creates a role and grants the role
+the appropriate permissions to access the warehouse and database.
+
+## Setup Roles and Permissions
+
+<Steps>
+  <Step title="Setup Warehouse">
+    You can choose to create an exclusive warehouse for PeerDB or use an existing warehouse:
+
+    1. (Recommended) You can create and use an exclusive warehouse for PeerDB. PeerDB operations will never contend with your queries for resources. You will have to pay the cost of running the warehouse.
+    2. You can use a shared warehouse to reduce your warehouse running cost. PeerDB operations may have to contend with your queries for the shared resources.
+
+  </Step>
+  <Step title="Roles and Permissions">
+    1. Log in to your Snowflake data warehouse.
+    2. Copy the following script to a new [worksheet](https://docs.snowflake.com/en/user-guide/ui-worksheet.html) and edit as needed (to add schemas).
+
+```sql Setup PeerDB Role
+begin;
+
+   -- create variables for user / password / role / warehouse / database (needs to be uppercase for objects)
+   set role_name = 'PEERDB_ROLE';
+   set user_name = 'PEERDB_USER';
+   set user_password = 'PEERDB_5TR0NG_P455W0RD';
+   set warehouse_name = 'PEERDB_WAREHOUSE';
+   set database_name = 'YOUR_DATABASE';
+   set internal_schema = '_PEERDB_INTERNAL' -- do not change this value
+
+   -- change role to securityadmin for user / role steps
+   use role securityadmin;
+
+   -- create role for peerdb
+   create role if not exists identifier($role_name);
+
+   -- create a user for peerdb
+   create user if not exists identifier($user_name)
+   password = $user_password
+   default_role = $role_name
+   default_warehouse = $warehouse_name;
+
+   -- grant the role to the peerdb user
+   grant role identifier($role_name) to user identifier($user_name);
+
+   -- change role to sysadmin for warehouse / database steps
+   use role sysadmin;
+
+   -- Only perform this step if you want to create a
+   -- dedicated warehouse for peerdb (recommended)
+   create warehouse if not exists identifier($warehouse_name)
+   warehouse_size = xsmall
+   warehouse_type = standard
+   auto_suspend = 60
+   auto_resume = true
+   initially_suspended = true;
+
+   -- change role to accountadmin to grant permissions
+   use role ACCOUNTADMIN;
+
+   -- grant peerdb role access to warehouse
+   grant usage on warehouse identifier($warehouse_name)
+   to role identifier($role_name);
+
+   -- grant peerdb access to database
+   grant usage on database identifier($database_name)
+   to role identifier($role_name);
+
+   use database identifier($database_name);
+
+   -- create peerdb internal schema and give all permissions to peerdb role
+   create schema if not exists identifier($internal_schema);
+   grant all on schema identifier($internal_schema) to role identifier($role_name);
+
+   -- add a statement like this one for each schema you want to have accessed by peerdb
+   grant usage on schema PUBLIC to role identifier($role_name); -- example
+   grant usage on schema <schema_name> to role identifier($role_name);
+
+   -- add statements granting select permissions and create table permissions
+   grant create table on schema PUBLIC to role identifier($role_name); -- example
+   grant create table on schema <schema_name> to role identifier($role_name);
+ commit;
+```
+
+</Step>
+
+  <Step title="Warehouse Setup">
+    Depending on whether you want to create a new warehouse or use a shared warehouse, do either of the following:
+
+    1. If you want to create a new exclusive warehouse, don't make any changes to the `PEERDB_WAREHOUSE` value in the script
+    2. If you want PeerDB to use a shared warehouse to process source queries, change the `PEERDB_WAREHOUSE` value in the script to the name of the shared warehouse
+
+  </Step>
+  <Step title="Role, User and Database Setup">
+  Replace the default `PEERDB_ROLE`, `PEERDB_DATABASE`, `PEERDB_USER`, and `PEERDB_5TR0NG_P455W0RD` values with values that conform to your specific naming conventions for those resources.
+  <Warning>
+    Do not use the actual value of `PEERDB_USER` for any other purpose.
+  </Warning>
+  </Step>
+  <Step title="Run the Script">
+  Run the script. Log in as the newly created user and verify that the schemas to sync to are visible in the Snowflake UI.
+  </Step>
+</Steps>
+
+## Setup Key-pair Authentication (Required)
+
+<Steps>
+  <Step title="Terminal">
+    Open the command line in a terminal window.
+  </Step>
+  <Step title="Generate Private Key">
+    Generate a private key. You can generate an encrypted version of the private key or an unencrypted version of the private key.
+
+    To generate an unencrypted version, you can execute one of the following commands:
+
+    ```bash
+    openssl genrsa -out rsa_key.pem 2048
+    openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
+    ```
+
+    To generate an encrypted version, execute the command:
+
+    ```bash
+    openssl genrsa 2048 | openssl pkcs8 -topk8 -v1 <ALGORITHM> -inform PEM -out rsa_key.p8
+    ```
+
+    You can use different algorithms with the `-v1` command line option. These algorithms use the `PKCS#12` password-based encryption algorithm and allow you to use strong encryption algorithms like triple DES or 128-bit RC2. You can use the following encryption algorithms:
+
+    * `PBE-SHA1-RC2-40`
+    * `PBE-SHA1-RC4-40`
+    * `PBE-SHA1-RC2-128`
+    * `PBE-SHA1-RC4-128`
+    * `PBE-SHA1-3DES`
+    * `PBE-SHA1-2DES`
+
+
+    To use stronger encryption algorithms, execute the command:
+
+    ```bash
+    openssl genrsa 2048 | openssl pkcs8 -topk8 -v2 <ALGORITHM> -inform PEM -out rsa_key.p8
+    ```
+
+    You can use different algorithms with the `-v2` command line option. You can use the following encryption algorithms:
+
+    * `AES128`
+    * `AES256`
+    * `DES3`
+
+  </Step>
+  <Step title="Generate Public Key">
+    From the command line, generate the public key by referencing the private key. Execute the command
+
+    ```bash
+    openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
+    ```
+
+  </Step>
+  <Step title="Assign Public Key">
+    Assign the public key to the Snowflake user. In a Snowflake worksheet, execute the command
+
+    ```sql
+    alter user <USERNAME> set rsa_public_key='<PUBLIC_KEY>';
+    ```
+
+    <Warning>
+    You must replace the `<PUBLIC_KEY>` value with the string between the `-----BEGIN PUBLIC KEY----- and -----END PUBLIC KEY-----` statements.
+    </Warning>
+
+    Refer to this [doc](https://docs.snowflake.com/en/user-guide/key-pair-auth#configuring-key-pair-authentication) for more details.
+
+  </Step>
+</Steps>
+
+## Configure PeerDB
+
+### PeerDB UI
+
+<Warning>
+  Work in progress
+</Warning>
+
+### PeerDB SQL
+
+In the PeerDB SQL interface, you can create a peer to Snowflake using the following command:
+
+```sql
+CREATE PEER snowflake_peer FROM SNOWFLAKE WITH
+(
+  account_id = '<snowflake_account_identifier>',
+  username = '<user_name>',
+  private_key ='<private_key>',
+  password = '<password>' -- only provide when the private key is encrypted
+  database = '<database_name>',
+  schema = '<schema>', -- default schema (most likely PUBLIC)
+  warehouse = '<warehouse_name>',
+  role = '<role_name>'
+);
+
+-- Query away tables in Snowflake
+SELECT * FROM sf_peer.<schema>.<tablename>;
+```
+
+<Info>
+  `SELECT CURRENT_ACCOUNT();` in Snowflake will give you the account identifier.
+</Info>
+
+<Warning>
+  `password` is NOT the account password. It is the password used to encrypt the
+  private key, if using an encrypted private key.
+</Warning>
+
+### Considerations
+
+1. **Database Specific:** PeerDB only supports querying tables within a database. Cross database joins are not supported yet.
+2. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying.
+3. **SQL Coverage:** Most SQL constructs in reads incl. Simple Selects, JOINs, aggregations, window functions, CTEs etc are supported. You can run both Postgres compatible and SF compatible queries through PeerDBs interface.
+4. **Error Handling:** If a query fails on the Snowflake side because of lack of auth or query coverage or timeout, PeerDB handles that error and propagates the entire message as a JSON text to the end-user. We also capture this ERROR message within PeerDB logs.
