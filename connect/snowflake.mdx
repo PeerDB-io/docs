@@ -189,9 +189,27 @@ begin;
 
 ## Configure PeerDB
 
+<Info>
+  To get the Snowflake `account_id`, run the following query in Snowflake worksheet:
+
+```sql
+select t.value:host || '' snowflake
+from table(flatten(parse_json(system$whitelist()))) t
+where t.value:type = 'SNOWFLAKE_DEPLOYMENT'
+```
+
+remove `.snowflakecomputing.com` from the output of the above query to get the account identifier.
+
+</Info>
+
 ### PeerDB UI
 
 In the PeerDB UI, after selecting Snowflake as the source, you can configure the connection details as follows:
+
+<Warning>
+  `password` is NOT the account password. It is the password used to encrypt the
+  private key, if using an encrypted private key.
+</Warning>
 
 <Frame caption="Configure PeerDB UI with Snowflake Connection details">
   <img src="/images/setup/sf-peerdb-ui.png" />
@@ -199,18 +217,14 @@ In the PeerDB UI, after selecting Snowflake as the source, you can configure the
 
 Validate the connection and create the Peer!
 
-<Info>
-  `SELECT CURRENT_ACCOUNT();` in Snowflake will give you the account identifier.
-</Info>
+### PeerDB SQL
+
+In the PeerDB SQL interface, you can create a peer to Snowflake using the following command:
 
 <Warning>
   `password` is NOT the account password. It is the password used to encrypt the
   private key, if using an encrypted private key.
 </Warning>
-
-### PeerDB SQL
-
-In the PeerDB SQL interface, you can create a peer to Snowflake using the following command:
 
 ```sql
 CREATE PEER snowflake_peer FROM SNOWFLAKE WITH
@@ -228,19 +242,6 @@ CREATE PEER snowflake_peer FROM SNOWFLAKE WITH
 -- Query away tables in Snowflake
 SELECT * FROM sf_peer.<schema>.<tablename>;
 ```
-
-<Info>
-  To get the `account_id`, do the following steps:
-
-  `SELECT CURRENT_ACCOUNT();` in Snowflake will give you the account identifier. The host domain of the snowflake instance (must include the account, region, cloud environment).
-  Example: `<account_identifier>.us-east-2.aws.snowflakecomputing.com`. In the `account_id` field, you only need to `<account_identifier>.<region>.<cloud>` part,
-  essentially all the way up to the `.snowflakecomputing.com` part, excluding the `.snowflakecomputing.com` part.
-</Info>
-
-<Warning>
-  `password` is NOT the account password. It is the password used to encrypt the
-  private key, if using an encrypted private key.
-</Warning>
 
 ### Considerations
 
