@@ -19,6 +19,19 @@ the appropriate permissions to access the warehouse and database.
     2. You can use a shared warehouse to reduce your warehouse running cost. PeerDB operations may have to contend with your queries for the shared resources.
 
   </Step>
+  <Step title="Warehouse Setup">
+    Depending on whether you want to create a new warehouse or use a shared warehouse, do either of the following:
+
+    1. If you want to create a new exclusive warehouse, don't make any changes to the `PEERDB_WAREHOUSE` value in the script
+    2. If you want PeerDB to use a shared warehouse to process source queries, change the `PEERDB_WAREHOUSE` value in the script to the name of the shared warehouse
+
+  </Step>
+  <Step title="Role, User and Database Setup">
+  Replace the default `PEERDB_ROLE`, `PEERDB_DATABASE`, `PEERDB_USER`, and `PEERDB_5TR0NG_P455W0RD` values with values that conform to your specific naming conventions for those resources.
+  <Warning>
+    Do not use the actual value of `PEERDB_USER` for any other purpose.
+  </Warning>
+  </Step>
   <Step title="Roles and Permissions">
     1. Log in to your Snowflake data warehouse.
     2. Copy the following script to a new [worksheet](https://docs.snowflake.com/en/user-guide/ui-worksheet.html) and edit as needed (to add schemas).
@@ -90,19 +103,7 @@ begin;
 
 </Step>
 
-  <Step title="Warehouse Setup">
-    Depending on whether you want to create a new warehouse or use a shared warehouse, do either of the following:
-
-    1. If you want to create a new exclusive warehouse, don't make any changes to the `PEERDB_WAREHOUSE` value in the script
-    2. If you want PeerDB to use a shared warehouse to process source queries, change the `PEERDB_WAREHOUSE` value in the script to the name of the shared warehouse
-
-  </Step>
-  <Step title="Role, User and Database Setup">
-  Replace the default `PEERDB_ROLE`, `PEERDB_DATABASE`, `PEERDB_USER`, and `PEERDB_5TR0NG_P455W0RD` values with values that conform to your specific naming conventions for those resources.
-  <Warning>
-    Do not use the actual value of `PEERDB_USER` for any other purpose.
-  </Warning>
-  </Step>
+  
   <Step title="Run the Script">
   Run the script. Log in as the newly created user and verify that the schemas to sync to are visible in the Snowflake UI.
   </Step>
