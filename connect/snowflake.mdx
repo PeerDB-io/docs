@@ -179,7 +179,10 @@ begin;
     </Warning>
 
     ```sql
+    BEGIN;
+    use role accountadmin;
     alter user <USERNAME> set rsa_public_key='<PUBLIC_KEY>';
+    COMMIT;
     ```
 
     Refer to this [doc](https://docs.snowflake.com/en/user-guide/key-pair-auth#configuring-key-pair-authentication) for more details.
@@ -199,6 +202,8 @@ where t.value:type = 'SNOWFLAKE_DEPLOYMENT'
 ```
 
 remove `.snowflakecomputing.com` from the output of the above query to get the account identifier.
+
+Example in `lixxxxx.us-east-1.snowflakecomputing.com`, you want to use `lixxxxx.us-east-1` as the account identifier.
 
 </Info>
 
