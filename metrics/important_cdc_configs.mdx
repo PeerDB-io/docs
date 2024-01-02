@@ -5,32 +5,32 @@ title: "Config Tuning for Change Data Capture (CDC)"
 The behavior of PeerDB while consuming changes from the logical replication slot is as follows:
 
 1. PeerDB would start reading the slot and keep waiting until the first record appears. It **never exits** before the first record appears.
-    
+
 2. Once the first record appears - SyncFlow exits based on whichever comes first:
-    
-3. `PEERDB_CDC_IDLE_TIMEOUT_SECONDS` defaults to 10s. This is set as an environment variable for the flow worker. OR
-    
+
+3. `PEERDB_CDC_IDLE_TIMEOUT_SECONDS` defaults to 60s. This is set as an environment variable for the flow worker. OR
+
 4. `max_batch_size` defaults to 100K. This is set as a part an option (WITH part) of the `CREATE MIRROR` command.
-    
+
 
 Below are the list of a few recommendations that you can follow while tuning `PEERDB_CDC_IDLE_TIMEOUT_SECONDS` and `max_batch_size`
 
 ## Latency / Lag Sensitive Workloads
 
-1. Low `PEERDB_CDC_IDLE_TIMEOUT_SECONDS` . You can leave this as default i.e. 10s. Other sane defaults incl. 30s, 60s etc.
-    
+1. Low `PEERDB_CDC_IDLE_TIMEOUT_SECONDS` . You can leave this as default i.e. 60s. Other sane defaults incl. 30s, 40s etc.
+
 2. High enough `max_batch_size`  to avoid too many roundtrips and support larger throughputs. You can leave this as default i.e. 100K or go a bit higher say 500K
-    
+
 
 ## Others
 
 1. High `PEERDB_CDC_IDLE_TIMEOUT_SECONDS` . Can be 5mins, 10mins, 30mins based on what acceptable lag or realtime-ness you are aiming for.
-    
+
 2. High `enough max_batch_size` to avoid too many roundtrips and support larger throughputs. You can decide this based on the memory available on the PeerDB instance. For example 100K for instances with low memory (&lt;=16GB) and 1 million for vms with higher RAM (&gt;=32GB RAM)
-    
+
 
 ## Postgres configs
 
 1. Make sure to set `wal_sender_timeout` to 0
-    
+
 2. If you constantly observing IO wait\_event\_type in pg\_stat\_activity while PeerDB is consuming the slot, consider increasing (say doubling) `logical_decoding_work_mem`

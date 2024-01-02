@@ -58,7 +58,7 @@ Make sure to replace **`(…)`** with the appropriate connection details for the
 
 ### **Step 2: Real-Time CDC from PostgreSQL to PostgreSQL**
 
-With the peers set up, you can create a mirror that facilitates real-time CDC from PostgreSQL to PostgreSQL. 
+With the peers set up, you can create a mirror that facilitates real-time CDC from PostgreSQL to PostgreSQL.
 
 ```sql
 -- Real-time CDC between two Postgres peers
@@ -72,7 +72,7 @@ WITH (
   snapshot_num_rows_per_partition = 500000,
   snapshot_max_parallel_workers = 4,
   snapshot_num_tables_in_parallel = 4
-); 
+);
 ```
 
 If you observe, **TABLE MAPPING** represents the table name mapping between the two Postgres peers. The final `WITH` clause captures if you wanted to include initial snapshot as a part of the MIRROR. If you don't include that `WITH`, peerdb assumes that you don't want to perform an initial snapshot. If just reads the slot and replays the changes to the target.
