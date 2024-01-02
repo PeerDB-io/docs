@@ -48,7 +48,7 @@ Let's look at a short video showcasing CDC from PostgreSQL to Google Cloud Stora
 2. For PeerDB to access the S3 Peer, you can either use an existing AWS user or create a new AWS user.
 3. Create access keys for that user through [AWS Console](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey) or [AWS CLI](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey_CLIAPI) or [AWS API](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey_API)
 4. For the same user, create and attach a policy as below using JSON editor. Sharing [AWS docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-create-and-attach-iam-policy.html) for reference. PeerDB requires `s3:ListAllMyBuckets`, `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` and `s3:DeleteObject` on that bucket.
-    
+
      ```json
         {
             "Version": "2012-10-17",
@@ -74,7 +74,7 @@ Let's look at a short video showcasing CDC from PostgreSQL to Google Cloud Stora
             ]
         }
         ```
-  
+
 
 #### GCS peer
 1. Ensure you have an existing bucket to use.
