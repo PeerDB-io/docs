@@ -50,7 +50,8 @@
     {
       "group": "Setup",
       "pages": [
-        "connect/snowflake"
+        "connect/snowflake",
+        "connect/bigquery"
       ]
     },
     {
