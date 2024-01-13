@@ -51,7 +51,8 @@
       "group": "Setup",
       "pages": [
         "connect/snowflake",
-        "connect/bigquery"
+        "connect/bigquery",
+        "connect/rds_postgres"
       ]
     },
     {
