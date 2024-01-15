@@ -16,7 +16,6 @@ Anything on or after Postgres 12
 
 
 1. Create a new parameter group for your Postgres version with `rds.logical_replication` set to 1; and `wal_sender_timeout` set to 0.
-    parameter_group_in_blade.png
 
     <Frame caption="Where to find Parameter groups in RDS?">
     <img src="/images/setup/parameter_group_in_blade.png" />
@@ -29,15 +28,15 @@ Anything on or after Postgres 12
     <Frame caption="Changing wal_sender_timeout">
     <img src="/images/setup/change_wal_sender_timeout.png" />
     </Frame>
-    
+
 2. Modify the RDS Postgres database by adding the new parameter group.
 
     <Frame caption="Modifying RDS Postgres with new parameter group">
     <img src="/images/setup/modify_parameter_group.png" />
     </Frame>
-    
+
 3. Reboot your RDS Postgres database for the above parameters to kick in.
-    
+
     <Frame caption="Reboot RDS Postgres">
     <img src="/images/setup/reboot_rds.png" />
     </Frame>
@@ -47,35 +46,36 @@ Anything on or after Postgres 12
 Connect to your RDS postgres through the admin user and run the below commands:
 
 1. Create a Postgres user exclusively for PeerDB.
-    
+
     1. ```sql
           CREATE USER peerdb_user PASSWORD 'some-password';
         ```
-        
+
 2. Grant read-only access to the schema from which you are replicating tables to `peerdb-user`. Below example shows granting permissions for the `public` schema. If you want to grant access to multiple schemas, you can run these three commands for each schema.
-    
+
     1. ```sql
           GRANT USAGE ON SCHEMA "public" TO peerdb_user;
           GRANT SELECT ON ALL TABLES IN SCHEMA "public" TO peerdb_user;
           ALTER DEFAULT PRIVILEGES IN SCHEMA "public" GRANT SELECT ON TABLES TO peerdb_user;
         ```
-        
+
 3. Grant replication access to this user:
-    
+
     1. ```sql
           GRANT rds_replication TO peerdb_user ;
         ```
-        
+
 4. Create publication that you'll be using for creating the MIRROR (replication) in future.
-    
+
     1. ```sql
           CREATE PUBLICATION peerdb_publication FOR ALL TABLES;
         ```
-        
 
-## Safe list PeerDB Cloud IPs
 
-If you are using PeerDB Cloud please safe list PeerDB IPs (`100.21.65.249`, `54.213.107.162` and `54.201.178.203`) by editing the `Inbound rules` of the `Security group` in which your RDS Postgres is located.
+## Safe-list PeerDB Cloud IPs
+
+If you are using PeerDB Cloud please safe-list PeerDB IPs (`100.21.65.249`, `54.213.107.162` and `54.201.178.203`) by editing the `Inbound rules` of the `Security group` in which your RDS Postgres is located.
+You will need to add 3 new rules for port 5432, each having one of the above IPs specified as the source.
 
 <Frame caption="Where to find security group in RDS Postgres?">
 <img src="/images/setup/security_group_in_rds_postgres.png" />
@@ -84,6 +84,8 @@ If you are using PeerDB Cloud please safe list PeerDB IPs (`100.21.65.249`, `54.
 <Frame caption="Edit inbound rules for the above security group">
 <img src="/images/setup/edit_inbound_rules.png" />
 </Frame>
+
+We recommend rebooting the PostgreSQL instance for the above changes to take effect.
 
 ## Create RDS Postgres Peer in PeerDB
 
