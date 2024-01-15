@@ -1,0 +1,53 @@
+
+Below table shows supported data types across PostgreSQL, BigQuery and Snowflake.
+
+#### Primitive Data Types
+
+<br></br>
+
+| Source | Destinations
+| --- | --- |
+| <b>PostgreSQL Type</b> | <b>PostgreSQL</b> | <b>BigQuery</b> | <b>Snowflake</b> |
+| `smallint` | `smallint` | `INT64` | `NUMBER` |
+| `integer` | `integer` | `INT64` | `NUMBER` |
+| `bigint` | `bigint` | `INT64` | `NUMBER` |
+| `real` | `float32` | `FLOAT32` | `FLOAT` |
+| `bit` | `bit` | `BYTES` | `BINARY` |
+| `bit varying` | `varbit` | `BYTES` | `BINARY` |
+| `boolean` | `bool` | `BOOL` | `BOOLEAN` |
+| `bytea` | `bytea` | `BYTES` | `BINARY` |
+| `character` | `char` | `STRING` | `STRING` |
+| `character varying` | `varchar` | `STRING` | `STRING` |
+| `inet` | `inet` | `STRING` | `STRING` |
+| `macaddr` | `macaddr` | `STRING` | `STRING` |
+| `cidr` | `cidr` | `STRING` | `STRING` |
+| `date` | `date` | `DATE` | `DATE` |
+| `double precision` | `double precision` | `FLOAT64` | `FLOAT` |
+| `json` | `json` | `STRING` | `VARIANT` |
+| `jsonb` | `jsonb` | `STRING` | `VARIANT` |
+| `hstore` | `hstore` | `JSON` | `VARIANT` |
+| `numeric` | `numeric` | `NUMERIC` | `NUMBER` |
+| `money` | `money` | `NUMERIC` | `NUMBER` |
+| `text` | `text` | `STRING` | `STRING` |
+| `geography` | `string` | `GEOGRAPHY` | `GEOGRAPHY` |
+| `geometry` | `string` | `GEOGRAPHY` | `GEOMETRY` |
+
+
+#### Array Data Types
+<br></br>
+| Source | Destinations
+| --- | --- |
+| <b>PostgreSQL Type</b> | <b>PostgreSQL</b> | <b>BigQuery</b> | <b>Snowflake</b> |
+| `ARRAY<INT2>` | `ARRAY<INT2>` | `ARRAY<INT>` | `VARIANT` |
+| `ARRAY<INT4>` | `ARRAY<INT4>` | `ARRAY<INT>` | `VARIANT` |
+| `ARRAY<INT8>` | `ARRAY<INT8>` | `ARRAY<INT>` | `VARIANT` |
+| `ARRAY<DOUBLE PRECISION>` | `ARRAY<DOUBLE PRECISION>` | `ARRAY<DOUBLE PRECISION>` | `VARIANT` |
+| `ARRAY<FLOAT8>` | `ARRAY<FLOAT8>` | `ARRAY<FLOAT64>` | `VARIANT` |
+| `ARRAY<BOOL>` | `ARRAY<BOOL>` | `ARRAY<BOOL>` | `VARIANT` |
+| `ARRAY<VARCHAR>` | `ARRAY<VARCHAR>` | `ARRAY<STRING>` | `VARIANT` |
+| `ARRAY<TEXT>` | `ARRAY<TEXT>` | `ARRAY<STRING>` | `VARIANT` |
+| `ARRAY<DATE>` | `ARRAY<DATE>` | `ARRAY<DATE>` | `VARIANT` |
+| `ARRAY<TIMESTAMP>` | `ARRAY<TIMESTAMP>` | `ARRAY<TIMESTAMP>` | `VARIANT` |
+| `ARRAY<TIMESTAMPTZ>` | `ARRAY<TIMESTAMPTZ>` | `ARRAY<TIMESTAMPTZ>` | `VARIANT` |
+
+
