@@ -1,5 +1,5 @@
 
-Below table shows supported data types across PostgreSQL, BigQuery and Snowflake.
+Below table shows supported data types across **PostgreSQL, BigQuery and Snowflake**.
 
 #### Primitive Data Types
 
@@ -8,31 +8,29 @@ Below table shows supported data types across PostgreSQL, BigQuery and Snowflake
 | Source | Destinations
 | --- | --- |
 | <b>PostgreSQL Type</b> | <b>PostgreSQL</b> | <b>BigQuery</b> | <b>Snowflake</b> |
-| `smallint` | `smallint` | `INT64` | `NUMBER` |
-| `integer` | `integer` | `INT64` | `NUMBER` |
-| `bigint` | `bigint` | `INT64` | `NUMBER` |
-| `real` | `float32` | `FLOAT32` | `FLOAT` |
+| `smallint` | `smallint` | `INTEGER` | `INTEGER` |
+| `integer` | `integer` | `INTEGER` | `INTEGER` |
+| `bigint` | `bigint` | `INTEGER` | `INTEGER` |
+| `float4` | `float4` | `FLOAT` | `FLOAT` |
+| `double precision` | `double precision` | `FLOAT` | `FLOAT` |
+| `boolean` | `bool` | `BOOLEAN` | `BOOLEAN` |
 | `bit` | `bit` | `BYTES` | `BINARY` |
 | `bit varying` | `varbit` | `BYTES` | `BINARY` |
-| `boolean` | `bool` | `BOOL` | `BOOLEAN` |
 | `bytea` | `bytea` | `BYTES` | `BINARY` |
-| `character` | `char` | `STRING` | `STRING` |
+| `character` | `character` | `STRING` | `STRING` |
 | `character varying` | `varchar` | `STRING` | `STRING` |
 | `inet` | `inet` | `STRING` | `STRING` |
 | `macaddr` | `macaddr` | `STRING` | `STRING` |
 | `cidr` | `cidr` | `STRING` | `STRING` |
 | `date` | `date` | `DATE` | `DATE` |
-| `double precision` | `double precision` | `FLOAT64` | `FLOAT` |
 | `json` | `json` | `STRING` | `VARIANT` |
-| `jsonb` | `jsonb` | `STRING` | `VARIANT` |
 | `hstore` | `hstore` | `JSON` | `VARIANT` |
 | `numeric` | `numeric` | `NUMERIC` | `NUMBER` |
-| `money` | `money` | `NUMERIC` | `NUMBER` |
 | `text` | `text` | `STRING` | `STRING` |
-| `geography` | `string` | `GEOGRAPHY` | `GEOGRAPHY` |
-| `geometry` | `string` | `GEOGRAPHY` | `GEOMETRY` |
+| `geography` | `geography` | `GEOGRAPHY` | `GEOGRAPHY` |
+| `geometry` | `geometry` | `GEOGRAPHY` | `GEOMETRY` |
 
-
+<br></br>
 #### Array Data Types
 <br></br>
 | Source | Destinations
@@ -41,13 +39,34 @@ Below table shows supported data types across PostgreSQL, BigQuery and Snowflake
 | `ARRAY<INT2>` | `ARRAY<INT2>` | `ARRAY<INT>` | `VARIANT` |
 | `ARRAY<INT4>` | `ARRAY<INT4>` | `ARRAY<INT>` | `VARIANT` |
 | `ARRAY<INT8>` | `ARRAY<INT8>` | `ARRAY<INT>` | `VARIANT` |
+| `ARRAY<FLOAT4>` | `ARRAY<FLOAT4>` | `ARRAY<FLOAT>` | `VARIANT` |
 | `ARRAY<DOUBLE PRECISION>` | `ARRAY<DOUBLE PRECISION>` | `ARRAY<DOUBLE PRECISION>` | `VARIANT` |
-| `ARRAY<FLOAT8>` | `ARRAY<FLOAT8>` | `ARRAY<FLOAT64>` | `VARIANT` |
 | `ARRAY<BOOL>` | `ARRAY<BOOL>` | `ARRAY<BOOL>` | `VARIANT` |
 | `ARRAY<VARCHAR>` | `ARRAY<VARCHAR>` | `ARRAY<STRING>` | `VARIANT` |
 | `ARRAY<TEXT>` | `ARRAY<TEXT>` | `ARRAY<STRING>` | `VARIANT` |
 | `ARRAY<DATE>` | `ARRAY<DATE>` | `ARRAY<DATE>` | `VARIANT` |
 | `ARRAY<TIMESTAMP>` | `ARRAY<TIMESTAMP>` | `ARRAY<TIMESTAMP>` | `VARIANT` |
-| `ARRAY<TIMESTAMPTZ>` | `ARRAY<TIMESTAMPTZ>` | `ARRAY<TIMESTAMPTZ>` | `VARIANT` |
+| `ARRAY<TIMESTAMPTZ>` | `ARRAY<TIMESTAMPTZ>` | `ARRAY<TIMESTAMP>` | `VARIANT` |
+<br></br>
 
+### Design Choices
+We recognise that there are various approaches to handling certain data types. Here are some decisions we've taken for PeerDB.
 
+#### Geospatial Data
+PeerDB detects invalid shapes (for example, a `linestring` with only one point) among PostGIS values it pulls, and writes them as null on the destination.
+We keep a log of this data and it can be retrieved if needed.
+
+Valid geospatial data is written on BigQuery and Snowflake in `Well-Known Text (WKT)` format,
+while to PostgreSQL destinations it is written as it is received.
+
+#### HStore Data
+PeerDB writes `HSTORE` data as `JSON` on BigQuery. All intricaces of the `HSTORE` data type are preserved, such as:
+- `NULL` values. Example: `'"a"=>NULL'` will be written as `{"a":null}`
+- Empty keys. Example: `'""=>1'` will be written as `{"":1}`
+- Overriding duplicate key values. Example: `'"a"=>"1", "a"=>"2"'` will be written as `{"a":2}`
+
+To Snowflake, it is written as a `VARIANT` data type, although it is
+formatted as a `JSON` and can be queried as such - `snowflake_hstore_column:key`.
+
+#### Nulls in BigQuery Arrays
+PeerDB removes `null` values from BigQuery arrays. This is because BigQuery does not support `null` values in arrays during their insertion.
