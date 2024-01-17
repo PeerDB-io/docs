@@ -71,6 +71,12 @@
       ]
     },
     {
+      "group": "Data types",
+      "pages": [
+        "datatypes/datatype-matrix"
+      ]
+    },
+    {
       "group": "Use-cases",
       "pages": [
         {
