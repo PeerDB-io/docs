@@ -25,7 +25,7 @@ Below table shows supported data types across **PostgreSQL, BigQuery and Snowfla
 | `date` | `date` | `DATE` | `DATE` |
 | `json` | `json` | `STRING` | `VARIANT` |
 | `hstore` | `hstore` | `JSON` | `VARIANT` |
-| `numeric` | `numeric` | `NUMERIC` | `NUMBER` |
+| `numeric` | `numeric` | `BIGNUMERIC` | `NUMBER` |
 | `text` | `text` | `STRING` | `STRING` |
 | `geography` | `geography` | `GEOGRAPHY` | `GEOGRAPHY` |
 | `geometry` | `geometry` | `GEOGRAPHY` | `GEOMETRY` |
@@ -51,6 +51,17 @@ Below table shows supported data types across **PostgreSQL, BigQuery and Snowfla
 
 ### Design Choices
 We recognise that there are various approaches to handling certain data types. Here are some decisions we've taken for PeerDB.
+
+#### Numeric Type
+For Snowflake, we map PostgreSQL's `numeric` type as follows:
+- `numeric` with no specified precision and scale is mapped to `NUMBER(38,20)`.
+- `numeric` with precision OR scale which is beyond 38 and 37 is mapped to `NUMBER(38, 20)`.
+- `numeric` with precision AND scale within the above limits is mapped to `NUMBER(precision, scale)`.
+
+For BigQuery, we map PostgreSQL's `numeric` type as follows:
+- `numeric` with no specified precision and scale is mapped to `BIGNUMERIC(38,20)`.
+- `numeric` with precision OR scale which is beyond 38 and 37 respectively, is mapped to `BIGNUMERIC(38, 20)`.
+- `numeric` with precision AND scale within the above limits is mapped to `BIGNUMERIC(precision, scale)`.
 
 #### Geospatial Data
 PeerDB detects invalid shapes (for example, a `linestring` with only one point) among PostGIS values it pulls, and writes them as null on the destination.
