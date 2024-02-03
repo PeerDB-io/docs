@@ -1,0 +1,96 @@
+---
+title: "Azure Flexible Server Postgres Source Setup Guide"
+---
+
+import SSHTunnel from '/snippets/ssh-tunnel.mdx';
+
+## Supported Postgres versions
+
+Anything on or after Postgres 12
+
+## Enable Logical Replication
+
+**You don't need** to follow the below steps if the settings `wal_level`. This setting should mostly be pre-configured if you are migrating from another data replication tool.
+
+1. Click on the **Server parameters** section
+
+<Frame caption="Server Parameters">
+    <img src="/images/setup/flexible_server/server_parameters.png" />
+</Frame>
+
+2. Edit the `wal_level` to `logical`
+
+<Frame caption="Change wal_level to logical">
+    <img src="/images/setup/flexible_server/wal_level.png" />
+</Frame>
+
+3. This change would require a server restart. So restart when requested.
+
+<Frame caption="Restart server">
+    <img src="/images/setup/flexible_server/restart.png" />
+</Frame>
+
+
+## Add PeerDB Cloud IPs to Firewall
+
+If you are using **PeerDB Cloud**, please follow the below steps to add peerdb ips to your network.
+
+1. Go to the **Networking** tab and add the 3 IPs `100.21.65.249`, `54.213.107.162` and `54.201.178.203` to Firewall 
+
+<Frame caption="Add PeerDB IPs to Firewall">
+    <img src="/images/setup/flexible_server/firewall.png" />
+</Frame>
+
+## Creating PeerDB User and Granting permissions
+
+Connect to your Azure Flexible Server Postgrees through the admin user and run the below commands:
+
+1. Create a Postgres user for exclusively PeerDB.
+    
+    1. ```sql
+              CREATE USER peerdb_user PASSWORD 'some-password';
+        ```
+        
+2. Provide read-only access to the schema from which you are replicating tables to the `peerdb-user`. Below example shows setting up permissions for the `public` schema. If you want to grant access to multiple schemas, you can run these three commands for each schema.
+    
+    1. ```sql
+              GRANT USAGE ON SCHEMA "public" TO peerdb_user;
+              GRANT SELECT ON ALL TABLES IN SCHEMA "public" TO peerdb_user;
+              ALTER DEFAULT PRIVILEGES IN SCHEMA "public" GRANT SELECT ON TABLES TO peerdb_user;
+        ```
+        
+3. Grant replication access to this user:
+    
+    1. ```sql
+           ALTER ROLE peerdb_user REPLICATION;
+        ```
+        
+4. Create publication that you'll be using for creating the MIRROR (replication) in future.
+    
+    1. ```sql
+              CREATE PUBLICATION peerdb_publication FOR ALL TABLES;
+        ```
+
+5. Set `wal_sender_timeout` to 0 for `peerdb_user`
+```sql
+        ALTER ROLE peerdb_user SET wal_sender_timeout to 0;
+```
+
+<SSHTunnel />
+
+
+## Create Azure Flexible Server Postgres Peer in PeerDB
+
+Through the PeerDB UI, create the Flexible Postgres Peer using the `peerdb_user` that you created in the previous step.
+
+<Frame caption="Choose PostgreSQL Peer">
+    <img src="/images/setup/flexible_server/create_peer1.png" />
+</Frame>
+
+<Frame caption="Peer Creation and Validation">
+    <img src="/images/setup/flexible_server/create_peer2.png" />
+</Frame>
+
+<Frame caption="Created Peer">
+    <img src="/images/setup/flexible_server/create_peer3.png" />
+</Frame>
