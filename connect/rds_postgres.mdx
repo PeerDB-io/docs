@@ -2,6 +2,8 @@
 title: "RDS Postgres Source Setup Guide"
 ---
 
+import SSHTunnel from '/snippets/ssh-tunnel.mdx';
+
 ## Supported Postgres versions
 
 Anything on or after Postgres 12
@@ -95,3 +97,5 @@ Through the PeerDB UI, create the RDS Postgres Peer using the `peerdb_user` that
 <Frame caption="Create RDS Postgres Peer">
 <img src="/images/setup/create_peer.png" />
 </Frame>
+
+<SSHTunnel />
