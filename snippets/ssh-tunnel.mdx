@@ -1,0 +1,26 @@
+## PeerDB SSH Tunneling Guide
+
+Sometimes to connect to your Postgres database you need to use an SSH tunnel. This is typically used when your database is not publicly accessible and you need to connect to it a jump server in your VPC. This is done by creating an SSH tunnel to the jump server and then connecting to the database through the tunnel.
+
+<Steps>
+    <Step title="Generate a key-pair">
+        Generate a key-pair using the following command:
+        
+        ```bash
+        ssh-keygen -t rsa -b 4096 -C "peerdb-ssh-tunnel" -f peerdb_key.pem
+        ```
+
+        This will generate a private key (`peerdb_key.pem`) and a public key (`peerdb_key.pub`).
+    </Step>
+    <Step title="Add public key to your jump server">
+        Add the public key to your jump server. This can be done by adding the public key to the `~/.ssh/authorized_keys` file on the jump server.
+
+        ```bash
+        # On the jump server
+        cat peerdb_key.pub >> ~/.ssh/authorized_keys
+        ```
+    </Step>
+    <Step title="Add private key to the connection">
+    When creating a Postgres peer you can specify the option to use an SSH tunnel. There you will be able to provide the private key you generated in the first step along with the jump server details.
+    </Step>
+</Steps>
