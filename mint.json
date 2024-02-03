@@ -56,6 +56,12 @@
       ]
     },
     {
+      "group": "Mirror",
+      "pages": [
+        "mirror/cdc-pg-sf"
+      ]
+    },
+    {
       "group": "5-minute Tutorials",
       "pages": [
         "tutorials/realtime-streaming-of-query-results"
