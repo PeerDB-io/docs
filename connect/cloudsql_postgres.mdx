@@ -2,6 +2,8 @@
 title: "Google CloudSQL Postgres Source Setup Guide"
 ---
 
+import SSHTunnel from '/snippets/ssh-tunnel.mdx';
+
 ## Supported Postgres versions
 
 Anything on or after Postgres 12
@@ -104,3 +106,5 @@ Through the PeerDB UI, create the CloudSQL Peer using the `peerdb_user` that you
 <Frame caption="Created Peer">
     <img src="/images/setup/cloudsql_postgres/create_peer3.png" />
 </Frame>
+
+<SSHTunnel />
