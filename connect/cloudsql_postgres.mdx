@@ -1,0 +1,106 @@
+---
+title: "Google CloudSQL Postgres Source Setup Guide"
+---
+
+## Supported Postgres versions
+
+Anything on or after Postgres 12
+
+## Enable Logical Replication
+
+**You don't need** to follow the below steps if the settings `cloudsql. logical_decoding` is on and `wal_sender_timeout` is 0. These settings should mostly be pre-configured if you are migrating from another data replication tool.
+
+1. Click on **Edit** button on the Overview page.
+
+<Frame caption="Edit Button in CloudSQL Postgres">
+    <img src="/images/setup/cloudsql_postgres/edit.png" />
+</Frame>
+    
+2. Go to Flags and change `cloudsql.logical_decoding` to on and `wal_sender_timeout` to 0. These changes will need restarting your Postgres server.
+    
+
+<Frame caption="Change cloudsql.logical_decoding to on">
+    <img src="/images/setup/cloudsql_postgres/cloudsql_logical_decoding1.png" />
+</Frame>
+
+<Frame caption="Changed cloudsql.logical_decoding and wal_sender_timeout">
+    <img src="/images/setup/cloudsql_postgres/cloudsql_logical_decoding2.png" />
+</Frame>
+
+<Frame caption="Restart Server">
+    <img src="/images/setup/cloudsql_postgres/cloudsql_logical_decoding3.png" />
+</Frame>
+
+
+## Add PeerDB Cloud IPs to Firewall
+
+If you are using **PeerDB Cloud**, please follow the below steps to add peerdb ips to your network.
+
+1. Go to **Connections** section
+    
+<Frame caption="CloudSQL Connection Connection Section">
+    <img src="/images/setup/cloudsql_postgres/connections.png" />
+</Frame>
+
+2. Go to the Networking subsection
+
+<Frame caption="Networking Sub Section in the Conenction Section">
+    <img src="/images/setup/cloudsql_postgres/coconnections_networking.png" />
+</Frame>
+
+3. Add 3 networks for the IPs `100.21.65.249`, `54.213.107.162` and `54.201.178.203`
+
+<Frame caption="Add PeerDB Networks">
+    <img src="/images/setup/cloudsql_postgres/firewall1.png" />
+</Frame>
+
+<Frame caption="PeerDB Networks Added">
+    <img src="/images/setup/cloudsql_postgres/firewall2.png" />
+</Frame>
+
+## Creating PeerDB User and Granting permissions
+
+Connect to your CloudSQL Postgres through the admin user and run the below commands:
+
+1. Create a Postgres user for exclusively PeerDB.
+    
+    1. ```sql
+              CREATE USER peerdb_user PASSWORD 'some-password';
+        ```
+        
+2. Provide read-only access to the schema from which you are replicating tables to the `peerdb-user`. Below example shows setting up permissions for the `public` schema. If you want to grant access to multiple schemas, you can run these three commands for each schema.
+    
+    1. ```sql
+              GRANT USAGE ON SCHEMA "public" TO peerdb_user;
+              GRANT SELECT ON ALL TABLES IN SCHEMA "public" TO peerdb_user;
+              ALTER DEFAULT PRIVILEGES IN SCHEMA "public" GRANT SELECT ON TABLES TO peerdb_user;
+        ```
+        
+3. Grant replication access to this user:
+    
+    1. ```sql
+           ALTER ROLE peerdb_user REPLICATION;
+        ```
+        
+4. Create publication that you'll be using for creating the MIRROR (replication) in future.
+    
+    1. ```sql
+              CREATE PUBLICATION peerdb_publication FOR ALL TABLES;
+        ```
+        
+
+## Create CloudSQL Postgres Peer in PeerDB
+
+Through the PeerDB UI, create the CloudSQL Peer using the `peerdb_user` that you created in the previous step.
+
+<Frame caption="Choose PostgreSQL Peer">
+    <img src="/images/setup/cloudsql_postgres/create_peer1.png" />
+</Frame>
+
+<Frame caption="Peer Creation and Validation">
+    <img src="/images/setup/cloudsql_postgres/create_peer2.png" />
+</Frame>
+
+<Frame caption="Created Peer">
+    <img src="/images/setup/cloudsql_postgres/create_peer3.png" />
+</Frame>

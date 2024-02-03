@@ -53,6 +53,7 @@
         "connect/snowflake",
         "connect/bigquery",
         "connect/rds_postgres",
+        "connect/cloudsql_postgres",
         "connect/ssh_tunnel"
       ]
     },
