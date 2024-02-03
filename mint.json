@@ -58,7 +58,9 @@
     {
       "group": "Mirror",
       "pages": [
-        "mirror/cdc-pg-sf"
+        "mirror/cdc-pg-bq",
+        "mirror/cdc-pg-sf",
+        "mirror/cdc-pg-pg"
       ]
     },
     {
