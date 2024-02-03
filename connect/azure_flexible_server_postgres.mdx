@@ -2,6 +2,8 @@
 title: "Azure Flexible Server Postgres Source Setup Guide"
 ---
 
+import SSHTunnel from '/snippets/ssh-tunnel.mdx';
+
 ## Supported Postgres versions
 
 Anything on or after Postgres 12
@@ -18,13 +20,13 @@ Anything on or after Postgres 12
 
 2. Edit the `wal_level` to `logical`
 
-<Frame caption="Server Parameters">
+<Frame caption="Change wal_level to logical">
     <img src="/images/setup/flexible_server/wal_level.png" />
 </Frame>
 
 3. This change would require a server restart. So restart when requested.
 
-<Frame caption="Server Parameters">
+<Frame caption="Restart server">
     <img src="/images/setup/flexible_server/restart.png" />
 </Frame>
 
@@ -73,9 +75,11 @@ Connect to your Azure Flexible Server Postgrees through the admin user and run t
 ```sql
         ALTER ROLE peerdb_user SET wal_sender_timeout to 0;
 ```
-        
 
-## Create CloudSQL Postgres Peer in PeerDB
+<SSHTunnel />
+
+
+## Create Azure Flexible Server Postgres Peer in PeerDB
 
 Through the PeerDB UI, create the Flexible Postgres Peer using the `peerdb_user` that you created in the previous step.
 
