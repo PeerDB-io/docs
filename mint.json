@@ -54,7 +54,8 @@
         "connect/bigquery",
         "connect/rds_postgres",
         "connect/cloudsql_postgres",
-        "connect/azure_flexible_server_postgres"
+        "connect/azure_flexible_server_postgres",
+        "connect/clickhouse"
       ]
     },
     {
