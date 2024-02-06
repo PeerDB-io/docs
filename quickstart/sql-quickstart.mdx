@@ -1,5 +1,5 @@
 ---
-title: Quickstart Guide
+title: SQL Quickstart Guide
 description: "Get started with PeerDB in a few simple steps."
 ---
 
@@ -89,7 +89,8 @@ Run the following command to kick off Change Data Capture (CDC) based streaming 
 ```sql
 --- CDC mirrors automatically create the destination table
 CREATE MIRROR cdc_mirror FROM source TO target
-WITH TABLE MAPPING (public.test:public.test);
+WITH TABLE MAPPING (public.test:public.test)
+WITH(do_initial_copy = true);
 ```
 Now that our CDC mirror is set up, it will automatically replicate data from the source to the target peer. Let's insert a row in the source table via PeerDB itself.
 
@@ -126,17 +127,16 @@ The above MIRROR takes care of replicating all DML commands (INSERT, UPDATE, DEL
 Run the following command to kick off query based streaming from source peer to target peer. You are able to mask `c1`,`c2` and `t` columns by hashing them prior to streaming them to the target.
 
 ```sql
-  /*Query based mirrors require the destination table to be created beforehand
-  which we did in one of the previous steps.*/
   CREATE MIRROR qrep_mirror FROM source TO target
   FOR $$
-      SELECT id, hashint4(c1) hash_c1, hashint4(c2) hash_c2, md5(t) AS hash_t
+      SELECT id, hashint4(c1) c1, hashint4(c2) c2, md5(t) AS t
       FROM test WHERE id BETWEEN {{.start}} AND {{.end}}
   $$ WITH (
       watermark_table_name='public.test',
       watermark_column='id',
       num_rows_per_partition = 10000,
       destination_table_name='public.test_transformed',
+      setup_watermark_table_on_destination=true,
       mode='append'
   );
   /*'append' mode indicates that the records in the source
@@ -146,7 +146,7 @@ Run the following command to kick off query based streaming from source peer to 
 Now our mirror is set up. You should see the results of the above SELECT query replicated on the target peer.
 
 ```sql
-  SELECT * FROM target.public.test_transformed;
+  SELECT id, c1 as hash_c1, c2 as hash_c2, t as hash_t FROM target.public.test_transformed;
 ```
 
 The output should look like this:

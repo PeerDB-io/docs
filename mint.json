@@ -42,9 +42,15 @@
       "group": "Home",
       "pages": [
         "introduction",
-        "quickstart",
         "architecture",
         "why-peerdb"
+      ]
+    },
+    {
+      "group": "Quickstart",
+      "pages": [
+        "quickstart/quickstart",
+        "quickstart/sql-quickstart"
       ]
     },
     {
