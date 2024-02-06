@@ -1,0 +1,155 @@
+---
+title: Quickstart Guide
+description: "Get started with PeerDB in a few simple steps."
+---
+
+### Deploying PeerDB
+
+We currently support deploying and testing PeerDB using our Docker Compose file, support for Kubernetes and other means of deployment are in development.
+
+<Info>
+  {" "}
+  Docker can be installed by referring to [these instructions](https://www.docker.com/products/docker-desktop).
+  The `docker compose` tool should also be present. The Postgres client tools (specifically
+  `psql`) are used to test the PeerDB installation.{" "}
+</Info>
+
+**Run the following commands in your terminal:**
+
+    ```bash
+    git clone --recursive https://github.com/PeerDB-io/peerdb.git
+    cd peerdb
+
+    # Run docker containers: peerdb-server, postgres as catalog, temporal.
+    # This might take a few minutes, so get a cup of coffee! :)
+    export COMPOSE_PROJECT_NAME=peerdb-stack
+    docker compose up
+    ```
+
+That's it! You now have PeerDB up and running on your machine, ready to query away!
+
+### Quickstart
+
+<Info>
+  {" "}
+  The following steps assume you have PeerDB running locally. We also need `psql` installed and available on your
+  PATH.
+</Info>
+
+#### Setup
+
+This script reuses the PeerDB internal Postgres instance to setup two databases, which we can use to create two peers. It also creates some tables on both databases to use later in the quickstart. Run the following commands in your terminal:
+
+```bash
+curl -O https://peerdb-sample-data.s3.us-east-2.amazonaws.com/quickstart_prepare_peers.sh
+chmod +x quickstart_prepare_peers.sh
+./quickstart_prepare_peers.sh
+```
+
+#### Creating Peers
+
+With PeerDB running, we can create our first peers.
+
+Head over to `localhost:3000` on your browser. This is the PeerDB Dashboard.
+
+Clicking on **Peers** in the sidebar will take us to the **Peers** page.
+
+Let's click on the Create Peer button at the top right to get started.
+![create peer](../images/ui-quickstart/createpeerbutton.png)
+
+Now, we select the data store for which we wish to create a peer. Let's select **Postgres** and click on the **Continue** button.
+![select datastore](../images/ui-quickstart/selectpg.png)
+
+This takes to a form where we can fill in the details for the peer. Let's fill in the details of our PostgreSQL peer.
+
+Fill in the **password** as `postgres`.
+![source peer](../images/ui-quickstart/createpg1.png)
+
+PeerDB validates the connection details and if everything is correct, clicking on **Validate** should show a success message.
+
+Finally, click on **Create** to create the peer.
+
+We now have our **source PostgreSQL peer** ready.
+
+Let's create the **target PostgreSQL peer** by repeating the exact same steps.
+
+Fill in the **password** as `postgres`.
+![target peer](../images/ui-quickstart/createpg2.png)
+
+Now that we have our source and target peers ready, let's move on to **creating a mirror**.
+![gototmirrors](../images/ui-quickstart/peersdone.png)
+
+Clicking on **Mirrors** in the sidebar will take us to the **Mirrors** page.
+
+
+#### Real-time CDC
+
+To kick off Change Data Capture (CDC) based streaming from source peer to target peer, let's click on **New Mirror**.
+![newmirror](../images/ui-quickstart/newmirrorbutton.png)
+
+Let's select the `CDC` box, and enter the name of the mirror and the two peers.
+![mirrorform](../images/ui-quickstart/mirrorpage.png)
+
+Scrolling down, we can see a section to a **select the table** on our source PostgreSQL peer to sync.
+![selecttable](../images/ui-quickstart/tablemapping.png)
+Let's select the table we have ready - `public.test`.
+Now that we've filled in all the mirror details.
+Let's click on **Validate** to check if everything is set up correctly, much like we did when creating peers!
+![selecttable2](../images/ui-quickstart/validatemirr.png)
+
+Finally, click on **Create** to create the mirror.
+![createmirr](../images/ui-quickstart/createmirr.png)
+
+Now that our CDC mirror is set up, it will automatically replicate data from the source to the target peer. Let's insert a row in the source table via PeerDB itself.
+
+Connect to PeerDB via psql:
+
+```bash
+psql "port=9900 host=localhost password=peerdb"
+```
+And now we can run the below commands.
+```sql
+--- Verify that the source table has zero rows
+SELECT id,c1,c2,t FROM source.public.test;
+```
+
+```sql
+--- Insert a row into the source table
+INSERT INTO source.public.test(c1, c2, t) VALUES(1, 2, 'oathbringer');
+```
+
+Within a minute, the row should be replicated to the target table. Let's click the mirror link on the `Mirrors` page which we landed on after creating the mirror:
+![mirrorlink](../images/ui-quickstart/mirrorlink.png)
+
+This takes to the **Mirror Overview** page. Let's click on the **Sync Status tab**, where we can see the status of the mirror and the number of rows replicated:
+![mirroroverview](../images/ui-quickstart/mirrorresults.png)
+
+We can see that the mirror has successfully replicated the row from the source to the target peer. Let's verify this by querying the target table.
+
+```sql
+--- CDC mirrors replicate data as-is, so the row should be identical.
+SELECT id,c1,c2,t FROM target.public.test;
+```
+The output should look like this:
+
+```bash
+peerdb=> SELECT id,c1,c2,t FROM target.public.test;
+id | c1 | c2 |      t
+----+----+----+-------------
+1 |  1 |  2 | oathbringer
+(1 row)
+```
+
+The above MIRROR takes care of replicating all future DML commands (`INSERT`, `UPDATE`, `DELETE`) from source to target.
+
+### FAQ
+
+If you have any questions about the PeerDB setup and deployment process, don't hesitate to reach out on [Slack](https://join.slack.com/t/peerdb-public/shared_invite/zt-1wo9jydev-EXInbMtCtpAKFFWdi7QvLQ). We're more than happy to assist and answer any questions, including:
+
+- What is the performance I can expect during CDC and query based replication?
+- How do I know my data sync is successful?
+- Can I set a specific time to start my data sync?
+
+If there are any unanswered questions, we'd love to help you get started. Feel free to ask your questions on our community [Slack](https://join.slack.com/t/peerdb-public/shared_invite/zt-1wo9jydev-EXInbMtCtpAKFFWdi7QvLQ) channel.
+
+In addition to this, if you require direct access to our team for any assistance, don't hesitate to contact us to discuss our premium support offerings.
