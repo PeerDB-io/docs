@@ -54,6 +54,12 @@
       ]
     },
     {
+      "group": "PeerDB Cloud",
+      "pages": [
+        "peerdb-cloud/cloud-quickstart"
+      ]
+    },
+    {
       "group": "Setup",
       "pages": [
         "connect/snowflake",
