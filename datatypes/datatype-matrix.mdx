@@ -7,31 +7,32 @@ Below table shows supported data types across **PostgreSQL, BigQuery and Snowfla
 
 | Source | Destinations
 | --- | --- |
-| <b>PostgreSQL Type</b> | <b>PostgreSQL</b> | <b>BigQuery</b> | <b>Snowflake</b> |
-| `smallint` | `smallint` | `INTEGER` | `INTEGER` |
-| `integer` | `integer` | `INTEGER` | `INTEGER` |
-| `bigint` | `bigint` | `INTEGER` | `INTEGER` |
-| `float4` | `float4` | `FLOAT` | `FLOAT` |
-| `double precision` | `double precision` | `FLOAT` | `FLOAT` |
-| `boolean` | `bool` | `BOOLEAN` | `BOOLEAN` |
-| `bit` | `bit` | `BYTES` | `BINARY` |
-| `bit varying` | `varbit` | `BYTES` | `BINARY` |
-| `bytea` | `bytea` | `BYTES` | `BINARY` |
-| `character` | `character` | `STRING` | `STRING` |
-| `character varying` | `varchar` | `STRING` | `STRING` |
-| `inet` | `inet` | `STRING` | `STRING` |
-| `macaddr` | `macaddr` | `STRING` | `STRING` |
-| `cidr` | `cidr` | `STRING` | `STRING` |
-| `date` | `date` | `DATE` | `DATE` |
-| `json` | `json` | `STRING` | `VARIANT` |
-| `hstore` | `hstore` | `JSON` | `VARIANT` |
-| `numeric` | `numeric` | `BIGNUMERIC` | `NUMBER` |
-| `text` | `text` | `STRING` | `STRING` |
-| `timestamp` | `timestamp` | `TIMESTAMP` | `TIMESTAMP_NTZ` |
-| `timestamp with time zone` | `timestamp with time zone` | `TIMESTAMP` | `TIMESTAMP_TZ` |
-| `time` | `time` | `TIME` | `TIME` |
-| `geography` | `geography` | `GEOGRAPHY` | `GEOGRAPHY` |
-| `geometry` | `geometry` | `GEOGRAPHY` | `GEOMETRY` |
+| <b>PostgreSQL Type</b> | <b>PostgreSQL</b> | <b>BigQuery</b> | <b>Snowflake</b> | <b>Clickhouse</b> |
+| `smallint` | `smallint` | `INTEGER` | `INTEGER` | `Int16` |
+| `integer` | `integer` | `INTEGER` | `INTEGER` | `Int32` |
+| `bigint` | `bigint` | `INTEGER` | `INTEGER` | `Int64` |
+| `float4` | `float4` | `FLOAT` | `FLOAT` | `Float32` |
+| `double precision` | `double precision` | `FLOAT` | `FLOAT` | `Float64` |
+| `boolean` | `bool` | `BOOLEAN` | `BOOLEAN` | `Bool`
+| `character` | `character` | `STRING` | `STRING` | `FixedString(1)`
+| `character varying` | `varchar` | `STRING` | `STRING` | `String`
+| `date` | `date` | `DATE` | `DATE` | `Nullable(Date)`
+| `json` | `json` | `STRING` | `VARIANT` | `String`
+| `numeric` | `numeric` | `BIGNUMERIC` | `NUMBER` | `Decimal`
+| `text` | `text` | `STRING` | `STRING` | `String`
+| `timestamp` | `timestamp` | `TIMESTAMP` | `TIMESTAMP_NTZ` | `Nullable(DateTime64(6))`
+| `timestamp with time zone` | `timestamp with time zone` | `TIMESTAMP` | `TIMESTAMP_TZ` | `Nullable(DateTime64(6))`
+| `time` | `time` | `TIME` | `TIME` | `String`
+| `bit` | `bit` | `BYTES` | `BINARY` | Coming soon!
+| `bit varying` | `varbit` | `BYTES` | `BINARY` | Coming soon!
+| `bytea` | `bytea` | `BYTES` | `BINARY` | Coming soon!
+| `geography` | `geography` | `GEOGRAPHY` | `GEOGRAPHY` | Coming soon!
+| `geometry` | `geometry` | `GEOGRAPHY` | `GEOMETRY` | Coming soon!
+| `inet` | `inet` | `STRING` | `STRING` | Coming soon!
+| `macaddr` | `macaddr` | `STRING` | `STRING` | Coming soon!
+| `cidr` | `cidr` | `STRING` | `STRING` | Coming soon!
+| `hstore` | `hstore` | `JSON` | `VARIANT` | Coming soon!
+| `uuid` | `uuid` | `STRING` | `STRING` | `uuid`
 
 <br></br>
 #### Array Data Types
@@ -39,17 +40,17 @@ Below table shows supported data types across **PostgreSQL, BigQuery and Snowfla
 | Source | Destinations
 | --- | --- |
 | <b>PostgreSQL Type</b> | <b>PostgreSQL</b> | <b>BigQuery</b> | <b>Snowflake</b> |
-| `ARRAY<INT2>` | `ARRAY<INT2>` | `ARRAY<INT>` | `VARIANT` |
-| `ARRAY<INT4>` | `ARRAY<INT4>` | `ARRAY<INT>` | `VARIANT` |
-| `ARRAY<INT8>` | `ARRAY<INT8>` | `ARRAY<INT>` | `VARIANT` |
-| `ARRAY<FLOAT4>` | `ARRAY<FLOAT4>` | `ARRAY<FLOAT>` | `VARIANT` |
-| `ARRAY<DOUBLE PRECISION>` | `ARRAY<DOUBLE PRECISION>` | `ARRAY<DOUBLE PRECISION>` | `VARIANT` |
-| `ARRAY<BOOL>` | `ARRAY<BOOL>` | `ARRAY<BOOL>` | `VARIANT` |
-| `ARRAY<VARCHAR>` | `ARRAY<VARCHAR>` | `ARRAY<STRING>` | `VARIANT` |
-| `ARRAY<TEXT>` | `ARRAY<TEXT>` | `ARRAY<STRING>` | `VARIANT` |
-| `ARRAY<DATE>` | `ARRAY<DATE>` | `ARRAY<DATE>` | `VARIANT` |
-| `ARRAY<TIMESTAMP>` | `ARRAY<TIMESTAMP>` | `ARRAY<TIMESTAMP>` | `VARIANT` |
-| `ARRAY<TIMESTAMPTZ>` | `ARRAY<TIMESTAMPTZ>` | `ARRAY<TIMESTAMP>` | `VARIANT` |
+| `ARRAY<INT2>` | `ARRAY<INT2>` | `ARRAY<INT>` | `VARIANT` | `Array<Int16>` |
+| `ARRAY<INT4>` | `ARRAY<INT4>` | `ARRAY<INT>` | `VARIANT` | `Array<Int32>` |
+| `ARRAY<INT8>` | `ARRAY<INT8>` | `ARRAY<INT>` | `VARIANT` | `Array<Int64>` |
+| `ARRAY<FLOAT4>` | `ARRAY<FLOAT4>` | `ARRAY<FLOAT>` | `VARIANT` | `Array<Float32>` |
+| `ARRAY<DOUBLE PRECISION>` | `ARRAY<DOUBLE PRECISION>` | `ARRAY<DOUBLE PRECISION>` | `VARIANT` | `Array<Float64>` |
+| `ARRAY<BOOL>` | `ARRAY<BOOL>` | `ARRAY<BOOL>` | `VARIANT` | `Array<Bool>` |
+| `ARRAY<VARCHAR>` | `ARRAY<VARCHAR>` | `ARRAY<STRING>` | `VARIANT` | `Array<String>` |
+| `ARRAY<TEXT>` | `ARRAY<TEXT>` | `ARRAY<STRING>` | `VARIANT` | `Array<String>` |
+| `ARRAY<DATE>` | `ARRAY<DATE>` | `ARRAY<DATE>` | `VARIANT` | Coming soon! |
+| `ARRAY<TIMESTAMP>` | `ARRAY<TIMESTAMP>` | `ARRAY<TIMESTAMP>` | `VARIANT` | Coming soon! |
+| `ARRAY<TIMESTAMPTZ>` | `ARRAY<TIMESTAMPTZ>` | `ARRAY<TIMESTAMP>` | `VARIANT` | Coming soon! |
 <br></br>
 
 ### Design Choices
@@ -65,6 +66,11 @@ For BigQuery, we map PostgreSQL's `numeric` type as follows:
 - `numeric` with no specified precision and scale is mapped to `BIGNUMERIC(38,20)`.
 - `numeric` with precision OR scale which is beyond 38 and 37 respectively, is mapped to `BIGNUMERIC(38, 20)`.
 - `numeric` with precision AND scale within the above limits is mapped to `BIGNUMERIC(precision, scale)`.
+
+For Clickhouse, we map PostgreSQL's `numeric` type as follows:
+- `numeric` with no specified precision and scale is mapped to `Decimal(76,38)`.
+- `numeric` with precision OR scale which is beyond 76 and 38 respectively, is mapped to `Decimal(76,38)`.
+- `numeric` with precision AND scale within the above limits is mapped to `Decimal(precision, scale)`.
 
 #### Geospatial Data
 PeerDB detects invalid shapes (for example, a `linestring` with only one point) among PostGIS values it pulls, and writes them as null on the destination.
@@ -84,3 +90,10 @@ formatted as a `JSON` and can be queried as such - `snowflake_hstore_column:key`
 
 #### Nulls in BigQuery Arrays
 PeerDB removes `null` values from BigQuery arrays. This is because BigQuery does not support `null` values in arrays during their insertion.
+
+#### Nullable for Clickhouse
+We do not map most data types to `Nullable` in Clickhouse.
+This is because Clickhouse [advises against defaulting to Nullable(type).](https://clickhouse.com/docs/en/cloud/bestpractices/avoid-nullable-columns)
+
+The exceptions being `Date` and `DateTime64` which are mapped to `Nullable(Date)` and `Nullable(DateTime64(6))` respectively, since
+the default value of 1st Jan 1970 is not a valid date for most use cases.
