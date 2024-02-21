@@ -16,12 +16,12 @@ Below table shows supported data types across **PostgreSQL, BigQuery and Snowfla
 | `boolean` | `bool` | `BOOLEAN` | `BOOLEAN` | `Bool`
 | `character` | `character` | `STRING` | `STRING` | `FixedString(1)`
 | `character varying` | `varchar` | `STRING` | `STRING` | `String`
-| `date` | `date` | `DATE` | `DATE` | `Nullable(Date)`
+| `date` | `date` | `DATE` | `DATE` | `Date`
 | `json` | `json` | `STRING` | `VARIANT` | `String`
 | `numeric` | `numeric` | `BIGNUMERIC` | `NUMBER` | `Decimal`
 | `text` | `text` | `STRING` | `STRING` | `String`
-| `timestamp` | `timestamp` | `TIMESTAMP` | `TIMESTAMP_NTZ` | `Nullable(DateTime64(6))`
-| `timestamp with time zone` | `timestamp with time zone` | `TIMESTAMP` | `TIMESTAMP_TZ` | `Nullable(DateTime64(6))`
+| `timestamp` | `timestamp` | `TIMESTAMP` | `TIMESTAMP_NTZ` | `DateTime64(6)`
+| `timestamp with time zone` | `timestamp with time zone` | `TIMESTAMP` | `TIMESTAMP_TZ` | `DateTime64(6)`
 | `time` | `time` | `TIME` | `TIME` | `String`
 | `bit` | `bit` | `BYTES` | `BINARY` | Coming soon!
 | `bit varying` | `varbit` | `BYTES` | `BINARY` | Coming soon!
@@ -90,10 +90,3 @@ formatted as a `JSON` and can be queried as such - `snowflake_hstore_column:key`
 
 #### Nulls in BigQuery Arrays
 PeerDB removes `null` values from BigQuery arrays. This is because BigQuery does not support `null` values in arrays during their insertion.
-
-#### Nullable for Clickhouse
-We do not map most data types to `Nullable` in Clickhouse.
-This is because Clickhouse [advises against defaulting to Nullable(type).](https://clickhouse.com/docs/en/cloud/bestpractices/avoid-nullable-columns)
-
-The exceptions being `Date` and `DateTime64` which are mapped to `Nullable(Date)` and `Nullable(DateTime64(6))` respectively, since
-the default value of 1st Jan 1970 is not a valid date for most use cases.
