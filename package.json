@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "mintlify": "^4.0.131"
+  },
+  "scripts": {
+    "dev": "mintlify dev"
+  }
+}
