@@ -56,7 +56,8 @@
     {
       "group": "PeerDB Cloud",
       "pages": [
-        "peerdb-cloud/cloud-quickstart"
+        "peerdb-cloud/cloud-quickstart",
+        "peerdb-cloud/peerdb-cloud-pricing-faq"
       ]
     },
     {
