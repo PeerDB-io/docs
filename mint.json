@@ -92,7 +92,14 @@
         "features/schema-changes",
         "features/replicating-partitioned-tables",
         "features/feature-matrix",
-        "features/supported-connectors"
+        "features/supported-connectors",
+        {
+          "group": "Alerting",
+          "pages": [
+            "features/alerting/slack-alerting",
+            "features/alerting/email-alerting"
+          ]
+        }
       ]
     },
     {

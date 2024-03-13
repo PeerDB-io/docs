@@ -1,0 +1,50 @@
+---
+title: Slack Alerting
+---
+
+import AlertingIntro from '/snippets/alerting/aletring-intro-features.mdx';
+
+<AlertingIntro AlertSender="Slack" />
+
+
+# Configuring Slack
+
+## Creating and Installing a Slack App (One-Time)
+<Info>This step is not required if you already have an Auth token that starts with `xoxb-`</Info>
+Follow the [Slack Apps Quickstart](https://api.slack.com/start/quickstart) (upto Step 3) to create and install a Slack App on your Workspace with `chat:write` permissions.
+
+
+<Info>
+You can find the Auth token starting with `xoxb-` under
+<Frame caption="Getting the Slack Auth token">
+    <img src="/images/alerting/slack/slack-token.jpg" />
+</Frame>
+</Info>
+
+
+## Getting the channel IDs
+
+Click the Channel Name if you have the channel open or right-click the channel and click "View channel details" from the
+side bar to get the channel view.
+
+Now the Channel ID can be copied at the bottom of the channel info dialog:
+<Frame caption="Getting the Slack Channel ID">
+    <img src="/images/alerting/slack/slack-channel-id.jpg" />
+</Frame>
+
+
+# Configuring PeerDB UI
+
+## Adding a configuration
+
+1. Click on "Alert Configuration" from the left side of the PeerDB UI and then click "Add Configuration".
+
+2. Now select "Slack" from the list of alert providers and paste the Auth Token and Channel ID from before.
+
+   <Info>To add multiple channel IDs for a given configuration, add them comma-separated</Info>
+
+3. Click on "Create"
+
+<Frame caption="Creating Slack Alert Configuration">
+    <img src="/images/alerting/slack/slack-alerting-config.jpg" />
+</Frame>
