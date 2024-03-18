@@ -68,7 +68,8 @@
         "connect/rds_postgres",
         "connect/cloudsql_postgres",
         "connect/azure_flexible_server_postgres",
-        "connect/clickhouse"
+        "connect/clickhouse",
+        "connect/crunchy_bridge"
       ]
     },
     {
