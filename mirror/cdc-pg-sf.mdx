@@ -57,3 +57,10 @@ PeerDB will try to match the data types of the source and destination tables as 
     Review the mirror configuration and click on the `Validate Mirror` button. If there are any errors, you will see them on the screen. If there are no errors, you will see a success message. Once you see the success message, click on the `Create Mirror` button to create the mirror ✨.
     </Step>
 </Steps>
+
+## Design Choices
+
+1. Check out the datatype mapping for Postgres to Snowflake CDC  [here](/datatypes/datatype-matrix)
+2. `VARCHAR` and `VARIANT` column values exceeding 16MB are truncated and stored as NULLs. This is because Snowflake doesn't support [VARCHAR](https://docs.snowflake.com/en/sql-reference/data-types-text#varchar) and [VARIANT](https://docs.snowflake.com/en/user-guide/data-load-considerations-prepare#semi-structured-data-size-limitations) over 16MB.
+3. We use `ON_ERROR=CONTINUE` in the [COPY](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table) command while loading data into Snowflake, applicable to both initial load and Change Data Capture (CDC). This setting ensures that any row that cannot be loaded into Snowflake due to an unsupported feature (e.g., [dates out of the supported range](https://docs.snowflake.com/en/sql-reference/data-types-datetime#date)) will be skipped. Such scenarios are rare, but they can occur. To check if there were any issues with a load, you can run the following query:
+`SELECT * FROM information_schema.load_history WHERE STATUS='PARTIALLY_LOADED'`
