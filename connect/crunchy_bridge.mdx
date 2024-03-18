@@ -1,0 +1,70 @@
+---
+title: "Crunchy Bridge Postgres Source Setup Guide"
+---
+
+## Enable Logical Replication
+
+Crunchy Bridge comes with logical replication enabled by [default](https://docs.crunchybridge.com/how-to/logical-replication). Ensure that the settings below are configured correctly. If not, adjust them accordingly.
+
+```sql
+SHOW wal_level; -- should be logical
+SHOW max_wal_senders; -- should be 10
+SHOW max_replication_slotsl; -- should be 10
+```
+
+## Creating PeerDB User and Granting permissions
+
+Connect to your Crunchy Bridge Postgres through the `postgres` user and run the below commands:
+
+1. Create a Postgres user exclusively for PeerDB.
+
+    1. ```sql
+          CREATE USER peerdb_user PASSWORD 'some-password';
+        ```
+
+2. Grant read-only access to the schema from which you are replicating tables to `peerdb-user`. Below example shows granting permissions for the `public` schema. If you want to grant access to multiple schemas, you can run these three commands for each schema.
+
+    1. ```sql
+          GRANT USAGE ON SCHEMA "public" TO peerdb_user;
+          GRANT SELECT ON ALL TABLES IN SCHEMA "public" TO peerdb_user;
+          ALTER DEFAULT PRIVILEGES IN SCHEMA "public" GRANT SELECT ON TABLES TO peerdb_user;
+        ```
+
+3. Grant replication access to this user:
+
+    1. ```sql
+         ALTER ROLE peerdb_user REPLICATION;
+        ```
+
+4. Create publication that you'll be using for creating the MIRROR (replication) in future.
+
+    1. ```sql
+          CREATE PUBLICATION peerdb_publication FOR ALL TABLES;
+        ```
+
+<SSHTunnel />
+
+## Safe list PeerDB Cloud IPs
+
+If you are using PeerDB Cloud please safe list PeerDB IPs (`100.21.65.249`, `54.213.107.162` and `54.201.178.203`) by adding the Firewall Rules in Crunchy Bridge.
+
+<Frame caption="Where to find Firewall Rules in Crunchy Bridge?">
+<img src="/images/setup/firewall_rules_crunchy_bridge.png" />
+</Frame>
+
+<Frame caption="Add the 3 Firewall Rules for PeerDB Cloud">
+<img src="/images/setup/add_firewall_rules_crunchy_bridge.png" />
+</Frame>
+
+## Create Crunchy Bridge Peer in PeerDB
+
+Through the PeerDB UI, create the Crunchy Bridge Postgres Peer using the `peerdb_user` that you created in the previous step.
+
+<Frame caption="Create peer drop down">
+<img src="/images/setup/create_postgres_peer.png" />
+</Frame>
+
+<Frame caption="Create Crunchy Bridge Peer">
+<img src="/images/setup/create_crunchy_bridge_peer.png" />
+</Frame>
+
