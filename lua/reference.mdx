@@ -12,6 +12,22 @@ function onRecord(r)
 end
 ```
 
+If multiple return values are given, multiple records will be written
+
+A result may also be a table,
+```lua
+{
+  topic = 'override', -- will use this over the mirror's destination table
+  key = 'partition key',
+  value = 'record value',
+  partition = 91, -- for use with Manual partitioner
+  headers = {
+    header1 = 'value1',
+	header2 = 'value2',
+  },
+}
+```
+
 # `peerdb` functions
 The set of functions in `peerdb` table are:
 
@@ -44,6 +60,8 @@ Previous row values, `nil` for insert
 New row values, `nil` for delete
 #### `checkpoint`
 LSN of CDC message
+#### `commit_time`
+CommitTime of record's preceding BeginMessage
 #### `target`
 Destination table of record defined by mirror
 #### `source`
@@ -52,9 +70,11 @@ Source table of record
 PeerDB row values which cannot be represented as Lua numbers or strings are wrapped in UserData. All of these types implement `__tostring`. Available types:
 #### `I64` / `U64`
 Represents signed/unsigned 64 bit integers. Implements comparisons with each other & `__tostring` support. There are 3 conversion properties:
-* `i64` becomes `[I64]`
-* `u64` becomes `[U64]`
+* `i64` cast to `[I64]`
+* `u64` cast to `[U64]`
 * `float64` cast to lua number
+* `hi` returns highest 32 bits as an unsigned number
+* `lo` returns lowest 32 bits as an unsigned number
 ## `Time`
 Has properties for durations since Unix epoch. These are `[I64]` results, except `unix` which is a lua number
 * unix_nano
@@ -97,3 +117,7 @@ Value of decimal as a `BigInt`
 Value of decimal as a `[I64]`
 #### `float`
 Value of decimal as a number
+# package.preload
+PeerDB offers some preloaded libraries:
+1. [`bit32`](https://github.com/PeerDB-io/gluabit32) implements bit32 API included in Lua 5.2
+1. `flatbuffers` implements API in Go compatible with Lua code generated using our [patched flatc](https://github.com/serprex/flatbuffers/tree/erpre) along with performance & handling peerdb's 64 bit integers
