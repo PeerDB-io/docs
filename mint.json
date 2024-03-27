@@ -83,7 +83,8 @@
         "mirror/cdc-pg-bq",
         "mirror/cdc-pg-sf",
         "mirror/cdc-pg-pg",
-        "mirror/cdc-pg-clickhouse"
+        "mirror/cdc-pg-clickhouse",
+        "mirror/upgrade"
       ]
     },
     {

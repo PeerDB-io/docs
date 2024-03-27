@@ -1,0 +1,10 @@
+Usually, recreating mirrors is not necessary unless we made some sort of breaking change. Pausing the mirror, upgrading, and then resuming mitigates temporal non determinism.
+
+If the mirror for some reason after an upgrade is in a bad state, then the following procedure works, avoiding the need to resync:
+1. Terminate `yourmirror-peerflow` workflow in Temporal
+2. Run sql on PeerDB server: `delete from flows where name = 'yourmirror';`
+3. Create mirror with same name and other parameters, **but turn off initial copy**
+
+This works because PeerDB picks up the last flushed LSN from the replication slot (which we did not drop. Drop Mirror drops the slot so we can't do that) , and our final normalize step (for PG, BQ, SF, CH destinations) has a merge command which ensures there won't be duplicates.
+
+If you're upgrading during initial load, then what you would want to do is comment out flow-snapshot-worker in the docker compose or make sure it stays on the same earlier version. This worker is responsible for holding the CREATE REPLICATION SLOT connection open, so if it restarts then initial load fails.
