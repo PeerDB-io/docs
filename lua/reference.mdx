@@ -7,8 +7,9 @@ PeerDB uses Lua scripting for packaging Kafka messages. In particular, [Gopher L
 For Kafka the script should define an `onRecord` function, returning a string:
 
 ```lua
+local json = require "json"
 function onRecord(r)
-  return peerdb.RowToJSON(r.row)
+  return json.encode(r.row)
 end
 ```
 
@@ -31,8 +32,6 @@ A result may also be a table,
 # `peerdb` functions
 The set of functions in `peerdb` table are:
 
-#### `RowToJSON(row) string`
-Returns json serialization of row
 #### `RowColumns(row) table`
 Returns array of row's column names
 #### `RowColumnKind(row, column) string`
@@ -117,6 +116,8 @@ Value of decimal as a `[I64]`
 #### `float`
 Value of decimal as a number
 # package.preload
-PeerDB offers some preloaded libraries:
-1. [`bit32`](https://github.com/PeerDB-io/gluabit32) implements bit32 API included in Lua 5.2
-1. `flatbuffers` implements API in Go compatible with Lua code generated using our [patched flatc](https://github.com/serprex/flatbuffers/tree/erpre) along with performance & handling peerdb's 64 bit integers
+PeerDB offers some preloaded libraries, accessible via `require`:
+1. [`bit32`](https://github.com/PeerDB-io/gluabit32) implements [bit32 API included in Lua 5.2](https://www.lua.org/manual/5.2/manual.html#6.7)
+1. [`flatbuffers`](https://github.com/PeerDB-io/gluaflatbuffers) implements [flatbuffers](https://flatbuffers.dev) API in Go with 64 bit integer support compatible with Lua code generated using our [patched flatc](https://github.com/serprex/flatbuffers/tree/erpre)
+1. [`json`](https://github.com/PeerDB-io/gluajson) implements [JSON](https://json.org) encoding/decoding
+1. [`msgpack`](https://github.com/PeerDB-io/gluamsgpack) implements [msgpack](https://msgpack.org) encoding
