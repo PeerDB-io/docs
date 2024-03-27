@@ -94,7 +94,6 @@ Has properties for durations since Unix epoch. These are `[I64]` results, except
 ## `UUID`
 Index with `[0..16)` to access bytes *(first element at index 0)*
 ## `BigInt`
-`[BigInt]` implements `__len`. Indexing with a number accesses its bytes. If iterating all bytes you should store result of bytes property to avoid allocations
 #### `sign`
 `1`, `0`, or `-1` depending on sign of value
 #### `bytes`
