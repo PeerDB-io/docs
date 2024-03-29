@@ -89,6 +89,7 @@
       "group": "Features",
       "pages": [
         "features/pause-mirror",
+        "features/edit-mirror",
         "features/schema-changes",
         "features/replicating-partitioned-tables",
         "features/feature-matrix",
