@@ -22,6 +22,11 @@
       "url": "sql"
     },
     {
+      "name": "Lua Reference",
+      "icon": "file-code",
+      "url": "lua"
+    },
+    {
       "name": "GitHub",
       "icon": "github",
       "url": "https://github.com/PeerDB-io/peerdb"
@@ -56,7 +61,8 @@
     {
       "group": "PeerDB Cloud",
       "pages": [
-        "peerdb-cloud/cloud-quickstart"
+        "peerdb-cloud/cloud-quickstart",
+        "peerdb-cloud/peerdb-cloud-pricing-faq"
       ]
     },
     {
@@ -67,7 +73,8 @@
         "connect/rds_postgres",
         "connect/cloudsql_postgres",
         "connect/azure_flexible_server_postgres",
-        "connect/clickhouse"
+        "connect/clickhouse",
+        "connect/crunchy_bridge"
       ]
     },
     {
@@ -76,7 +83,8 @@
         "mirror/cdc-pg-bq",
         "mirror/cdc-pg-sf",
         "mirror/cdc-pg-pg",
-        "mirror/cdc-pg-clickhouse"
+        "mirror/cdc-pg-clickhouse",
+        "mirror/upgrade"
       ]
     },
     {
@@ -93,7 +101,14 @@
         "features/schema-changes",
         "features/replicating-partitioned-tables",
         "features/feature-matrix",
-        "features/supported-connectors"
+        "features/supported-connectors",
+        {
+          "group": "Alerting",
+          "pages": [
+            "features/alerting/slack-alerting",
+            "features/alerting/email-alerting"
+          ]
+        }
       ]
     },
     {
@@ -156,6 +171,12 @@
         "sql/commands/create-peer",
         "sql/commands/create-mirror",
         "sql/commands/supported-connectors"
+      ]
+    },
+    {
+      "group": "Lua Reference",
+      "pages": [
+        "lua/reference"
       ]
     }
   ],

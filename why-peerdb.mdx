@@ -51,8 +51,7 @@ By implementing the below optimizations/strategies, we are able to cut up to 80%
 
 1. **State of art engineering:** Our engineering focus revolves around cost efficiency and hardware optimization. You can go through [our architecture](https://docs.peerdb.io/architecture) and [engineering blog](https://blog.peerdb.io/) for a deep dive into our design tradeoffs to build the most optimal data movement solution for Postgres.
     
-2. **Transparent pricing:** Our pricing is based on compute usage rather than the amount of data transferred. Based on the volume of data you move, we will come up with the number of **cores and memory** needed for your use case. You will know that in advance and can scale up and down based on what you wish.
-**NOTE**: We take premiums only over compute costs. Network and storage will be charged at cost. If you are running PeerDB in the same cloud provider as the peers, you can anticipate minimal network costs. With this approach of pricing, **you'll clearly know your expenses beforehand, with no surprises in the future!**
+2. **Predictable pricing:** Our pricing is based on provisioned vCPUs rather than the amount of data transferred. Based on the volume of data you move, we will come up with the number of vCPUs needed for your use case. You will know that in advance and can scale up and down based on what you wish. With this approach of pricing, you'll clearly know your expenses beforehand, with no surprises in the future!
     
 3. **PeerDB CostControl:** PeerDB already has mechanisms in place to reduce activity and costs on your Data Warehouse.
     
