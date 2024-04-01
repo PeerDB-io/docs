@@ -117,7 +117,10 @@ Value of decimal as a `[I64]`
 Value of decimal as a number
 # package.preload
 PeerDB offers some preloaded libraries, accessible via `require`:
-1. [`bit32`](https://github.com/PeerDB-io/gluabit32) implements [bit32 API included in Lua 5.2](https://www.lua.org/manual/5.2/manual.html#6.7)
-1. [`flatbuffers`](https://github.com/PeerDB-io/gluaflatbuffers) implements [flatbuffers](https://flatbuffers.dev) API in Go with 64 bit integer support compatible with Lua code generated using our [patched flatc](https://github.com/serprex/flatbuffers/tree/erpre)
-1. [`json`](https://github.com/PeerDB-io/gluajson) implements [JSON](https://json.org) encoding/decoding
-1. [`msgpack`](https://github.com/PeerDB-io/gluamsgpack) implements [msgpack](https://msgpack.org) encoding
+library|description
+-------|-----------
+[bit32](https://github.com/PeerDB-io/gluabit32) | [bit32 API included in Lua 5.2](https://www.lua.org/manual/5.2/manual.html#6.7)
+[flatbuffers](https://github.com/PeerDB-io/gluaflatbuffers) | [flatbuffers](https://flatbuffers.dev) API with 64-bit integer support, compatible with Lua generated using our [patched flatc](https://github.com/serprex/flatbuffers/tree/erpre)
+[json](https://github.com/PeerDB-io/gluajson) | [JSON](https://json.org) encoding/decoding
+[msgpack](https://github.com/PeerDB-io/gluamsgpack) | [msgpack](https://msgpack.org) encoding
+[utf8](https://github.com/PeerDB-io/gluautf8) | [utf8 API included in Lua 5.3](https://www.lua.org/manual/5.3/manual.html#6.5)
