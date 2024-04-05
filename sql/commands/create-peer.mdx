@@ -256,57 +256,46 @@ If you are connecting to a Docker SQL Server/Azure SQL Edge instance on the same
 
 1. Currently only data-movement is supported for this type of peer. Querying this peer from PeerDB's interface is not supported.
 
-## Eventhub Support
+## EventHub Peer
 
-### EventHub Peer
-
-This peer uses an external PostgreSQL instance to manage metadata for the mirror. To create an EVENTHUB peer, use the following SQL syntax:
+To create an Eventhub peer, use the following SQL syntax:
 
 ```sql
-CREATE PEER <eh_peer_name> FROM EVENTHUB WITH (
-  subscription_id = '<subscription-id>',
-  resource_group = '<resource-group-name>',
-  namespace = '<namespace-name>',
-  location = '<location>',  -- eg: eastus
-  partition_count = '<number-of-partitions>',
-  message_retention_in_days = '<retention-days>'
+CREATE PEER eventhubs_peer_x FROM EVENTHUBS WITH (
+eventhubs = '[{"subscription_id":"my-sub-id",
+"resource_group":"myresource",
+"namespace":"mynamespace-1",
+"location":"eastus",
+"partition_count":5,
+"message_retention_in_days":2
+},
+{"subscription_id":"my-sub-id",
+"resource_group":"myresource",
+"namespace":"mynamespace-2",
+"location":"eastus",
+"partition_count":3,
+"message_retention_in_days":1
+}
+]',
+unnest_columns = [] -- can omit this field too
 );
 ```
 
 **Parameters:**
+- `eventhubs`: A JSON array of details of namespaces. Each item should have the following fields:
+  - `subscription_id`: The ID of the Azure subscription.
+  - `resource_group`: The name of the Azure resource group.
+  - `namespace`: The namespace for the Eventhub.
+  - `location`: The location of the Eventhub namespace's resource group, e.g., eastus.
+  - `partition_count`: The number of partitions for the Eventhub.
+  - `message_retention_in_days`: The number of days the messages will be retained.
+- `unnest_columns`: Specifies the columns you'd like to unnest
 
-- `subscription_id`: The ID of the Azure subscription.
-- `resource_group`: The name of the Azure resource group.
-- `namespace`: The namespace for the EVENTHUB.
-- `location`: The location of the EVENTHUB instance, e.g., eastus.
-- `partition_count`: The number of partitions for the EVENTHUB.
-- `message_retention_in_days`: The number of days the messages will be retained.
 
-### EventHubGroup Peer
-
-You will need to wrap multiple EVENTHUB peers in an EVENTHUBGROUP peer to create a mirror. To create an EVENTHUBGROUP peer, use the following SQL syntax:
-
-```sql
-CREATE PEER <eh_group_name> FROM EVENTHUBGROUP WITH (
-  mq_test_peer_7 = true, -- enable this member
-  metadata_db = 'host=<hostname> user=<username> port=<port-number> password=<password> database=<database-name>',
-  unnest_columns = '<column-names>'
-);
-```
-
-**Parameters:**
-
-- `mq_test_peer_7`: Enable this EVENTHUB member in the group. You can enable multiple EVENTHUB peers in the group.
-- `metadata_db`: The PostgreSQL connection string for the metadata database. Ensure it includes host, user, port, password, and database details.
-- `unnest_columns`: Specifies the columns you'd like to unnest in the EVENTHUBGROUP.
-
-In order to use this peer, your **Azure credentials must be filled** in our PeerDB docker-compose file in the environments section of the `flow-worker` service:
+In order to use this peer in a self-hosted PeerDB instance, your **Azure credentials must be filled** in our PeerDB docker-compose file in the environments section of the `flow-worker` service:
 
 ```yaml
 environment:
-  ENABLE_PROFILING: true
-  PROFILING_SERVER: 0.0.0.0:6060
-  TEMPORAL_HOST_PORT: temporalite:7233
   AZURE_CLIENT_ID: <client-id>
   AZURE_CLIENT_SECRET: <secret>
   AZURE_TENANT_ID: <tenant-id>
@@ -314,4 +303,4 @@ environment:
 
 ### Considerations
 
-1. Currently only data-movement is supported for this type of peer. Querying this peer from PeerDB's interface is not supported.
+1. Currently only CDC data-movement is supported for this type of peer. Querying this peer from PeerDB's interface is not supported.
