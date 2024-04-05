@@ -93,7 +93,7 @@ begin;
    grant create table on schema identifier($internal_schema) to role identifier($role_name);
 
    -- add a statement like this one for each schema you want to have accessed by peerdb
-   -- EXAMPLE: grant usage on schema PUBLIC to role identifier($role_name); -- example
+   -- EXAMPLE: grant usage on schema PUBLIC to role identifier($role_name);
    grant usage on schema <schema_name> to role identifier($role_name);
 
    -- add statements granting select permissions and create table permissions
