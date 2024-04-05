@@ -1,0 +1,16 @@
+---
+title: PubSub
+---
+PubSub records may be a table, overriding the following:
+
+```lua
+{
+  topic = 'override', -- will use this over the mirror's destination table
+  key = 'partition key',
+  value = 'record value',
+  headers = {
+    header1 = 'value1',
+	header2 = 'value2',
+  },
+}
+```

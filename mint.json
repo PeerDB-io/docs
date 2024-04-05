@@ -176,7 +176,10 @@
     {
       "group": "Lua Reference",
       "pages": [
-        "lua/reference"
+        "lua/reference",
+        "lua/kafka",
+        "lua/pubsub",
+        "lua/eventhubs"
       ]
     }
   ],

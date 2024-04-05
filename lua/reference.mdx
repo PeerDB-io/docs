@@ -2,35 +2,23 @@
 title: PeerDB Lua Scripting
 ---
 
-PeerDB uses Lua scripting for packaging Kafka messages. In particular, [Gopher Lua](https://github.com/yuin/gopher-lua)
+PeerDB uses Lua scripting for packaging messages for queues. In particular, [Gopher Lua](https://github.com/yuin/gopher-lua)
 
-For Kafka the script should define an `onRecord` function, returning a string:
+Supported queues:
+1. [Kafka](./kafka)
+2. [PubSub](./pubsub)
+3. [EventHubs](./eventhubs)
 
-```lua
-local json = require "json"
-function onRecord(r)
-  return json.encode(r.row)
-end
-```
+The script should define an `onRecord` function, returning a string
+
+See [examples](https://github.com/PeerDB-io/examples) for sample scripts
 
 If multiple return values are given, multiple records will be written
 
-A result may also be a table,
-```lua
-{
-  topic = 'override', -- will use this over the mirror's destination table
-  key = 'partition key',
-  value = 'record value',
-  partition = 91, -- for use with Manual partitioner
-  headers = {
-    header1 = 'value1',
-	header2 = 'value2',
-  },
-}
-```
+Result may be a table instead of a string to specify partition key, metadata, etc. See queue specific pages for supported fields
 
 # `peerdb` functions
-The set of functions in `peerdb` table are:
+The set of functions in global `peerdb` table are:
 
 #### `RowColumns(row) table`
 Returns array of row's column names
