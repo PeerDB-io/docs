@@ -1,0 +1,19 @@
+---
+title: PeerDB Cloud Pricing FAQ
+---
+
+### What is the main advantage of PeerDB's pricing model?
+
+PeerDB offers a predictable pricing model. We charges based on the provisioned vCPUs rather than the amount of data transferred. This would ensure that your data-movement costs don't spiral out of control. You’ll clearly know your expenses beforehand, with no surprises in the future
+
+### **Is there an extra charge for the Initial Load? Would what I provisioned be sufficient?**
+
+PeerDB Cloud is configured for autoscaling up to 2 times the provisioned vCPUs and compute. For example, if you provision a 4 vCPU PeerDB instance, autoscaling is configured up to 8 vCPUs. Therefore, the initial load can scale up to double what you've provisioned. We do not charge for additional vCPUs as long as it is a one-off occurrence. However, if the additional usage is consistent, we will inform you and only proceed to scale up to the next tier after receiving acknowledgment from you.
+
+### Are the recommendations for how many rows PeerDB tiers can handle completely accurate?
+
+No, the recommendations for PeerDB tiers (required vCPUs) in relation to the number of rows moved per month are estimates. They are based on observations from our average customer. For example, a smaller number of super wide rows could require a larger tier than recommended, while a higher number of narrow rows might justify a smaller recommended tier. Workloads with multiple MIRRORs could require a larger tier than recommended. The best way to determine the ideal configuration is to test PeerDB with your workload. For further assistance, please contact our team at [contact@peerdb.io](mailto:contact@peerdb.io).
+
+### Do PeerDB Tiers impose strict limits on the number of rows moved per month?
+
+No, PeerDB Tiers simply correspond to the number of provisioned vCPUs for your workload. Recommendations regarding the number of rows moved per month for each tier are estimates based on the average customer. They are not strict limits.

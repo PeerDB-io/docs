@@ -17,13 +17,7 @@ We currently support deploying and testing PeerDB using our Docker Compose file,
 **Run the following commands in your terminal:**
 
     ```bash
-    git clone --recursive https://github.com/PeerDB-io/peerdb.git
-    cd peerdb
-
-    # Run docker containers: peerdb-server, postgres as catalog, temporal.
-    # This might take a few minutes, so get a cup of coffee! :)
-    export COMPOSE_PROJECT_NAME=peerdb-stack
-    docker compose up
+    ./run-peerdb.sh
     ```
 
 That's it! You now have PeerDB up and running on your machine, ready to query away!

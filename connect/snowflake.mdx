@@ -118,14 +118,13 @@ begin;
     Open the command line in a terminal window.
   </Step>
   <Step title="Generate Private Key">
-    Generate a private key. You can generate an encrypted version of the private key or an unencrypted version of the private key.
+    Generate a private key (`rsa_key.p8`). You can generate an encrypted version of the private key or an unencrypted version of the private key.
 
     <AccordionGroup>
       <Accordion title="Generate Unencrypted Key-pair">
       To generate an unencrypted version, you can execute the following commands:
 
       ```bash
-      openssl genrsa -out rsa_key.pem 2048
       openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
       ```
       </Accordion>
@@ -140,7 +139,6 @@ begin;
       You will be prompted to enter a password. Choose a strong one, and don't forget to note it down!
 
       You can also use different algorithms instead of the recommended `AES256` if needed. PeerDB supports the following alternative algorithms:
-
       * `AES128`
       * `DES3`
       </Accordion>
@@ -148,7 +146,7 @@ begin;
 
   </Step>
   <Step title="Generate Public Key">
-    From the command line, generate the public key by referencing the private key. Execute the command
+    From the command line, generate the public key (`rsa_key.pub`) by referencing the private key. Execute the command
 
     ```bash
     openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
@@ -161,6 +159,8 @@ begin;
     <Warning>
     You must replace the `<PUBLIC_KEY>` value with the string between the `-----BEGIN PUBLIC KEY----- and -----END PUBLIC KEY-----` statements.
     Exclude the `-----BEGIN PUBLIC KEY-----` and `-----END PUBLIC KEY-----` parts of the string.
+
+    Apart from that, multiple lines in the public key are fine.
     </Warning>
 
     ```sql
@@ -178,6 +178,9 @@ begin;
 ## Configure PeerDB
 
 <Info>
+  To get the Snowflake `account_id`, you can either get it via a query or from the Snowflake UI:
+  <AccordionGroup>
+  <Accordion title="Account ID via SQL Query">
   To get the Snowflake `account_id`, run the following query in Snowflake worksheet:
 
 ```sql
@@ -189,6 +192,22 @@ where t.value:type = 'SNOWFLAKE_DEPLOYMENT'
 remove `.snowflakecomputing.com` from the output of the above query to get the account identifier.
 
 Example in `lixxxxx.us-east-1.snowflakecomputing.com`, you want to use `lixxxxx.us-east-1` as the account identifier.
+
+</Accordion>
+
+  <Accordion title="Account ID via Snowflake Web Interface">
+  Open the account selector form the bottom left of the Snowflake Web Interface and click the Copy icon as below:
+
+<Frame caption="Get Snowflake Account Identifier via the Snowflake Web Interface">
+  <img src="/images/setup/sf-account-identifier.png" />
+</Frame>
+  Replace any dots (`.`) in the account identifier with hyphens (`-`).
+
+  Example, in `AB1234.XYZ987`, you want `AB1234-XYZ987`
+</Accordion>
+
+</AccordionGroup>
+The account identifier is case insensitive.
 
 </Info>
 

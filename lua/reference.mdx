@@ -1,0 +1,126 @@
+---
+title: PeerDB Lua Scripting
+---
+
+PeerDB uses Lua scripting for packaging Kafka messages. In particular, [Gopher Lua](https://github.com/yuin/gopher-lua)
+
+For Kafka the script should define an `onRecord` function, returning a string:
+
+```lua
+local json = require "json"
+function onRecord(r)
+  return json.encode(r.row)
+end
+```
+
+If multiple return values are given, multiple records will be written
+
+A result may also be a table,
+```lua
+{
+  topic = 'override', -- will use this over the mirror's destination table
+  key = 'partition key',
+  value = 'record value',
+  partition = 91, -- for use with Manual partitioner
+  headers = {
+    header1 = 'value1',
+	header2 = 'value2',
+  },
+}
+```
+
+# `peerdb` functions
+The set of functions in `peerdb` table are:
+
+#### `RowColumns(row) table`
+Returns array of row's column names
+#### `RowColumnKind(row, column) string`
+Returns underlying `Kind` of row column, see [qvalue/kind.go](https://github.com/PeerDB-io/peerdb/blob/main/flow/model/qvalue/kind.go) for list of kinds
+#### `Now() [Time]`
+Returns current time as `[Time]`
+#### `UUID() [UUID]`
+Returns random `[UUID]`
+#### `type(any) string`
+Returns `fmt.Sprintf("%T", value)` on underlying value of UserData. Returns `nil` for other types
+#### `tostring(any) string`
+Returns `fmt.Sprint(value)` on underlying value of UserData. Returns `nil` for other types
+
+# types
+PeerDB exposes records as UserData:
+## `Record`
+Represents a CDC change
+#### `kind`
+One of `insert`, `update`, `delete`, or `relation`. You will likely want to ignore `relation` messages
+#### `row`
+Canonical row values of change. For `update` this is the new row. Keep in mind that Postgres does not send unchanged toast column values in CDC updates
+#### `old`
+Previous row values, `nil` for insert
+#### `new`
+New row values, `nil` for delete
+#### `checkpoint`
+LSN of CDC message
+#### `commit_time`
+CommitTime of record's preceding BeginMessage
+#### `target`
+Destination table of record defined by mirror
+#### `source`
+Source table of record
+## `Row`
+PeerDB row values which cannot be represented as Lua numbers or strings are wrapped in UserData. All of these types implement `__tostring`. Available types:
+#### `I64` / `U64`
+Represents signed/unsigned 64 bit integers. Implements comparisons with each other & `__tostring` support. There are 3 conversion properties:
+* `i64` cast to `[I64]`
+* `u64` cast to `[U64]`
+* `float64` cast to lua number
+* `hi` returns highest 32 bits as an unsigned number
+* `lo` returns lowest 32 bits as an unsigned number
+## `Time`
+Has properties for durations since Unix epoch. These are `[I64]` results, except `unix` which is a lua number
+* unix_nano
+* unix_micro
+* unix_milli
+* unix_second
+* unix
+
+& properties for datetime components as numbers:
+* year
+* month
+* day
+* yearday
+* hour
+* minute
+* second
+* nanosecond
+## `UUID`
+Index with `[0..16)` to access bytes *(first element at index 0)*
+## `BigInt`
+#### `sign`
+`1`, `0`, or `-1` depending on sign of value
+#### `bytes`
+string of `*big.Int` Bytes method
+#### `int64`
+value as `[I64]`
+#### `is64`
+whether value can be represented by `int64`
+## `Decimal`
+#### `coefficient`
+`[BigInt]` representing digits
+#### `coefficient64`
+`[I64]` representing digits
+#### `exponent`
+Exponent, value of decimal is `coefficient * (10 ^ exponent)`
+#### `bigint`
+Value of decimal as a `BigInt`
+#### `int64`
+Value of decimal as a `[I64]`
+#### `float`
+Value of decimal as a number
+# package.preload
+PeerDB offers some preloaded libraries, accessible via `require`:
+library|description
+-------|-----------
+[bit32](https://github.com/PeerDB-io/gluabit32) | [bit32 API included in Lua 5.2](https://www.lua.org/manual/5.2/manual.html#6.7)
+[flatbuffers](https://github.com/PeerDB-io/gluaflatbuffers) | [flatbuffers](https://flatbuffers.dev) API with 64-bit integer support, compatible with Lua generated using our [patched flatc](https://github.com/serprex/flatbuffers/tree/erpre)
+[json](https://github.com/PeerDB-io/gluajson) | [JSON](https://json.org) encoding/decoding
+[msgpack](https://github.com/PeerDB-io/gluamsgpack) | [msgpack](https://msgpack.org) encoding
+[utf8](https://github.com/PeerDB-io/gluautf8) | [utf8 API included in Lua 5.3](https://www.lua.org/manual/5.3/manual.html#6.5)
