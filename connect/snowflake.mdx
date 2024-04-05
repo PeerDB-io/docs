@@ -93,11 +93,11 @@ begin;
    grant create table on schema identifier($internal_schema) to role identifier($role_name);
 
    -- add a statement like this one for each schema you want to have accessed by peerdb
-   grant usage on schema PUBLIC to role identifier($role_name); -- example
+   -- EXAMPLE: grant usage on schema PUBLIC to role identifier($role_name);
    grant usage on schema <schema_name> to role identifier($role_name);
 
    -- add statements granting select permissions and create table permissions
-   grant create table on schema PUBLIC to role identifier($role_name); -- example
+   -- EXAMPLE: grant create table on schema PUBLIC to role identifier($role_name);
    grant create table on schema <schema_name> to role identifier($role_name);
  commit;
 ```
@@ -130,15 +130,15 @@ begin;
       </Accordion>
 
       <Accordion title="Generate Encrypted Key-pair">
-      To generate an encrypted version, execute the command:
+      To generate an encrypted keypair, execute the command:
 
       ```bash
-      openssl genrsa 2048 | openssl pkcs8 -topk8 -v2 <ALGORITHM> -inform PEM -out rsa_key.p8
+      openssl genrsa 2048 | openssl pkcs8 -topk8 -v2 AES -inform PEM -out rsa_key.p8
       ```
 
-      You can use the following different encryption algorithms:
+      You will be prompted to enter a password. Choose a strong one, and don't forget to note it down!
 
-      * `AES256`
+      You can also use different algorithms instead of the recommended `AES256` if needed. PeerDB supports the following alternative algorithms:
       * `AES128`
       * `DES3`
       </Accordion>
