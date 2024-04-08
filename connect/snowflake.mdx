@@ -133,7 +133,7 @@ begin;
       To generate an encrypted keypair, execute the command:
 
       ```bash
-      openssl genrsa 2048 | openssl pkcs8 -topk8 -v2 AES -inform PEM -out rsa_key.p8
+      openssl genrsa 2048 | openssl pkcs8 -topk8 -v2 AES256 -inform PEM -out rsa_key.p8
       ```
 
       You will be prompted to enter a password. Choose a strong one, and don't forget to note it down!
