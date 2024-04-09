@@ -1,0 +1,14 @@
+Kafka records may be a table, overriding the following:
+
+```lua
+{
+  topic = 'override', -- will use this over the mirror's destination table
+  key = 'partition key',
+  value = 'record value',
+  partition = 91, -- for use with Manual partitioner
+  headers = {
+    header1 = 'value1',
+    header2 = 'value2',
+  },
+}
+```

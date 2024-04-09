@@ -1,0 +1,23 @@
+---
+title: EventHubs
+---
+See (eventhubs/postgres cdc guide)[/usecases/Real-time CDC/postgres-to-azure-eventhubs] for details specifying properties in destination table name, scripting is designed so it can be used in conjunction with the default behavior
+
+EventHubs records may be a table, overriding the following:
+```lua
+{
+  value = 'body',
+  contentType = 'application/json',
+  messageId = 'arbitrary',
+  headers = {
+    header1 = 'value1',
+    header2 = 'value2',
+  },
+
+  destination = '<namespace-name>.<eventhub-name>.<partition-key-column>', -- overrides mirror's destination table value. Following values will overwrite values from this string
+  namespace = 'otherspace', -- must exist in hub configs
+  partitionColumn = 'account_id', -- setting without `key` will use existing partition-by-column logic with this column
+  key = 'computed', -- sets partition key value, bypassing hashing columns
+  hub = 'otherhub', -- sets eventhub name
+}
+```
