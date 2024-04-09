@@ -30,28 +30,27 @@ Run the following commands to let PeerDB know about the existing PostgreSQL and 
 psql "port=9900 host=localhost password=peerdb"
 
 -- Add PostgreSQL and Event Hubs peers
-CREATE PEER postgres_peer FROM PostgreSQL (...);
-CREATE PEER eventhub_peer FROM EVENTHUB (...);
-CREATE PEER eventhub_group_peer FROM EVENTHUBGROUP (...);
+CREATE PEER postgres_peer FROM POSTGRES (...);
+CREATE PEER eventhubs_peer FROM EVENTHUBS (...);
 ```
 
-Make sure to replace **`(…)`** with the appropriate connection details for both the PostgreSQL and Event Hubs instances. More details on adding PEERs are available [here](/sql/commands/create-peer).
+Make sure to replace **`(…)`** with the appropriate connection details for both the PostgreSQL and Event Hubs instances. More details on adding Peers are available [here](/sql/commands/create-peer).
 
 ### **Step 2: Real-Time CDC from PostgreSQL to Event Hubs**
+The mirror from PostgreSQL to Eventhubs is unique, in the sense that you can sync source tables **across namespaces**, 
+and you can **specify a column whose values will be used to route data** into the partitions of the event hub.
 
 To facilitate real-time Change Data Capture (CDC) from PostgreSQL to Event Hubs, set up your peers and then create a mirror using the following SQL syntax:
 
 ```sql
 CREATE MIRROR IF NOT EXISTS <mirror-name>
-FROM <postgres-peer-name> TO <eventhubgroup-peer-name>
+FROM <postgres-peer-name> TO <eventhubs-peer-name>
 WITH TABLE MAPPING(
-    <source-schema>.<table>:<eh-group-member>.<destination-schema>.<table>,
+    <source-schema>.<table>:<namespace_name>.<eventhub_name>.<partition_key_column>,
     ... -- Repeat as required for multiple tables
 )
 WITH(
     max_batch_size = <number>,
-    push_batch_size = <number>,
-    push_parallelism = <number>,
     publication_name = '<publication-name>'
 );
 ```
@@ -62,14 +61,13 @@ Example:
 CREATE MIRROR IF NOT EXISTS test_eh_mirror
 FROM test_pg_peer TO test_eh_peer
 WITH TABLE MAPPING(
-    schema1.table1:eh_group_member_1.hub1.table1,
-    schema1.table2:eh_group_member_1.hub1.table2
+    schema1.table1:mynamespace1.hub1.id,
+    schema1.table2:mynamespace2.hub2.id
     -- Add more tables as required
 )
 WITH(
+    do_initial_copy = false,
     max_batch_size = 300000,
-    push_batch_size = 300000,
-    push_parallelism = 32,
     publication_name = 'test_publication'
 );
 ```
@@ -78,11 +76,12 @@ Parameters:
 
 - **`mirror-name`**: Desired name for the mirror.
 - **`postgres-peer-name`**: Name of the PostgreSQL peer.
-- **`eventhubgroup-peer-name`**: Name of the Event Hubs group peer.
-- **max_batch_size**: Maximum number of records in a batch.
-- **push_batch_size**: Number of records to push in a batch.
-- **push_parallelism**: Degree of parallelism for data pushes.
-- **publication_name**: Name of the publication.
+- **`eventhubs-peer-name`**: Name of the Event Hubs group peer.
+- **`namespace-name`**: Name of the namespace in which you wish to sync to an eventhub.
+- **`eventhub-name`**: Name of the eventhub in which you wish to sync the data. PeerDB creates the eventhub for you if it doesn't exist already.
+- **`partition_key_column`**: Column in the source table whose values will be used to route data into the partitions of the event hub.
+- **`max_batch_size`**: Maximum number of records in a batch.
+- **`publication_name`**: Name of the publication.
 
 Remember to adjust placeholder values (\<...\>) with your specific details and preferences.
 The example above has been abbreviated for clarity; ensure you provide all the necessary mappings and configurations in practice.

@@ -87,7 +87,7 @@ To perform CDC via `AVRO mode`, you must set the following:
 You must set the staging path to be an existing S3 bucket URL, or an empty string for PeerDB to stage the AVRO files internally.
 
 If you observe, **TABLE MAPPING** represents the table name mapping between the two Postgres peers. The final `WITH` clause captures if you wanted to include initial snapshot as a part of the MIRROR. If you don't include that `WITH`, PeerDB assumes that you don't want to perform an initial snapshot. If just reads the slot and replays the changes to the target.
-1. Data type mapping between [Postgres and Snowflake can be found here](https://github.com/PeerDB-io/peerdb/pull/104).
+1. Data type mapping between [Postgres and Snowflake can be found here](/datatypes/datatype-matrix).
 2. If you want additional types to be supported or want to alter the existing data type mapping, please reach out to us. We can aim to support that within a few days. Also, PeerDB is [fully open source](https://github.com/PeerDB-io/peerdb), so feel free to submit a PR.
 
 > **PeerDB also supports replicating TOAST columns very efficiently**. Unlike most CDC tools, you don't need to set up REPLICA IDENTITY FULL for replicating TOAST columns. This [PR](https://github.com/PeerDB-io/peerdb/pull/111) captures the infrastructural optimizations that PeerDB takes to support TOAST columns.
