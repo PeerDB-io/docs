@@ -6,7 +6,7 @@ PubSub records may be a table, overriding the following:
 ```lua
 {
   topic = 'override', -- will use this over the mirror's destination table
-  key = 'partition key',
+  key = 'ordering key',
   value = 'record value',
   headers = {
     header1 = 'value1',
