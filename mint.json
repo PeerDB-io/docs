@@ -75,6 +75,7 @@
         "connect/azure_flexible_server_postgres",
         "connect/clickhouse",
         "connect/crunchy_bridge",
+        "connect/kafka",
         "connect/pubsub"
       ]
     },
