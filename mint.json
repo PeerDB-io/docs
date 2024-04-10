@@ -76,7 +76,8 @@
         "connect/clickhouse",
         "connect/crunchy_bridge",
         "connect/kafka",
-        "connect/pubsub"
+        "connect/pubsub",
+        "connect/gcs"
       ]
     },
     {
