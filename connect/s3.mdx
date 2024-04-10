@@ -1,0 +1,40 @@
+---
+title: "S3 Setup Guide"
+---
+
+1. Create an S3 bucket or ensure an existing bucket is available for use.
+2. For PeerDB to access the S3 Peer, you can either use an existing AWS user or create a new AWS user.
+3. Create access keys for that user through [AWS Console](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey) or [AWS CLI](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey_CLIAPI) or [AWS API](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey_API). By the end, you should have an access key along with its secret.
+4. For the same user, create and attach the policy below using the [JSON editor](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-create-and-attach-iam-policy.html). Be sure to substitute the bucket name with your own. PeerDB requires `s3:ListAllMyBuckets`, `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` and `s3:DeleteObject` on that bucket. 
+
+     ```json
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "s3:GetObject",
+                        "s3:PutObject",
+                        "s3:ListBucket",
+                        "s3:DeleteObject"
+                    ],
+                    "Resource": [
+                        "arn:aws:s3:::<your-bucket-name>",
+                        "arn:aws:s3:::<your-bucket-name>/*"
+                    ]
+                }
+            ]
+        }
+        ```
+5. In the PeerDB UI, select the Peers menu and select the New Peer option on the top right. Select the peer type as S3 and click on continue.
+
+<Frame caption="Create peer drop down">
+<img src="/images/setup/s3_gcs_peer.png" />
+</Frame>
+
+6. Choose a mirror name, and fill your bucket URL (with optional prefix, in case you want PeerDB's files to be nested within the bucket), access key and secret access key along with the region. Click `Validate` to see if any issues crop up and fix them accordingly. Then click Create peer to finish peer creation.
+
+<Frame caption="Creating S3 peer">
+<img src="/images/setup/s3_create_peer.png" />
+</Frame>
