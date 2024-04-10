@@ -1,0 +1,27 @@
+---
+title: "PubSub Setup Guide"
+---
+
+1. [Create a dedicated Service Account](https://cloud.google.com/iam/docs/keys-create-delete#iam-service-account-keys-create-console) for PeerDB through Google Cloud Console and specify `Pub/Sub Publisher`
+    
+   <Frame caption="Create a dedicated Service Account For PeerDB and grant the necessary permissions">
+    <img src="/images/setup/pubsub-peerdb-ui.png" />
+   </Frame>
+
+2. Add a key to the above created service account
+    
+   <Frame caption="Add Key to the Service Account">
+    <img src="/images/setup/bq-add-key-1.png" />
+   </Frame>   
+   <Frame caption="Key Added to the Service Account">
+    <img src="/images/setup/bq-add-key-2.png" />
+   </Frame>
+
+3. Using this service account key create the peer using PeerDB UI
+
+   <Frame caption="Create PubSub Peer">
+    <img src="/images/setup/pubsub-create-peer.png" />
+   </Frame>
+----
+PeerDB mirrors will automatically create topics if they don't already exist,
+but you must create a subscription on the topic for messages to be retained.
