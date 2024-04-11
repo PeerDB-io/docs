@@ -83,7 +83,8 @@
         "connect/clickhouse",
         "connect/kafka",
         "connect/pubsub",
-        "connect/gcs"
+        "connect/gcs",
+        "connect/s3"
       ]
     },
     {
