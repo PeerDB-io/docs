@@ -70,11 +70,17 @@
       "pages": [
         "connect/snowflake",
         "connect/bigquery",
-        "connect/rds_postgres",
-        "connect/cloudsql_postgres",
-        "connect/azure_flexible_server_postgres",
+        {
+          "group": "Postgres",
+          "pages": [
+            "connect/postgres/rds_postgres",
+            "connect/postgres/cloudsql_postgres",
+            "connect/postgres/azure_flexible_server_postgres",
+            "connect/postgres/crunchy_bridge"
+          ]
+        },
+
         "connect/clickhouse",
-        "connect/crunchy_bridge",
         "connect/kafka",
         "connect/pubsub",
         "connect/gcs"
