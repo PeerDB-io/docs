@@ -18,13 +18,11 @@ Or, if let's say you're syncing to a data warehouse where frequent writes are ex
 Select the mirror you created from the Mirrors page:
 ![selectmirror](../images/pause-mirror/selectmirror.png)
 
-In order to edit the mirror, it needs to be paused first. We can click on the **Pause** button under **Status** in the **Overview** tab:
-![pausemirror](../images/pause-mirror/clickpause.png)
+In order to edit the mirror, it needs to be paused first. We can click on the **Pause** button under the **Actions** menu:
+![pausemirror](../images/pause-mirror/pause.png)
 
 Once clicked, you can refresh the page and see that the **Status** is now **Paused**.
-![resumemirror](../images/pause-mirror/resumemirror.png)
-
-Now, we can click on the **Edit** button under **Actions** in the **Overview** tab:
+Now, we can click on the **Edit Mirror** button under **Actions** in the **Overview** tab:
 ![clickedit1](../images/edit-mirror/clickedit1.png)
 
 This takes to the **Edit Mirror** page where you can edit the **Pull Batch Size** and **Sync Interval**:
@@ -34,6 +32,8 @@ Once you have made the changes, click on the **Edit Mirror** button in the botto
 
 ### Adding Tables
 You can add tables in the Edit Mirror page by clicking on any of the schemas and selecting tables.
+<Note>If you've provided a publication of your own for this mirror, you must add new tables to that publication</Note>
+
 ![selecttable](../images/ui-quickstart/tablemapping.png)
 
 After selecting them and clicking **Edit Mirror**, you will be taken to the Overview tab where the **Status** will be **Snapshot**.
