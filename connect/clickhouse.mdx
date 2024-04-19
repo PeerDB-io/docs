@@ -2,21 +2,20 @@
 title: "ClickHouse Setup Guide"
 ---
 
-1. Create a separate database for the ClickHouse peer called peerdb. This is where tables will be auto created and synced by PeerDB.
+1. Create a separate database for the ClickHouse peer called peerdb. This is where tables will be auto-created and synced by PeerDB.
 ```sql
    CREATE DATABASE peerdb;
 ```
 2. Make sure you have a database user who has permissions for DDL, DML and SELECT operations on ClickHouse.
 3. Create the ClickHouse Peer through UI
-    <Frame caption="Choose PostgreSQL Peer">
-    <img src="/images/setup/clickhouse/create_mirror.png" />
+    <Frame caption="Create Clickhouse Peer">
+    <img src="/images/setup/clickhouse/clickhousepeer.png" />
     </Frame>
     1. Enter all the details `Name`, `Host`, `Port`, `User`, `Password` and `Database`
-    2. ClickHouse peer requires AWS S3 for transient staging of data.
+    2. Disable TLS if your server does not support it.
+    3. ClickHouse peer requires AWS S3 for transient staging of data.
     <Warning>
     If you are using **PeerDB Cloud**, you don't need to enter any of these credentials. We take care of transient staging for you.
     </Warning>
-    If you are using PeerDB OSS please enter `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` and `S3 Bucket` while creating the peer.  Note that the `S3 Bucket` should already exist while creating the peer. 
-
-   
-    
+    #### For PeerDB OSS
+    If you are using PeerDB OSS, please enter `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` and `S3 Path` while creating the peer.  Note that the `S3 Path` should already exist while creating the peer.
