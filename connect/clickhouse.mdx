@@ -7,15 +7,17 @@ title: "ClickHouse Setup Guide"
    CREATE DATABASE peerdb;
 ```
 2. Make sure you have a database user who has permissions for DDL, DML and SELECT operations on ClickHouse.
-3. Create the ClickHouse Peer through UI
-    <Frame caption="Create Clickhouse Peer">
+3. ClickHouse has several ports exposed, and PeerDB requires to use a port that exposes the `ClickHouse native protocol` which by default is `9440` for the secure TLS-enabled port and `9000` for the non-TLS port. If the default ports have been changed, please adjust them accordingly.
+<Warning>
+We do not recommend using the non-TLS enabled port for ClickHouse. If this is needed, please also check the `Disable TLS?` option.
+</Warning>
+4. ClickHouse requires setting up AWS S3 for transient staging of data.
+   #### For PeerDB OSS
+   If you are using PeerDB OSS, please enter `S3 Path`, `Access Key ID`, `Secret Access Key` and `Region` while creating the peer.  Note that the `S3 Path` should already exist while creating the peer.
+   #### For PeerDB Cloud
+   For a seamless setup on PeerDB Cloud, you can contact us via [e-mail](mailto:contact@peerdb.io) or [slack](https://join.slack.com/t/peerdb-public/shared_invite/zt-1wo9jydev-EXInbMtCtpAKFFWdi7QvLQ) to get the S3 staging setup for you, otherwise you may choose to provide AWS Bucket and Credentials yourself.
+5. Create the ClickHouse Peer through UI
+    <Frame caption="Choose PostgreSQL Peer">
     <img src="/images/setup/clickhouse/clickhousepeer.png" />
     </Frame>
-    1. Enter all the details `Name`, `Host`, `Port`, `User`, `Password` and `Database`
-    2. Disable TLS if your server does not support it.
-    3. ClickHouse peer requires AWS S3 for transient staging of data.
-    <Warning>
-    If you are using **PeerDB Cloud**, you don't need to enter any of these credentials. We take care of transient staging for you.
-    </Warning>
-    #### For PeerDB OSS
-    If you are using PeerDB OSS, please enter `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` and `S3 Path` while creating the peer.  Note that the `S3 Path` should already exist while creating the peer.
+    Enter all the details `Name`, `Host`, `Port` (as determined above), `User`, `Password` and `Database` along with S3 credentials to setup the peer.
