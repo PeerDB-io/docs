@@ -26,8 +26,10 @@ Returns array of row's column names
 Returns underlying `Kind` of row column, see [qvalue/kind.go](https://github.com/PeerDB-io/peerdb/blob/main/flow/model/qvalue/kind.go) for list of kinds
 #### `Now() [Time]`
 Returns current time as `[Time]`
-#### `UUID() [UUID]`
-Returns random `[UUID]`
+#### `UUID(string?) [UUID]`
+Returns random `[UUID]`, or parses passed in string
+#### `Decimal(string | number)`
+Returns Decimal based on passed in value
 #### `type(any) string`
 Returns `fmt.Sprintf("%T", value)` on underlying value of UserData. Returns `nil` for other types
 #### `tostring(any) string`
@@ -53,6 +55,8 @@ CommitTime of record's preceding BeginMessage
 Destination table of record defined by mirror
 #### `source`
 Source table of record
+#### `unchanged_columns`
+Update records have a table mapping unchanged [toast](https://www.postgresql.org/docs/current/storage-toast.html) columns to `true`
 ## `Row`
 PeerDB row values which cannot be represented as Lua numbers or strings are wrapped in UserData. All of these types implement `__tostring`. Available types:
 #### `I64` / `U64`
