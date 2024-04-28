@@ -8,9 +8,10 @@ PeerDB currently supports the below types of Peers. To connect a database to Pee
 1. [BigQuery](#bigquery-peer)
 2. [Snowflake](#snowflake-peer)
 3. [PostgreSQL](#postgresql-peer)
-4. [Storage Peers - S3 and Google Cloud](#storage-peers-s3-and-gcs)
-5. [SQL Server](#sqlserver-peer)
-6. [Azure EventHubs](#eventhub-peer)
+4. [SQL Server](#sqlserver-peer)
+5. [MySQL](#mysql-peer)
+6. [Storage Peers - S3 and Google Cloud](#storage-peers-s3-and-gcs)
+7. [Azure EventHubs](#eventhub-peer)
 
 ## BigQuery Peer
 
@@ -241,7 +242,7 @@ x-flow-worker-env: &flow-worker-env
 ## SQLServer Peer
 
 ```sql
-CREATE PEER sqlserver_peer FROM SQLSERVER WITH(
+CREATE PEER sqlserver_peer FROM SQLSERVER WITH (
   server='<your-hostname>',
   port='<your-port>',
   user='<user>',
@@ -255,6 +256,25 @@ If you are connecting to a Docker SQL Server/Azure SQL Edge instance on the same
 ### Considerations
 
 1. Currently only data-movement is supported for this type of peer. Querying this peer from PeerDB's interface is not supported.
+
+## MySQL Peer
+
+```sql
+CREATE PEER mysql_peer FROM MYSQL WITH (
+  host='<your-hostname>',
+  port=3006,
+  user='<user>'
+  password='<password>',
+  database='<database>',
+  setup='set session transaction level read only',
+  disable_tls=false
+);
+```
+
+### Considerations
+
+1. Currently only querying is supported for this type of peer. Mirrors are not supported.
+2. `setup` is optional, but can be used to run queries when connection setup. Useful for setting transactions as read only by default, or setting catalog/database with `use catalog.database` for [StarRocks](https://www.starrocks.io)
 
 ## EventHub Peer
 
