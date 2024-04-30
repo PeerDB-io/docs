@@ -2,11 +2,22 @@
 title: "Kafka Setup Guide"
 ---
 
-![create kafka peer ui](../images/setup/kafka-peer.png)
-
 If looking to try out without an already setup Kafka endpoint, [see Redpanda quickstart,](https://docs.redpanda.com/current/get-started/quick-start) by default no authentication is necessary.
 
-PeerDB only supports plaintext & sasl authentication. If username isn't supplied then PeerDB will attempt to connect without authentication.
+To get the above redpanda container to work with PeerDB on OSS, you can first add it to the PeerDB containers' network:
+```bash
+# container id of the redpanda-0
+docker network connect peerdb_default <redpanda_server_container_id>
+
+# container id of the redpanda-console
+docker network connect peerdb_default <redpanda_console_container_id>
+```
+
+And then in UI you can create the Kafka peer like so:
+![create kafka peer ui](../images/setup/redpeer.png)
+
+
+PeerDB only supports plaintext and SASL authentication. If username isn't supplied then PeerDB will attempt to connect without authentication.
 
 Multiple servers can be specified as a comma separated list.
 
