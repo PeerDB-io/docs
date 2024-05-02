@@ -11,11 +11,7 @@ title: "ClickHouse Setup Guide"
 <Warning>
 We do not recommend using the non-TLS enabled port for ClickHouse. If this is needed, please also check the `Disable TLS?` option.
 </Warning>
-4. ClickHouse requires setting up AWS S3 for transient staging of data.
-   #### For PeerDB OSS
-   If you are using PeerDB OSS, please enter `S3 Path`, `Access Key ID`, `Secret Access Key` and `Region` while creating the peer.  Note that the `S3 Path` should already exist while creating the peer.
-   #### For PeerDB Cloud
-   For a seamless setup on PeerDB Cloud, you can contact us via [e-mail](mailto:contact@peerdb.io) or [slack](https://join.slack.com/t/peerdb-public/shared_invite/zt-1wo9jydev-EXInbMtCtpAKFFWdi7QvLQ) to get the S3 staging setup for you, otherwise you may choose to provide AWS Bucket and Credentials yourself.
+4. If you are using PeerDB OSS, we use MinIO as the internal transient stage. You might need to adjust your firewall rules to allow connections from ClickHouse to MinIO. In [PeerDB Cloud](https://app.peerdb.cloud/), we abstract all of this from you. If you run into issues, please reach out to support@peerdb.io or join our Slack [channel](https://join.slack.com/t/peerdb-public/shared_invite/zt-1wo9jydev-EXInbMtCtpAKFFWdi7QvLQ). 
 5. Create the ClickHouse Peer through UI
     <Frame caption="Choose PostgreSQL Peer">
     <img src="/images/setup/clickhouse/clickhousepeer.png" />
