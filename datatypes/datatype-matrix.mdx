@@ -8,38 +8,38 @@ Below table shows supported data types across **PostgreSQL, BigQuery and Snowfla
 | Source | Destinations
 | --- | --- |
 | <b>PostgreSQL</b> | <b>PostgreSQL</b> | <b>BigQuery</b> | <b>Snowflake</b> | <b>Clickhouse</b> | <b>ElasticSearch</b> |
-| `smallint` | `smallint` | `INTEGER` | `INTEGER` | `Int16` |
-| `integer` | `integer` | `INTEGER` | `INTEGER` | `Int32` |
-| `bigint` | `bigint` | `INTEGER` | `INTEGER` | `Int64` |
-| `float4` | `float4` | `FLOAT` | `FLOAT` | `Float32` |
-| `double precision` | `double precision` | `FLOAT` | `FLOAT` | `Float64` |
-| `boolean` | `bool` | `BOOLEAN` | `BOOLEAN` | `Bool`
-| `"char"` | `CHAR` | `STRING` | `STRING` | `FixedString(1)`
-| `varchar` | `varchar` | `STRING` | `STRING` | `String`
-| `date` | `date` | `DATE` | `DATE` | `Date`
-| `json` | `json` | `STRING` | `VARIANT` | `String`
-| `numeric` | `numeric` | `BIGNUMERIC` | `NUMBER` | `Decimal`
-| `text` | `text` | `STRING` | `STRING` | `String`
-| `timestamp` | `timestamp` | `TIMESTAMP` | `TIMESTAMP_NTZ` | `DateTime64(6)`
-| `timestamp with time zone` | `timestamp with time zone` | `TIMESTAMP` | `TIMESTAMP_TZ` | `DateTime64(6)`
-| `time` | `time` | `TIME` | `TIME` | `String`
-| `bit` | `bit` | `BYTES` | `BINARY` | Coming soon!
-| `bit varying` | `varbit` | `BYTES` | `BINARY` | Coming soon!
-| `bytea` | `bytea` | `BYTES` | `BINARY` | Coming soon!
-| `geography` | `geography` | `GEOGRAPHY` | `GEOGRAPHY` | Coming soon!
-| `geometry` | `geometry` | `GEOGRAPHY` | `GEOMETRY` | Coming soon!
-| `inet` | `inet` | `STRING` | `STRING` | Coming soon!
-| `macaddr` | `macaddr` | `STRING` | `STRING` | Coming soon!
-| `cidr` | `cidr` | `STRING` | `STRING` | Coming soon!
-| `hstore` | `hstore` | `JSON` | `VARIANT` | Coming soon!
-| `uuid` | `uuid` | `STRING` | `STRING` | `uuid`
+| `smallint` | `smallint` | `INTEGER` | `INTEGER` | `Int16` | `INTEGER`
+| `integer` | `integer` | `INTEGER` | `INTEGER` | `Int32` | `INTEGER`
+| `bigint` | `bigint` | `INTEGER` | `INTEGER` | `Int64` |  `LONG`
+| `float4` | `float4` | `FLOAT` | `FLOAT` | `Float32` | `FLOAT`
+| `double precision` | `double precision` | `FLOAT` | `FLOAT` | `Float64` | `FLOAT`
+| `boolean` | `bool` | `BOOLEAN` | `BOOLEAN` | `Bool` | `BOOLEAN`
+| `"char"` | `CHAR` | `STRING` | `STRING` | `FixedString(1)` | `TEXT`
+| `varchar` | `varchar` | `STRING` | `STRING` | `String` | `TEXT`
+| `date` | `date` | `DATE` | `DATE` | `Date` | `TEXT`
+| `json` | `json` | `JSON` | `VARIANT` | `String` | `TEXT`
+| `numeric` | `numeric` | `BIGNUMERIC` | `NUMBER` | `Decimal` | `INTEGER`
+| `text` | `text` | `STRING` | `STRING` | `String`| `STRING`
+| `timestamp` | `timestamp` | `TIMESTAMP` | `TIMESTAMP_NTZ` | `DateTime64(6)`| `TEXT`
+| `timestamp with time zone` | `timestamp with time zone` | `TIMESTAMP` | `TIMESTAMP_TZ` | `DateTime64(6)` | `TEXT`
+| `time` | `time` | `TIME` | `TIME` | `String` | `TEXT`
+| `bit` | `bit` | `BYTES` | `BINARY` | Coming soon! | `BINARY`
+| `bit varying` | `varbit` | `BYTES` | `BINARY` | Coming soon! | `BINARY`
+| `bytea` | `bytea` | `BYTES` | `BINARY` | Coming soon! | `TEXT`
+| `geography` | `geography` | `GEOGRAPHY` | `GEOGRAPHY` | Coming soon! | Coming soon!
+| `geometry` | `geometry` | `GEOGRAPHY` | `GEOMETRY` | Coming soon! | `TEXT`
+| `inet` | `inet` | `STRING` | `STRING` | Coming soon! | `TEXT`
+| `macaddr` | `macaddr` | `STRING` | `STRING` | Coming soon! | `TEXT`
+| `cidr` | `cidr` | `STRING` | `STRING` | Coming soon! | `TEXT`
+| `hstore` | `hstore` | `JSON` | `VARIANT` | Coming soon! | Coming soon!
+| `uuid` | `uuid` | `STRING` | `STRING` | `uuid` | `TEXT`
 
 <br></br>
 #### Array Data Types
 <br></br>
 | Source | Destinations
 | --- | --- |
-| <b>PostgreSQL Type</b> | <b>PostgreSQL</b> | <b>BigQuery</b> | <b>Snowflake</b> | <b>Clickhouse</b> |
+| <b>PostgreSQL Type</b> | <b>PostgreSQL</b> | <b>BigQuery</b> | <b>Snowflake</b> | <b>Clickhouse</b> | <b>ElasticSearch</b> |
 | `ARRAY<INT2>` | `ARRAY<INT2>` | `ARRAY<INT>` | `VARIANT` | `Array<Int16>` |
 | `ARRAY<INT4>` | `ARRAY<INT4>` | `ARRAY<INT>` | `VARIANT` | `Array<Int32>` |
 | `ARRAY<INT8>` | `ARRAY<INT8>` | `ARRAY<INT>` | `VARIANT` | `Array<Int64>` |
