@@ -1,6 +1,6 @@
 ---
-title: Quickstart Guide
-description: "Get started with PeerDB in a few simple steps."
+title: PeerDB Streams for Kafka Quickstart Guide
+description: "Get started with PeerDB Streams for Kafka in a few simple steps."
 ---
 
 ### Deploying PeerDB
@@ -36,7 +36,7 @@ That's it! You now have PeerDB up and running on your machine, ready to query aw
   PATH.
 </Info>
 
-#### Setup
+## Setup
 
 This script reuses the PeerDB internal Postgres instance to setup two databases, which we can use to create two peers. It also creates some tables on both databases to use later in the quickstart. Run the following commands in your terminal:
 
@@ -46,13 +46,15 @@ chmod +x quickstart_prepare_peers.sh
 ./quickstart_prepare_peers.sh
 ```
 
-#### Creating Peers
+### Creating Peers
 
 With PeerDB running, we can create our first peers.
 
 Head over to `localhost:3000` on your browser. This is the PeerDB Dashboard.
 
 Clicking on **Peers** in the sidebar will take us to the **Peers** page.
+
+#### Creating Source Postgres Peer
 
 Let's click on the Create Peer button at the top right to get started.
 ![create peer](../images/ui-quickstart/createpeerbutton.png)
@@ -71,36 +73,53 @@ Finally, click on **Create** to create the peer.
 
 We now have our **source PostgreSQL peer** ready.
 
-Let's create the **target PostgreSQL peer** by repeating the exact same steps.
+#### Creating Target Kafka Peer
 
-Fill in the **password** as `postgres`.
-![target peer](../images/ui-quickstart/createpg2.png)
+Let's create the **target Kafka peer**.
 
-Now that we have our source and target peers ready, let's move on to **creating a mirror**.
-![gototmirrors](../images/ui-quickstart/peersdone.png)
+First lets start a local Kafka (or Redpanda) instance.
+
+```bash
+mkdir redpanda-setup && cd redpanda-setup
+curl -O https://docs.redpanda.com/redpanda-labs/docker-compose/_attachments/single-broker/docker-compose.yml
+docker compose up -d
+
+# connect to the peerdb_default network
+docker network connect peerdb_default $(docker container ls -qf "name=redpanda-0")
+docker network connect peerdb_default $(docker container ls -qf "name=redpanda-console")
+```
+
+Once you go to the create peers page, select Kafka as the option.
+![create peer](../images/streams-quickstart/kafka-setup-1.jpeg)
+
+Fill in the various fields:
+
+* Name: `target`
+* Servers: `redpanda-0:9092`
+* SASL Mechanism: `Scram SHA 256`
+* Partitioner: `Least Backup`
+* Disable TLS: `true`
+
+![target peer](../images/streams-quickstart/kafka-setup-2.jpeg)
+
+Then click the **Create Peer** button.
 
 Clicking on **Mirrors** in the sidebar will take us to the **Mirrors** page.
 
 
 #### Real-time CDC
 
-To kick off Change Data Capture (CDC) based streaming from source peer to target peer, let's click on **New Mirror**.
-![newmirror](../images/ui-quickstart/newmirrorbutton.png)
-
-Let's select the `CDC` box, and enter the name of the mirror and the two peers.
-![mirrorform](../images/ui-quickstart/mirrorpage.png)
+Lets start by creating a CDC mirror. In the side-bar click on **Mirrors**, and then **CDC Mirror**.
+![mirrorform](../images/streams-quickstart/cdc-1.jpeg)
 
 Scrolling down, we can see a section to a **select the table** on our source PostgreSQL peer to sync.
-![selecttable](../images/ui-quickstart/tablemapping.png)
+![selecttable](../images/streams-quickstart/cdc-2.jpeg)
+
 Let's select the table we have ready - `public.test`.
 Now that we've filled in all the mirror details.
-Let's click on **Validate** to check if everything is set up correctly, much like we did when creating peers!
-![selecttable2](../images/ui-quickstart/validatemirr.png)
 
-Finally, click on **Create** to create the mirror.
-![createmirr](../images/ui-quickstart/createmirr.png)
-
-Now that our CDC mirror is set up, it will automatically replicate data from the source to the target peer. Let's insert a row in the source table via PeerDB itself.
+Let's click on **Create Mirror**, which will validate to check if everything is set up correctly, much like we did when creating peers and then will create the mirror.
+![create-mirror](../images/streams-quickstart/cdc-3.jpeg)
 
 Connect to PeerDB via psql:
 
@@ -119,26 +138,16 @@ INSERT INTO source.public.test(c1, c2, t) VALUES(1, 2, 'oathbringer');
 ```
 
 Within a minute, the row should be replicated to the target table. Let's click the mirror link on the `Mirrors` page which we landed on after creating the mirror:
-![mirrorlink](../images/ui-quickstart/mirrorlink.png)
+![mirrorlink](../images/streams-quickstart/mirror-box.jpeg)
 
 This takes to the **Mirror Overview** page. Let's click on the **Sync Status tab**, where we can see the status of the mirror and the number of rows replicated:
-![mirroroverview](../images/ui-quickstart/mirrorresults.png)
+![mirroroverview](../images/streams-quickstart/sync-area.jpeg)
 
-We can see that the mirror has successfully replicated the row from the source to the target peer. Let's verify this by querying the target table.
+We can see that the mirror has successfully replicated the row from the source to the target peer. Let's verify this by querying the target topic.
 
-```sql
---- CDC mirrors replicate data as-is, so the row should be identical.
-SELECT id,c1,c2,t FROM target.public.test;
-```
-The output should look like this:
+Head over to [Redpanda Console](http://localhost:8080/topics), click on the `public.test` topic:
 
-```bash
-peerdb=> SELECT id,c1,c2,t FROM target.public.test;
-id | c1 | c2 |      t
-----+----+----+-------------
-1 |  1 |  2 | oathbringer
-(1 row)
-```
+![rpconsole](../images/streams-quickstart/rp-console.jpeg)
 
 The above MIRROR takes care of replicating all future DML commands (`INSERT`, `UPDATE`, `DELETE`) from source to target.
 
