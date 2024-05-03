@@ -55,6 +55,7 @@
       "group": "Quickstart",
       "pages": [
         "quickstart/quickstart",
+        "quickstart/streams-quickstart",
         "quickstart/sql-quickstart"
       ]
     },
