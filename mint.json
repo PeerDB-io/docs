@@ -129,6 +129,12 @@
       ]
     },
     {
+      "group": "Best practices",
+      "pages": [
+        "bestpractices/heartbeat"
+      ]
+    },
+    {
       "group": "Use-cases",
       "pages": [
         {
