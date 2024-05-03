@@ -100,11 +100,11 @@ The `OPTIONS` clause provides granular control when configuring the MIRROR:
 7. `if_not_exists`: If specified, the MIRROR will be created only if it does not exist.
 
 #### XMIN Query Replication
-PeerDB supports `xmin` as watermark column. The query needs typecasting like below to work with `xmin` column. Note that DELETEs are not supported in XMIN Query Replication.
+PeerDB supports `xmin` as watermark column. Note that DELETEs are not supported in XMIN Query Replication.
 
 ```sql
 CREATE MIRROR xmin_mirror_1 FROM pg_test_peer TO sf_test_peer FOR
-$$ SELECT * FROM users WHERE xmin::text::bigint BETWEEN {{.start}} AND {{.end}} $$
+$$ SELECT * FROM users $$
 WITH (
 	destination_table_name = 'public.users',
 	watermark_column = 'xmin',
