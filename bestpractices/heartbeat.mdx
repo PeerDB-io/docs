@@ -21,10 +21,10 @@ CREATE TABLE _peerdb_heartbeat (
   last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO heartbeat DEFAULT VALUES;
+INSERT INTO _peerdb_heartbeat DEFAULT VALUES;
 
 -- Update the row every minute (this can be done with, say, pg_cron)
-UPDATE heartbeat SET last_updated = CURRENT_TIMESTAMP;
+UPDATE _peerdb_heartbeat SET last_updated = CURRENT_TIMESTAMP;
 ```
 Periodic update can be done with the below pg_cron command:
 
