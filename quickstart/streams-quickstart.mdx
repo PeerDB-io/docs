@@ -22,7 +22,6 @@ We currently support deploying and testing PeerDB using our Docker Compose file.
 
     # Run docker containers: peerdb-server, postgres as catalog, temporal.
     # This might take a few minutes, so get a cup of coffee! :)
-    export COMPOSE_PROJECT_NAME=peerdb-stack
     ./run-peerdb.sh
     ```
 
@@ -84,9 +83,9 @@ mkdir redpanda-setup && cd redpanda-setup
 curl -O https://docs.redpanda.com/redpanda-labs/docker-compose/_attachments/single-broker/docker-compose.yml
 docker compose up -d
 
-# connect to the peerdb_default network
-docker network connect peerdb_default $(docker container ls -qf "name=redpanda-0")
-docker network connect peerdb_default $(docker container ls -qf "name=redpanda-console")
+# connect to the peerdb_network network
+docker network connect peerdb_network $(docker container ls -qf "name=redpanda-0")
+docker network connect peerdb_network $(docker container ls -qf "name=redpanda-console")
 ```
 
 Once you go to the create peers page, select Kafka as the option.
