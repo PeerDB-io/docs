@@ -31,7 +31,6 @@ PeerDB can stream your PostgreSQL data to your S3 bucket in the form of `.avro` 
         mode = 'append',
         parallelism = 10,
         refresh_interval = 10,
-        sync_data_format = 'avro', // this is a must
         destination_table_name = 'peerdb_demo',
         num_rows_per_partition = 2
     );
