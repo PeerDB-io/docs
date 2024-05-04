@@ -1,0 +1,88 @@
+---
+title: "CDC Setup from Postgres to Kafka"
+---
+
+
+## Prerequisites
+
+To perform CDC from Postgres to Kafka, you first need to create a source and destination Peer.
+
+1. Create a Source Peer for Postgres. Follow the instructions depending on your Postgres instance:
+    * [RDS](/connect/postgres/rds_postgres)
+    * [Cloud SQL](/connect/postgres/cloudsql_postgres)
+    * [Azure Flexible Server](/connect/postgres/azure_flexible_server_postgres)
+    * [Crunchy Bridge](/connect/postgres/crunchy_bridge)
+2. Create a Destination Peer for Kafka. Follow the instructions depending on your Kafka instance:
+    * [Confluent Cloud](/connect/confluent-cloud)
+    * [Apache Kafka](/connect/kafka)
+
+
+
+## Demo
+
+<div style={{ position: 'relative', paddingBottom: '55.5%', height: 0 }}>
+  <iframe 
+    src="https://www.loom.com/embed/ebcfb7646a1e48738835853b760e5d04?sid=8b6ffcbe-57ba-4df6-bbb4-cab548ab5005" 
+    allowFullScreen 
+    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} 
+  />
+</div>
+
+
+## Mirror Overview
+
+Once PeerDB is connected to your PostgreSQL database or read replica, we will first do a full initial load of all the selected tables from your database. Then the continuous sync process will start using WAL to capture changes from the source database and apply them to the destination queue.
+
+Depending on the script you've chosen you have complete control of the format on the destination. Default is `JSON`.
+
+<Steps>
+    <Step title="Create Mirror Screen">
+    <Frame caption="Click on Mirrors tab and then enter new Mirror screen">
+        <img src="/images/cdc/new-mirror-1.jpeg" />
+    </Frame>
+    </Step>
+    <Step title="Mirror Type">
+    Since in this walk through we are focussing on CDC based replication, choose CDC as the mirror type.
+    </Step>
+    <Step title="Mirror Name">
+    Enter a unique identifier for the mirror name. This is used to identify the mirror in the PeerDB UI. Make this alpha numeric and without any special characters except underscore. Typically users use something like: `prod_pg_to_kafka_v1` or `dev_pg_to_kafka`.
+    </Step>
+    <Step title="Select Source and Destination Peers">
+    Select the source and destination peers that you created in the prerequisites in the drop down.
+    <Frame caption="source and destination drop down">
+        <img src="/images/cdc_kafka/1.png" />
+    </Frame>
+    </Step>
+    <Step title="Mirror Configuration">
+    * **Sync Interval (Seconds)**: This is the interval after which PeerDB will re-establish a connection to the source database. In case of queues the recommended value is over 600 seconds.
+    * **Publication Name**: This is the name of the publication that you created in the source database. This is used to capture changes from the source database. If you have not created a publication, you can leave this blank and PeerDB will create a publication for you.  If you have not created a publication, you can leave this blank and PeerDB will create a publication for you. If you have already created a publication dedicated to peerdb (`peerdb_publication`), don't forget adding that in this field.
+    * **Replication Slot Name**: This is the name of the replication slot that you created in the source database. This is used to capture changes from the source database. If you have not created a replication slot, you can leave this blank and PeerDB will create a replication slot for you.
+    * **Script**: This is the script that you want to use to transform the data from the source database to the destination database. You can use the default script which writes to `JSON` or you can create your own script, see: [Scripting](/lua/reference).
+    <Frame caption="Replication Slot Name">
+        <img src="/images/cdc_kafka/2.png" />
+    </Frame>
+    </Step>
+    <Step title="Table Selection">
+    Select the tables that you want to replicate from the source database to the destination Kafka Server. You can use the search bar to search for the tables. You can also use the filter to filter the tables based on the schema. You can specify the destination topic name, by default we create a topic with the name `<source_schema>.<source_table>`.
+
+    <Note>
+    If broker does not have automatic topic creation enabled you will have to create the topic ahead of time and give it to PeerDB. Automatic topic creation in Kafka Connect is controlled by the `topic.creation.enable` property. The default value for the property is `true`, enabling automatic topic creation, as shown in the following example:
+    
+```
+topic.creation.enable = true
+```
+    </Note>
+    <Frame caption="Table Selection">
+        <img src="/images/cdc_kafka/3.png" />
+    </Frame>
+    </Step>
+    <Step title="Review and Create">
+    Review the mirror configuration and click on the `Validate Mirror` button. If there are any errors, you will see them on the screen. If there are no errors, you will see a success message. Once you see the success message, click on the `Create Mirror` button to create the mirror ✨.
+    </Step>
+</Steps>
+
+<Warning>
+When dealing with tables that feature `TOAST` columns, it's essential to configure the replica identity to `FULL` to enable PeerDB to accurately capture changes to these columns. 
+Setting `REPLICA IDENTITY FULL` on tables that include primary keys—or when operating on PostgreSQL 16 -- typically imposes minimal overhead on the primary server.
+For an in-depth analysis, refer to this [detailed blog post on the performance implications](https://xata.io/blog/replica-identity-full-performance).
+</Warning>
