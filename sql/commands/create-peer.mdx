@@ -12,6 +12,7 @@ PeerDB currently supports the below types of Peers. To connect a database to Pee
 5. [MySQL](#mysql-peer)
 6. [Storage Peers - S3 and Google Cloud](#storage-peers-s3-and-gcs)
 7. [Azure EventHubs](#eventhub-peer)
+8. [ClickHouse](#clickhouse-peer)
 
 ## BigQuery Peer
 
@@ -238,6 +239,47 @@ x-flow-worker-env: &flow-worker-env
 1. The bucket specified in the URL must already exist.
 2. Only `.avro` file format is currently supported.
 3. Currently only data-movement is supported for this type of peer. Querying this peer from PeerDB's interface is not supported.
+
+## Clickhouse Peer
+You can create a Clickhouse peer using the following SQL syntax:
+
+```sql
+CREATE PEER <clickhouse_peer_name> FROM CLICKHOUSE
+WITH
+(
+    host='<host>',
+    port=<port>,
+    user='<user>',
+    password='<password>',
+    database='<database>',
+    -- disable_tls = true
+);
+```
+
+- For local docker installations of Clickhouse and if you're using PeerDB OSS, the host will be `host.docker.internal`, with the port being the external port.
+- The `disable_tls` parameter is optional and can be set to `true` if you are using a Clickhouse instance without TLS.
+- PeerDB maintains an ephemeral internal stage for Clickhouse using a [min.io](https://min.io/) bucket.
+
+You can configure your own bucket (S3/min.io/GCS) by passing the following optional parameters:
+```sql
+CREATE PEER <my_staged_clickhouse_peer> FROM CLICKHOUSE
+WITH
+(
+    host='<host>',
+    port=<port>,
+    user='<user>',
+    password='<password>',
+    database='<database>',
+
+    -- (Optional) S3 stage of yours:
+    s3_path = 's3://<bucket-name>',
+    access_key_id = '<access_key_id>',
+    secret_access_key = '<secret_access_key>',
+    region = '<region>',
+    endpoint = '<endpoint>' -- for GCS: https://storage.googleapis.com
+);
+
+```
 
 ## SQLServer Peer
 
