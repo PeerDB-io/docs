@@ -82,16 +82,17 @@
         },
 
         "connect/clickhouse",
-        "connect/pubsub",
         "connect/gcs",
-        "connect/s3"
+        "connect/s3",
+        "connect/elasticsearch"
       ]
     },
     {
       "group": "Queues Setup",
       "pages": [
         "connect/kafka",
-        "connect/confluent-cloud"
+        "connect/confluent-cloud",
+        "connect/pubsub"
       ]
     },
     {
