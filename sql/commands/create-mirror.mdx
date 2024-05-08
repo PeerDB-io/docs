@@ -75,7 +75,6 @@ WITH (
 	unique_key_columns = '<unique_key_columns>',
 	parallelism = <parallelism>,
 	refresh_interval = <refresh_interval_in_seconds>,
-	sync_data_format = '<sync_data_format>'
   num_rows_per_partition = 100000,
   initial_copy_onle = <true|false>,
   setup_watermark_table_on_destination = <true|false>,
@@ -100,11 +99,11 @@ The `OPTIONS` clause provides granular control when configuring the MIRROR:
 7. `if_not_exists`: If specified, the MIRROR will be created only if it does not exist.
 
 #### XMIN Query Replication
-PeerDB supports `xmin` as watermark column. The query needs typecasting like below to work with `xmin` column. Note that DELETEs are not supported in XMIN Query Replication.
+PeerDB supports `xmin` as watermark column. Note that DELETEs are not supported in XMIN Query Replication.
 
 ```sql
 CREATE MIRROR xmin_mirror_1 FROM pg_test_peer TO sf_test_peer FOR
-$$ SELECT * FROM users WHERE xmin::text::bigint BETWEEN {{.start}} AND {{.end}} $$
+$$ SELECT * FROM users $$
 WITH (
 	destination_table_name = 'public.users',
 	watermark_column = 'xmin',
@@ -112,7 +111,6 @@ WITH (
 	mode = 'append', -- upsert (only updates) and overwrite are also supported
 	parallelism = 10,
 	refresh_interval = 30,
-	num_rows_per_partition = 100,
-	sync_data_format = 'avro'
+	num_rows_per_partition = 100
 );
 ```

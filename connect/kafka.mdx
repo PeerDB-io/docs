@@ -7,10 +7,10 @@ If looking to try out without an already setup Kafka endpoint, [see Redpanda qui
 To get the above redpanda container to work with PeerDB on OSS, you can first add it to the PeerDB containers' network:
 ```bash
 # container id of redpanda-0
-docker network connect peerdb_default <redpanda_server_container_id>
+docker network connect peerdb_network $(docker container ls -qf "name=redpanda-0")
 
 # container id of redpanda-console
-docker network connect peerdb_default <redpanda_console_container_id>
+docker network connect peerdb_network $(docker container ls -qf "name=redpanda-console")
 ```
 
 And then in UI you can create the Kafka peer like so:

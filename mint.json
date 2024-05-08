@@ -55,6 +55,7 @@
       "group": "Quickstart",
       "pages": [
         "quickstart/quickstart",
+        "quickstart/streams-quickstart",
         "quickstart/sql-quickstart"
       ]
     },
@@ -81,10 +82,17 @@
         },
 
         "connect/clickhouse",
-        "connect/kafka",
-        "connect/pubsub",
         "connect/gcs",
-        "connect/s3"
+        "connect/s3",
+        "connect/elasticsearch"
+      ]
+    },
+    {
+      "group": "Queues Setup",
+      "pages": [
+        "connect/kafka",
+        "connect/confluent-cloud",
+        "connect/pubsub"
       ]
     },
     {
@@ -94,6 +102,7 @@
         "mirror/cdc-pg-sf",
         "mirror/cdc-pg-pg",
         "mirror/cdc-pg-clickhouse",
+        "mirror/cdc-pg-kafka",
         "mirror/upgrade"
       ]
     },
@@ -125,6 +134,12 @@
       "group": "Data types",
       "pages": [
         "datatypes/datatype-matrix"
+      ]
+    },
+    {
+      "group": "Best practices",
+      "pages": [
+        "bestpractices/heartbeat"
       ]
     },
     {

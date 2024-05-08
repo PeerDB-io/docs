@@ -9,13 +9,16 @@ Supported queues:
 2. [PubSub](./pubsub)
 3. [EventHubs](./eventhubs)
 
-The script should define an `onRecord` function, returning a string
-
 See [examples](https://github.com/PeerDB-io/examples) for sample scripts
+
+The script should define an `onRecord` function. Result may be a table instead of a string to specify partition key, metadata, etc. See queue specific pages for supported fields
 
 If multiple return values are given, multiple records will be written
 
-Result may be a table instead of a string to specify partition key, metadata, etc. See queue specific pages for supported fields
+Scripts can be added & edited in UI:
+![scripts overview](../images/scripts_overview.png)
+
+![scripts editor](../images/scripts_editor.png)
 
 # `peerdb` functions
 The set of functions in global `peerdb` table are:
