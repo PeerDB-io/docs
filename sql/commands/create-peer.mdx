@@ -202,12 +202,13 @@ CREATE PEER ssh_postgres_peer FROM POSTGRES WITH
         "user": "<ssh_user>",
         "password": "<ssh_password>",
         "private_key": "<base64_encoded_ssh_private_key>"
-        "host_key": "host_key"
+        "host_key": "host_key" -- optional
     }'
 );
 ```
 
 Note that the input for the private key here expects a base64 encoded private key.
+The host key input is optional and is for preventing MITM attacks.
 
 ## Storage Peers - S3 and GCS
 
