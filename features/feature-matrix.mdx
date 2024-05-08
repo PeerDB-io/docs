@@ -3,21 +3,34 @@
 Below table shows supported features and features we are working on for WAL or CDC Based replication from **Postgres** to different targets.
 ✅ means supported. 🛠️ means **Work in Progress and Coming Soon!**.
 
-| Feature | Snowflake | BigQuery | Postgres | S3/GCS | EventHubs | Kafka / Redpanda | PubSub |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| [Initial Snapshot - Parallelizable](https://blog.peerdb.io/parallelized-initial-load-for-cdc-based-streaming-from-postgres#heading-parallelized-initial-snapshot-for-cdc-based-streaming) | ✅ | ✅ | ✅ | ✅ | 🛠️ | ✅ | ✅ |
-| Incremental Sync (CDC) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| DML Support - INSERT, UPDATE and DELETE | ✅ | ✅ | ✅ | ✅ | ✅ | N/A | N/A |
-| [Schema Changes](/features/schema-changes) | ✅ | ✅ | ✅ | ✅ | ✅ | 🛠️ | 🛠️ |
-| Soft Delete | ✅ | 🛠️ | 🛠️ | 🛠️ | 🛠️ | ? | ? |
-| [Partitioned Tables](/features/replicating-partitioned-tables) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Pausing Mirrors | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Advanced Types - Arrays, JSONB, HSTORE, Geospatial etc. | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Advanced Monitoring - Lag, Throughput, Postgres Wait Events etc | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Resync Mirrors | ✅ | 🛠️ | 🛠️ | 🛠️ | 🛠️ | ✅ | ✅ |
-| Column Exclusion | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+## Warehouses
 
+| Feature | Snowflake | BigQuery | Clickhouse | Postgres | S3/GCS |
+| --- | --- | --- | --- | --- | --- |
+| [Initial Snapshot - Parallelizable](https://blog.peerdb.io/parallelized-initial-load-for-cdc-based-streaming-from-postgres#heading-parallelized-initial-snapshot-for-cdc-based-streaming) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Incremental Sync (CDC) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| DML Support - INSERT, UPDATE and DELETE | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [Schema Changes](/features/schema-changes) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Soft Delete | ✅ | ✅ | 🛠️ | ✅ | ✅ |
+| [Partitioned Tables](/features/replicating-partitioned-tables) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Advanced Types - Arrays, JSONB, HSTORE, Geospatial etc. | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Advanced Monitoring - Lag, Throughput, Postgres Wait Events etc | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Resync Mirrors | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Column Exclusion | ✅ | ✅ | ✅ | ✅ | ✅ |
 
+## Queues
+
+| Feature | EventHubs | Kafka | Redpanda | PubSub |
+| --- | --- | --- | --- | --- |
+| [Initial Snapshot - Parallelizable](https://blog.peerdb.io/parallelized-initial-load-for-cdc-based-streaming-from-postgres#heading-parallelized-initial-snapshot-for-cdc-based-streaming) | 🛠️ | ✅ | ✅ | ✅ |
+| Incremental Sync (CDC) | ✅ | ✅ | ✅ | ✅ |
+| DML Support - INSERT, UPDATE and DELETE | ✅ | N/A | N/A | N/A |
+| [Schema Changes](/features/schema-changes) | ✅ | 🛠️ | 🛠️ | 🛠️ |
+| [Partitioned Tables](/features/replicating-partitioned-tables) | ✅ | ✅ | ✅ | ✅ |
+| Advanced Types - Arrays, JSONB, HSTORE, Geospatial etc. | ✅ | ✅ | ✅ | ✅ |
+| Advanced Monitoring - Lag, Throughput, Postgres Wait Events etc | ✅ | ✅ | ✅ | ✅ |
+| Resync Mirrors | 🛠️ | N/A | N/A | N/A |
+| Column Exclusion | ✅ | ✅ | ✅ | ✅ |
 # Query Based or Watermark Based Replication
 
 Below table shows supported features and features we are working on for Query Based or Watermark Based Replication from **Postgres** to different targets.
@@ -30,7 +43,6 @@ Below table shows supported features and features we are working on for Query Ba
 | DML Support - INSERT, UPDATE (if updated_at & primary key are present) | ✅ | ✅ | ✅ | ✅ |
 | Schema Changes - ADD COLUMN | ✅ | 🛠️ | 🛠️ | 🛠️ |
 | Resync Mirrors | ✅ | 🛠️ | 🛠️ | 🛠️ |
-| Pausing Mirrors | ✅ | ✅ | ✅ | ✅ |
 | Partitioned Tables | ✅ | ✅ | ✅ | ✅ |
 | Advanced Types - Arrays, JSONB, HSTORE, Geospatial etc. | ✅ | ✅ | ✅ | ✅ |
 | Advanced Monitoring - Throughput, Postgres Wait Events etc | ✅ | ✅ | ✅ | ✅ |
@@ -47,5 +59,6 @@ Below table shows what targets we support transformations and their status
 | PubSub | ✅ |
 | Snowflake | Private Preview |
 | BigQuery | Private Preview |
+| Clickhouse | Private Preview |
 | Postgres | Private Preview |
 | S3/GCS | Private Preview |
