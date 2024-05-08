@@ -103,6 +103,7 @@
         "mirror/cdc-pg-pg",
         "mirror/cdc-pg-clickhouse",
         "mirror/cdc-pg-kafka",
+        "mirror/cdc-pg-elasticsearch",
         "mirror/upgrade"
       ]
     },

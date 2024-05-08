@@ -1,0 +1,72 @@
+---
+title: "CDC Setup from Postgres to Elasticsearch"
+---
+
+
+## Prerequisites
+
+To perform CDC from Postgres to Elasticsearch, you first need to create a source and destination Peer.
+
+1. Create a Source Peer for Postgres. Follow the instructions depending on your Postgres instance:
+    * [RDS](/connect/postgres/rds_postgres)
+    * [Cloud SQL](/connect/postgres/cloudsql_postgres)
+    * [Azure Flexible Server](/connect/postgres/azure_flexible_server_postgres)
+    * [Crunchy Bridge](/connect/postgres/crunchy_bridge)
+2. Create a Destination Peer for Elasticsearch
+    * [Elasticsearch](/connect/elasticsearch)
+
+## Demo
+
+<div style={{ position: 'relative', paddingBottom: '55.5%', height: 0 }}>
+  <iframe 
+    src="https://www.loom.com/embed/59af80e870dc4b6791e95e4a136ea8e1?sid=d5e9068f-1e6d-4b03-b688-49f4171ad057" 
+    allowFullScreen 
+    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} 
+  />
+</div>
+
+## Mirror Overview
+
+Once PeerDB is connected to your PostgreSQL database or read replica, we will first do a full initial load of all the selected tables from your database. Then the continuous sync process will start using WAL to capture changes from the source database and apply them to the destination database.
+
+By default, PeerDB uses Elasticsearch [dynamic mapping](https://www.elastic.co/guide/en/elasticsearch/reference/current/dynamic-field-mapping.html) to map Postgres source types to Elasticsearch types. For reference, please refer to the [Data Type Mapping](/datatypes/datatye-matrix) page. In case a stricter mapping is required, you can use the [Elasticsearch Mapping API](https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-put-mapping.html) to define the mapping for your index before creating the mirror.
+
+<Steps>
+    <Step title="Create Mirror Screen">
+    <Frame caption="Click on Mirrors tab and then enter new Mirror screen">
+        <img src="/images/cdc/new-mirror-1.jpeg" />
+    </Frame>
+    </Step>
+    <Step title="Mirror Type">
+    Since in this walkthrough we are focussing on CDC based replication, choose CDC as the mirror type.
+    </Step>
+    <Step title="Mirror Name">
+    Enter a unique identifier for the mirror name. This is used to uniquely identify the mirror in the PeerDB UI. Make this alphanumeric and without any special characters except underscores.
+    </Step>
+    <Step title="Select Source and Destination Peers">
+    Select the source and destination peers that you created in the prerequisites in the drop down.
+    <Frame caption="source and destination drop down">
+        <img src="/images/cdc/pg-es-dropdown.png" />
+    </Frame>
+    </Step>
+    <Step title="Mirror Configuration">
+    * **Initial Snapshot**: Selecting this option will do a full initial load of all the selected tables from your database. This is useful when you are setting up the mirror for the first time. Default is enabled.
+    * **Sync Interval (Seconds)**: This is the interval at which PeerDB will flush the record batch and then restart polling the source database for changes. Default is `60` seconds.
+    * **Publication Name**: This is the name of the publication that you created in the source database. This is used to capture changes from the source database. If you have not created a publication, you can leave this blank and PeerDB will create a publication for you.  If you have not created a publication, you can leave this blank and PeerDB will create a publication for you. If you have already created a publication dedicated to PeerDB, don't forget adding that in this field.
+    * **Replication Slot Name**: This is the name of the replication slot that you created in the source database. This is used to capture changes from the source database. If you have not created a replication slot, you can leave this blank and PeerDB will create a replication slot for you. Do ote that initial snapshot is only supported if PeerDB is able to create a slot.
+    * **Snapshot Number of Rows Per Partition**: This is the number of rows that will be fetched in each partition during the initial snapshot. Default is `500000`. This is useful when you have a large number of rows in your tables and you want to control the number of rows fetched in each partition.
+    * **Snapshot Maximum Parallel Workers**: This is the number of parallel workers that will be used to fetch the initial snapshot. Default is `1`. This is useful when you have a large number of tables and you want to control the number of parallel workers used to fetch the initial snapshot. This setting is per-table.
+    * **Snapshot Number of Tables In Parallel**: This is the number of tables that will be fetched in parallel during the initial snapshot. Default is `4`. This is useful when you have a large number of tables and you want to control the number of tables fetched in parallel.
+    * **Soft Delete**: This is set to `true` by default. Elasticsearch does not support soft delete currently, so this should be set to false.
+    </Step>
+    <Step title="Table Selection">
+    Select the tables that you want to replicate from the source database to the destination database. You can use the search bar to search for the tables. You can also use the filter to filter the tables based on the schema.
+
+    <Frame caption="Table Selection">
+        <img src="/images/cdc/mirror-drop-down.jpeg" />
+    </Frame>
+    </Step>
+    <Step title="Review and Create">
+    Review the mirror configuration and click on the `Validate Mirror` button. If there are any errors, you will see them on the screen. If there are no errors, you will see a success message. Once you see the success message, click on the `Create Mirror` button to create the mirror ✨.
+    </Step>
+</Steps>
