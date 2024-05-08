@@ -24,7 +24,7 @@ Below table shows supported features and features we are working on for Query Ba
 ✅ means supported. 🛠️ means **Work in Progress and Coming Soon!**.
 
 | Feature | Snowflake | BigQuery | Postgres | S3/GCS |
-| --- | --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | --- |
 | Initial Snapshot | ✅ | ✅ | ✅ | ✅ |
 | Incremental Sync Based on Watermark | ✅ | ✅ | ✅ | ✅ |
 | DML Support - INSERT, UPDATE (if updated_at & primary key are present) | ✅ | ✅ | ✅ | ✅ |
@@ -35,3 +35,17 @@ Below table shows supported features and features we are working on for Query Ba
 | Advanced Types - Arrays, JSONB, HSTORE, Geospatial etc. | ✅ | ✅ | ✅ | ✅ |
 | Advanced Monitoring - Throughput, Postgres Wait Events etc | ✅ | ✅ | ✅ | ✅ |
 | Column Exclusion | ✅ | ✅ | ✅ | ✅ |
+
+# Transformations
+
+Below table shows what targets we support transformations and their status
+
+| Target | Status |
+| --- | --- |
+| EventHubs | ✅ |
+| Kafka / Redpanda | ✅ |
+| PubSub | ✅ |
+| Snowflake | Private Preview |
+| BigQuery | Private Preview |
+| Postgres | Private Preview |
+| S3/GCS | Private Preview |
