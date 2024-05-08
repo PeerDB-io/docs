@@ -3,21 +3,19 @@
 Below table shows supported features and features we are working on for WAL or CDC Based replication from **Postgres** to different targets.
 ✅ means supported. 🛠️ means **Work in Progress and Coming Soon!**.
 
-| Feature | Snowflake | BigQuery | Postgres | S3/GCS | EventHubs | Kafka | PubSub |
+| Feature | Snowflake | BigQuery | Postgres | S3/GCS | EventHubs | Kafka / Redpanda | PubSub |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [Initial Snapshot - Parallelizable](https://blog.peerdb.io/parallelized-initial-load-for-cdc-based-streaming-from-postgres#heading-parallelized-initial-snapshot-for-cdc-based-streaming) | ✅ | ✅ | ✅ | ✅ | 🛠️ | Y | Y |
-| Incremental Sync (CDC) | ✅ | ✅ | ✅ | ✅ | ✅ | Y | Y |
-| DML Support - INSERT, UPDATE and DELETE | ✅ | ✅ | ✅ | ✅ | ✅ | ? | ? |
-| [Schema Changes](/features/schema-changes) | ✅ | ✅ | ✅ | ✅ | ✅ | N | N |
+| [Initial Snapshot - Parallelizable](https://blog.peerdb.io/parallelized-initial-load-for-cdc-based-streaming-from-postgres#heading-parallelized-initial-snapshot-for-cdc-based-streaming) | ✅ | ✅ | ✅ | ✅ | 🛠️ | ✅ | ✅ |
+| Incremental Sync (CDC) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| DML Support - INSERT, UPDATE and DELETE | ✅ | ✅ | ✅ | ✅ | ✅ | N/A | N/A |
+| [Schema Changes](/features/schema-changes) | ✅ | ✅ | ✅ | ✅ | ✅ | 🛠️ | 🛠️ |
 | Soft Delete | ✅ | 🛠️ | 🛠️ | 🛠️ | 🛠️ | ? | ? |
-| [Partitioned Tables](/features/replicating-partitioned-tables) | ✅ | ✅ | ✅ | ✅ | ✅ | Y | Y |
-| Pausing Mirrors | ✅ | ✅ | ✅ | ✅ | ✅ | Y | Y |
-| Advanced Types - Arrays, JSONB, HSTORE, Geospatial etc. | ✅ | ✅ | ✅ | ✅ | ✅ | Y | Y |
-| Advanced Monitoring - Lag, Throughput, Postgres Wait Events etc | ✅ | ✅ | ✅ | ✅ | ✅ | ? | ? |
-| Resync Mirrors | ✅ | 🛠️ | 🛠️ | 🛠️ | 🛠️ | Y | Y |
-| Column Exclusion | ✅ | ✅ | ✅ | ✅ | ✅ | Y | Y |
-| PeerDB Watchdog - Alerting based on important metrics such as slot size (lag) | 🛠️ | 🛠️ | 🛠️ | 🛠️ | 🛠️ | ? | ? |
-| PeerDB AutoAdapt - Based on activity on the source auto adapt load/pressure | 🛠️ | 🛠️ | 🛠️ | 🛠️ | 🛠️ | ? | ? |
+| [Partitioned Tables](/features/replicating-partitioned-tables) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Pausing Mirrors | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Advanced Types - Arrays, JSONB, HSTORE, Geospatial etc. | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Advanced Monitoring - Lag, Throughput, Postgres Wait Events etc | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Resync Mirrors | ✅ | 🛠️ | 🛠️ | 🛠️ | 🛠️ | ✅ | ✅ |
+| Column Exclusion | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 
 # Query Based or Watermark Based Replication
