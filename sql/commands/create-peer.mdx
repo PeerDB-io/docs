@@ -180,6 +180,34 @@ If you are connecting to a Docker Postgres instance on the same docker network a
 1. **Supported Datatypes:** All string, numeric and timestamp based datatypes are supported for querying. We are actively addding support for other types.
 2. **Unsupported COPY command:** COPY command is not supported yet.
 
+### SSH Tunneling Configuration (Optional)
+You can connect to a PostgreSQL database through a bastion host using SSH tunneling.
+Here's a [guide on setting up an SSH tunnel for PeerDB.](/connect/postgres/rds_postgres#peerdb-ssh-tunneling-guide-optional)
+
+
+Then, create a PostgreSQL peer using an SSH tunnel:
+
+
+```sql
+CREATE PEER ssh_postgres_peer FROM POSTGRES WITH
+(
+    host = '<hostname>',
+    port = 5432,
+    user = '<user>',
+    password = '<password>',
+    database = '<dbname>',
+    ssh_config = '{
+        "host": "<ssh_host>",
+        "port": 22,
+        "user": "<ssh_user>",
+        "password": "<ssh_password>",
+        "private_key": "<base64_encoded_ssh_private_key>"
+        "host_key": "host_key"
+    }'
+);
+```
+
+Note that the input for the private key here expects a base64 encoded private key.
 
 ## Storage Peers - S3 and GCS
 
