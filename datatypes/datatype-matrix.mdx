@@ -7,39 +7,39 @@ Below table shows supported data types across **PostgreSQL, BigQuery and Snowfla
 
 | Source | Destinations
 | --- | --- |
-| <b>PostgreSQL Type</b> | <b>PostgreSQL</b> | <b>BigQuery</b> | <b>Snowflake</b> | <b>Clickhouse</b> |
-| `smallint` | `smallint` | `INTEGER` | `INTEGER` | `Int16` |
-| `integer` | `integer` | `INTEGER` | `INTEGER` | `Int32` |
-| `bigint` | `bigint` | `INTEGER` | `INTEGER` | `Int64` |
-| `float4` | `float4` | `FLOAT` | `FLOAT` | `Float32` |
-| `double precision` | `double precision` | `FLOAT` | `FLOAT` | `Float64` |
-| `boolean` | `bool` | `BOOLEAN` | `BOOLEAN` | `Bool`
-| `"char"` | `CHAR` | `STRING` | `STRING` | `FixedString(1)`
-| `varchar` | `varchar` | `STRING` | `STRING` | `String`
-| `date` | `date` | `DATE` | `DATE` | `Date`
-| `json` | `json` | `STRING` | `VARIANT` | `String`
-| `numeric` | `numeric` | `BIGNUMERIC` | `NUMBER` | `Decimal`
-| `text` | `text` | `STRING` | `STRING` | `String`
-| `timestamp` | `timestamp` | `TIMESTAMP` | `TIMESTAMP_NTZ` | `DateTime64(6)`
-| `timestamp with time zone` | `timestamp with time zone` | `TIMESTAMP` | `TIMESTAMP_TZ` | `DateTime64(6)`
-| `time` | `time` | `TIME` | `TIME` | `String`
-| `bit` | `bit` | `BYTES` | `BINARY` | Coming soon!
-| `bit varying` | `varbit` | `BYTES` | `BINARY` | Coming soon!
-| `bytea` | `bytea` | `BYTES` | `BINARY` | Coming soon!
-| `geography` | `geography` | `GEOGRAPHY` | `GEOGRAPHY` | Coming soon!
-| `geometry` | `geometry` | `GEOGRAPHY` | `GEOMETRY` | Coming soon!
-| `inet` | `inet` | `STRING` | `STRING` | Coming soon!
-| `macaddr` | `macaddr` | `STRING` | `STRING` | Coming soon!
-| `cidr` | `cidr` | `STRING` | `STRING` | Coming soon!
-| `hstore` | `hstore` | `JSON` | `VARIANT` | Coming soon!
-| `uuid` | `uuid` | `STRING` | `STRING` | `uuid`
+| <b>PostgreSQL</b> | <b>PostgreSQL</b> | <b>BigQuery</b> | <b>Snowflake</b> | <b>Clickhouse</b> | <b>ElasticSearch</b> |
+| `smallint` | `smallint` | `INTEGER` | `INTEGER` | `Int16` | `long`
+| `integer` | `integer` | `INTEGER` | `INTEGER` | `Int32` | `long`
+| `bigint` | `bigint` | `INTEGER` | `INTEGER` | `Int64` |  `long`
+| `float4` | `float4` | `FLOAT` | `FLOAT` | `Float32` | `float`
+| `double precision` | `double precision` | `FLOAT` | `FLOAT` | `Float64` | `float`
+| `boolean` | `bool` | `BOOLEAN` | `BOOLEAN` | `Bool` | `boolean`
+| `"char"` | `CHAR` | `STRING` | `STRING` | `FixedString(1)` | `text`
+| `varchar` | `varchar` | `STRING` | `STRING` | `String` | `text`
+| `date` | `date` | `DATE` | `DATE` | `Date` | `date`
+| `json` | `json` | `JSON` | `VARIANT` | `String` | unnested subdocument
+| `numeric` | `numeric` | `BIGNUMERIC` | `NUMBER` | `Decimal` | `text`
+| `text` | `text` | `STRING` | `STRING` | `String`| `text`
+| `timestamp` | `timestamp` | `TIMESTAMP` | `TIMESTAMP_NTZ` | `DateTime64(6)`| `date`
+| `timestamp with time zone` | `timestamp with time zone` | `TIMESTAMP` | `TIMESTAMP_TZ` | `DateTime64(6)` | `date`
+| `time` | `time` | `TIME` | `TIME` | `String` | `date`
+| `bit` | `bit` | `BYTES` | `BINARY` | Coming soon! | `text`
+| `bit varying` | `varbit` | `BYTES` | `BINARY` | Coming soon! | `text`
+| `bytea` | `bytea` | `BYTES` | `BINARY` | Coming soon! | `text`
+| `geography` | `geography` | `GEOGRAPHY` | `GEOGRAPHY` | Coming soon! | Coming soon!
+| `geometry` | `geometry` | `GEOGRAPHY` | `GEOMETRY` | Coming soon! | Coming soon!
+| `inet` | `inet` | `STRING` | `STRING` | Coming soon! | `text`
+| `macaddr` | `macaddr` | `STRING` | `STRING` | Coming soon! | `text`
+| `cidr` | `cidr` | `STRING` | `STRING` | Coming soon! | `text`
+| `hstore` | `hstore` | `JSON` | `VARIANT` | Coming soon! | Coming soon!
+| `uuid` | `uuid` | `STRING` | `STRING` | `uuid` | Coming soon!
 
 <br></br>
 #### Array Data Types
 <br></br>
 | Source | Destinations
 | --- | --- |
-| <b>PostgreSQL Type</b> | <b>PostgreSQL</b> | <b>BigQuery</b> | <b>Snowflake</b> |
+| <b>PostgreSQL Type</b> | <b>PostgreSQL</b> | <b>BigQuery</b> | <b>Snowflake</b> | <b>Clickhouse</b> |
 | `ARRAY<INT2>` | `ARRAY<INT2>` | `ARRAY<INT>` | `VARIANT` | `Array<Int16>` |
 | `ARRAY<INT4>` | `ARRAY<INT4>` | `ARRAY<INT>` | `VARIANT` | `Array<Int32>` |
 | `ARRAY<INT8>` | `ARRAY<INT8>` | `ARRAY<INT>` | `VARIANT` | `Array<Int64>` |
@@ -90,3 +90,6 @@ formatted as a `JSON` and can be queried as such - `snowflake_hstore_column:key`
 
 #### Nulls in BigQuery Arrays
 PeerDB removes `null` values from BigQuery arrays. This is because BigQuery does not support `null` values in arrays during their insertion.
+
+#### Elasticsearch 
+We currently rely on Elasticsearch dynamic mapping for data type mappings, so this mapping may not be accurate for all cases. We are working on enabling explicit mappings for Elasticsearch.
