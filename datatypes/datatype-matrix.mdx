@@ -18,20 +18,21 @@ Below table shows supported data types across **PostgreSQL, BigQuery and Snowfla
 | `varchar` | `varchar` | `STRING` | `STRING` | `String` | `text`
 | `date` | `date` | `DATE` | `DATE` | `Date` | `date`
 | `json` | `json` | `JSON` | `VARIANT` | `String` | unnested subdocument
+| `jsonb` | `jsonb` | `JSON` | `VARIANT` | `String` | unnested subdocument
 | `numeric` | `numeric` | `BIGNUMERIC` | `NUMBER` | `Decimal` | `text`
 | `text` | `text` | `STRING` | `STRING` | `String`| `text`
 | `timestamp` | `timestamp` | `TIMESTAMP` | `TIMESTAMP_NTZ` | `DateTime64(6)`| `date`
 | `timestamp with time zone` | `timestamp with time zone` | `TIMESTAMP` | `TIMESTAMP_TZ` | `DateTime64(6)` | `date`
 | `time` | `time` | `TIME` | `TIME` | `String` | `date`
-| `bit` | `bit` | `BYTES` | `BINARY` | Coming soon! | `text`
-| `bit varying` | `varbit` | `BYTES` | `BINARY` | Coming soon! | `text`
-| `bytea` | `bytea` | `BYTES` | `BINARY` | Coming soon! | `text`
-| `geography` | `geography` | `GEOGRAPHY` | `GEOGRAPHY` | Coming soon! | Coming soon!
-| `geometry` | `geometry` | `GEOGRAPHY` | `GEOMETRY` | Coming soon! | Coming soon!
-| `inet` | `inet` | `STRING` | `STRING` | Coming soon! | `text`
-| `macaddr` | `macaddr` | `STRING` | `STRING` | Coming soon! | `text`
-| `cidr` | `cidr` | `STRING` | `STRING` | Coming soon! | `text`
-| `hstore` | `hstore` | `JSON` | `VARIANT` | Coming soon! | Coming soon!
+| `bit` | `bit` | `BYTES` | `BINARY` | `String` | `text`
+| `bit varying` | `varbit` | `BYTES` | `BINARY` | `String` | `text`
+| `bytea` | `bytea` | `BYTES` | `BINARY` | `String` | `text`
+| `geography` | `geography` | `GEOGRAPHY` | `GEOGRAPHY` | `String` | Coming soon!
+| `geometry` | `geometry` | `GEOGRAPHY` | `GEOMETRY` | `String` | Coming soon!
+| `inet` | `inet` | `STRING` | `STRING` | `String` | `text`
+| `macaddr` | `macaddr` | `STRING` | `STRING` | `String` | `text`
+| `cidr` | `cidr` | `STRING` | `STRING` | `String` | `text`
+| `hstore` | `hstore` | `JSON` | `VARIANT` | `String` | Coming soon!
 | `uuid` | `uuid` | `STRING` | `STRING` | `uuid` | Coming soon!
 
 <br></br>
@@ -48,9 +49,9 @@ Below table shows supported data types across **PostgreSQL, BigQuery and Snowfla
 | `ARRAY<BOOL>` | `ARRAY<BOOL>` | `ARRAY<BOOL>` | `VARIANT` | `Array<Bool>` |
 | `ARRAY<VARCHAR>` | `ARRAY<VARCHAR>` | `ARRAY<STRING>` | `VARIANT` | `Array<String>` |
 | `ARRAY<TEXT>` | `ARRAY<TEXT>` | `ARRAY<STRING>` | `VARIANT` | `Array<String>` |
-| `ARRAY<DATE>` | `ARRAY<DATE>` | `ARRAY<DATE>` | `VARIANT` | Coming soon! |
-| `ARRAY<TIMESTAMP>` | `ARRAY<TIMESTAMP>` | `ARRAY<TIMESTAMP>` | `VARIANT` | Coming soon! |
-| `ARRAY<TIMESTAMPTZ>` | `ARRAY<TIMESTAMPTZ>` | `ARRAY<TIMESTAMP>` | `VARIANT` | Coming soon! |
+| `ARRAY<DATE>` | `ARRAY<DATE>` | `ARRAY<DATE>` | `VARIANT` | `String` |
+| `ARRAY<TIMESTAMP>` | `ARRAY<TIMESTAMP>` | `ARRAY<TIMESTAMP>` | `VARIANT` | `String` |
+| `ARRAY<TIMESTAMPTZ>` | `ARRAY<TIMESTAMPTZ>` | `ARRAY<TIMESTAMP>` | `VARIANT` | `String` |
 <br></br>
 
 ### Design Choices
