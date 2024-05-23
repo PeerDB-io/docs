@@ -57,21 +57,6 @@ This is optional as PeerDB creates the slot it needs by default. A use-case for 
 10. **synced_at_col_name**: Column name to be used for tracking the last synced timestamp. Default is `_PEERDB_SYNCED_AT`.
 11. **soft_delete_col_name**: Column name to be used for tracking the soft delete status. Default is `_PEERDB_IS_DELETED`.
 
-
-#### CDC Modes for Mirror
-
-We also support the `sql` and `avro` modes for CDC for some destinations such as BigQuery and Snowflake. This can be configured with:
-
-```
-  cdc_sync_mode = 'avro' // or 'sql'
-  cdc_staging_path = '<stage>' // Needed for AVRO mode only
-```
-
-The stage depends on your destination peer:
-
-- For BigQuery, it would be your GCS bucket.
-- For Snowflake, it would be either your S3 bucket URL or an empty string for PeerDB to stage AVRO files internally.
-
 ### MIRROR for Streaming Query Results
 
 This type of MIRROR periodically streams query results on the source peer to the target peer.
