@@ -1,0 +1,74 @@
+---
+title: PeerDB Cloud Security
+description: "Learn about how PeerDB Cloud ensures the security of your data."
+icon: "lock"
+iconType: "solid"
+
+---
+
+
+Security is paramount at PeerDB, and we take our commitment to protecting customer data very seriously. To provide a secure and compliant platform, we adhere to strict protocols and employ various measures to safeguard sensitive information.
+
+
+## Compliance
+
+PeerDB is currently compliant with the following frameworks:
+
+
+
+* [**GDPR**](https://blog.peerdb.io/peerdb-is-gdpr-compliant)
+
+We are currently undergoing compliance review for the following frameworks:
+
+
+
+* **SOC2** - Audit ends on May 29, 2024 and report will be available by 1st/2nd week of June 2024
+* **HIPAA** - Controls are being set up in place for compliance
+
+
+## Data Retention
+
+PeerDB doesn’t store any customer specific data on their end: all the data that is transferred/staged, whether local or remote (S3) is **transient**.
+
+
+## Access and Isolation
+
+
+### Isolation
+
+Every customer instance on PeerDB Cloud is **fully isolated** from other instances and all cross-instance traffic is explicitly denied by default.
+
+More details are available in the [Isolation Architecture Doc](https://trust.peerdb.io/resources?s=s4vk91c8wyd5q0aok7x4sh&name=peer-db-cloud-customer-isolation-architecture) on our [Trust Center](https://trust.peerdb.io/).
+
+
+### Access
+
+PeerDB follows the Principle of Least Privilege wherever possible and requires **read-only access** to the source peers: no write access is needed.
+
+Any and all internal traffic/access across instances is controlled via claim-based and role-based access-control, short-lived credentials and **security best-practices**.
+
+
+## Encryption
+
+Any data in transit is **fully encrypted**. Additionally customers can leverage SSH Tunneling to ensure that they don’t need to expose the public IP of the source peer/database.
+
+
+### [SSH Tunneling for Secure Postgres Replication](https://blog.peerdb.io/ssh-tunneling-for-secure-postgres-replication)
+
+
+We natively support SSH tunneling right from the first connection to your database. A very simple way to get started can be found [here](/connect/postgres/rds_postgres#peerdb-ssh-tunneling-guide-optional)
+
+
+## Additional Documents and Compliance
+
+[Our Trust Center](https://trust.peerdb.io/) is the best place to get an overview and to get access to more documents and compliance frameworks. Click on “Request Access” and we will grant you access shortly.
+
+All PeerDB employees follow security programs/protocols and are trained to ensure that all customer data is securely handled and isolated. These include but are not limited to:
+
+* Incident Response Plan
+* Security Trainings
+* MDM
+* 2FA Enforcement for each and every access
+* Timely Vulnerability Fixes and Dependency Updates
+* Intrusion Detection System
+* Automated Alerts and Alarms
