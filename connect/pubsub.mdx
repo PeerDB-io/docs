@@ -2,17 +2,19 @@
 title: "PubSub Setup Guide"
 ---
 
-1. [Create a dedicated Service Account](https://cloud.google.com/iam/docs/keys-create-delete#iam-service-account-keys-create-console) for PeerDB through Google Cloud Console and specify `Pub/Sub Publisher`
-    
+1. [Create a dedicated Service Account](https://cloud.google.com/iam/docs/keys-create-delete#iam-service-account-keys-create-console) 
+for PeerDB through Google Cloud Console and specify the following roles:
+- `Pub/Sub Viewer` : PeerDB requires this role to check if your provided topic exists.
+- `Pub/Sub Publisher` : PeerDB requires this role to publish messages to the topic.
+
    <Frame caption="Create a dedicated Service Account For PeerDB and grant the necessary permissions">
-    <img src="/images/setup/pubsub-peerdb-ui.png" />
+    <img src="/images/setup/pubsub-setup.png" />
    </Frame>
 
 2. Add a key to the above created service account
-    
    <Frame caption="Add Key to the Service Account">
     <img src="/images/setup/bq-add-key-1.png" />
-   </Frame>   
+   </Frame>
    <Frame caption="Key Added to the Service Account">
     <img src="/images/setup/bq-add-key-2.png" />
    </Frame>
