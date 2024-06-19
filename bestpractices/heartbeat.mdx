@@ -27,7 +27,7 @@ UPDATE _peerdb_heartbeat SET last_updated = CURRENT_TIMESTAMP;
 ```
 
 ### PeerDB Implementation
-PeerDB has the facility to perform periodic updates on your heartbeat table. 
+PeerDB has the facility to perform periodic updates on your heartbeat table.
 This has the benefit of not needing to install an extension like pg_cron.
 Currently, updates are done every 12 minutes. This will soon be configurable.
 PeerDB will require update permission on the heartbeat table:
@@ -67,3 +67,23 @@ WITH(
  ...
 );
 ```
+
+## Mitigate slot growth with emit messages
+If setting up heartbeat tables is unideal for your use case,
+you can also rely on `pg_logical_emit_message()` - a system function for emitting a logical decoding message into WAL.
+
+PeerDB picks up on the message as part of its WAL processing and flushes the slot at the frequency of the CDC sync interval.
+
+Permissions to be granted, if needed, to call this function can be done with:
+```SQL
+GRANT EXECUTE ON FUNCTION pg_logical_emit_message( transactional boolean, prefix text, content text )
+TO <postgres_peer_user>;
+```
+
+Edit the current value fields of the following settings in the **Settings** tab in UI:
+- `PEERDB_ENABLE_WAL_HEARTBEAT`: Set this to `true` (no quotes or anything)
+- `PEERDB_WAL_HEARTBEAT_QUERY`: Set this to the emit_message function call command to be run periodically:
+```sql
+SELECT pg_logical_emit_message(false,'heartbeat','')
+```
+Currently, PeerDB emits a message every 12 minutes. This will soon be configurable.
