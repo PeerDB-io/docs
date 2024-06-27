@@ -2,23 +2,20 @@
 title: PeerDB Lua Scripting
 ---
 
-PeerDB uses Lua scripting for packaging messages for queues. In particular, [Gopher Lua](https://github.com/yuin/gopher-lua)
-
-Supported queues:
-1. [Kafka](./kafka)
-2. [PubSub](./pubsub)
-3. [EventHubs](./eventhubs)
+PeerDB uses [Gopher Lua](https://github.com/yuin/gopher-lua) for scripting
 
 See [examples](https://github.com/PeerDB-io/examples) for sample scripts
-
-The script should define an `onRecord` function. Result may be a table instead of a string to specify partition key, metadata, etc. See queue specific pages for supported fields
-
-If multiple return values are given, multiple records will be written
 
 Scripts can be added & edited in UI:
 ![scripts overview](../images/scripts_overview.png)
 
 ![scripts editor](../images/scripts_editor.png)
+
+PeerDB Streams supports an `onRecord` function for complete control of message content. Result may be a table instead of a string to specify partition key, metadata, etc. See queue specific pages for supported fields. If multiple return values are given, multiple records will be written
+
+For qrep mirrors `transformRow` can be defined. Row fields can be set to transform row. Schema may not be modified
+
+For cdc mirrors `transformRow` will be called on the record's rows by default, unless `tranformRecord` is defined. The latter can be useful for comparing old & new field values
 
 # `peerdb` functions
 The set of functions in global `peerdb` table are:
