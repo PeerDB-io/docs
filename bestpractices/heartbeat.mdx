@@ -72,6 +72,10 @@ WITH(
 If setting up heartbeat tables is unideal for your use case,
 you can also rely on `pg_logical_emit_message()` - a system function for emitting a logical decoding message into WAL.
 
+<Warning>
+Note that this is supported in PostgreSQL versions 14 and above.
+</Warning>
+
 PeerDB picks up on the message as part of its WAL processing and flushes the slot at the frequency of the CDC sync interval.
 
 Permissions to be granted, if needed, to call this function can be done with:
