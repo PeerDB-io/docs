@@ -1,0 +1,292 @@
+
+```http
+POST /api/mirrors/state
+```
+
+This endpoint is used to get the status of a mirror. Status of the mirror could be:
+
+- `STATUS_SETUP`: The mirror is in setup flow, where it creates target tables and metadata tables.
+- `STATUS_SNAPSHOT`: The mirror is currently performing initial load.
+- `STATUS_RUNNING`: The mirror has completed initial load and is in the phase of CDC.
+- `STATUS_PAUSED`: The mirror is in CDC phase and is [paused](/features/pause-mirror).
+- `STATUS_PAUSING`: The mirror is in CDC phase and is in the process of pausing.
+- `STATUS_TERMINATED`: The mirror has been deleted/terminated.
+- `STATUS_UNKNOWN`: The mirror is not found in the catalog, or its status cannot be obtained due to some issue.
+
+### Request Body
+The request consists of the mirror name specified as `flowJobName`
+and `includeFlowInfo` as a boolean, which when set, will include in its response
+additional, non-status related information about the mirror
+such as mirror configuration and initial load information of tables.
+
+<ParamField path="flowJobName" type="string" required>
+The name of the mirror to get the status of.
+</ParamField>
+
+<ParamField path="includeFlowInfo" type="boolean">
+When set to true, will include in its response
+additional, non-status related information about the mirror
+such as mirror configuration and initial load information of tables.
+</ParamField>
+
+### Response Fields
+
+<ParamField path="flowJobName" type="string">
+The name of the mirror.
+</ParamField>
+
+<ParamField path="errorMessage" type="string">
+Error message if any.
+</ParamField>
+
+<ParamField path="currentFlowState" type="string">
+The current state of the mirror.
+</ParamField>
+
+<ParamField path="ok" type="boolean">
+Indicates if the request was successful.
+</ParamField>
+
+Additional flow information when `includeFlowInfo` is set to true:
+<Expandable>
+<ResponseField name="cdcStatus" type="object">
+Information about the mirror configuration and initial load of tables.
+    <Expandable title='config'>
+        <ResponseField name="config" type="object">
+        Mirror configuration.
+        </ResponseField>
+        <Expandable>
+            <ResponseField name="flowJobName" type="string">
+            The name of the mirror.
+            </ResponseField>
+            <ResponseField name="tableMappings" type="object array">
+            Array of table mapping objects. Each object contains the following fields.
+            <Expandable>
+                <ParamField path="sourceTableIdentifier" type="string">
+                The source table identifier. Will be of the form `schema.table`.
+                </ParamField>
+                <ParamField path="destinationTableIdentifier" type="string">
+                The destination table identifier.
+                </ParamField>
+                <ParamField path="exclude" type="string array">
+                Column names to exclude
+                </ParamField>
+            </Expandable>
+            </ResponseField>
+            <ResponseField name="maxBatchSize" type="number">
+            Pull batch size: the number of rows to pull in a single batch.
+            </ResponseField>
+            <ResponseField name="idleTimeoutSeconds" type="string">
+            The time in seconds after which the mirror will flush pulled rows to the target data store,
+            if pull batch size has not already been reached.
+            </ResponseField>
+            <ResponseField name="cdcStagingPath" type="string">
+            The path where CDC staging files are stored.
+            </ResponseField>
+            <ResponseField name="publicationName" type="string">
+            The publication name in the source database.
+            </ResponseField>
+            <ResponseField name="replicationSlotName" type="string">
+            The replication slot name in the source database.
+            </ResponseField>
+            <ResponseField name="doInitialSnapshot" type="boolean">
+            Indicates if an initial snapshot is to be taken.
+            </ResponseField>
+            <ResponseField name="snapshotNumRowsPerPartition" type="number">
+            The number of rows to sync per partition during initial snapshot.
+            </ResponseField>
+            <ResponseField name="snapshotStagingPath" type="string">
+            The path where initial snapshot staging files are stored.
+            </ResponseField>
+            <ResponseField name="snapshotMaxParallelWorkers" type="number">
+            The maximum number of parallel workers to use during initial snapshot.
+            </ResponseField>
+            <ResponseField name="snapshotNumTablesInParallel" type="number">
+            The number of tables to sync in parallel during initial snapshot.
+            </ResponseField>
+            <ResponseField name="resync" type="boolean">
+            Indicates if a resync is to be performed.
+            </ResponseField>
+            <ResponseField name="initialSnapshotOnly" type="boolean">
+            Indicates if only an initial snapshot is to be taken.
+            </ResponseField>
+            <ResponseField name="softDelete" type="boolean">
+            Indicates if soft delete is enabled.
+            </ResponseField>
+            <ResponseField name="softDeleteColName" type="string">
+            The name of the column used for soft delete.
+            </ResponseField>
+            <ResponseField name="syncedAtColName" type="string">
+            The name of the column used for tracking sync time.
+            </ResponseField>
+            <ResponseField name="script" type="string">
+            The script to run after each sync.
+            </ResponseField>
+            <ResponseField name="system" type="Q | PG">
+            The data type system of the mirror.
+            </ResponseField>
+            <ResponseField name="sourceName" type="string">
+            The source peer name.
+            </ResponseField>
+            <ResponseField name="destinationName" type="string">
+            The destination peer name.
+            </ResponseField>
+        </Expandable>
+            <ResponseField name="snapshotStatus" type="object">
+                Information about the initial load of tables.
+            <Expandable>
+                <ResponseField name="clones" type="object array">
+                Array of clone objects. Each object contains the following fields.
+                <Expandable>
+                    <ParamField path="tableName" type="string">
+                    The name of the table.
+                    </ParamField>
+                    <ParamField path="startTime" type="string">
+                    The time when the clone started.
+                    </ParamField>
+                    <ParamField path="numPartitionsCompleted" type="number">
+                    The number of partitions completed.
+                    </ParamField>
+                    <ParamField path="numPartitionsTotal" type="number">
+                    The total number of partitions.
+                    </ParamField>
+                    <ParamField path="numRowsSynced" type="string">
+                    The number of rows synced.
+                    </ParamField>
+                    <ParamField path="avgTimePerPartitionMs" type="string">
+                    The average time per partition in milliseconds.
+                    </ParamField>
+                    <ParamField path="flowJobName" type="string">
+                    The name of the clone flow.
+                    </ParamField>
+                    <ParamField path="sourceTable" type="string">
+                    The source table.
+                    </ParamField>
+                    <ParamField path="fetchCompleted" type="boolean">
+                    Indicates if fetching is completed.
+                    </ParamField>
+                    <ParamField path="consolidateCompleted" type="boolean">
+                    Indicates if consolidation is completed.
+                    </ParamField>
+                    <ParamField path="mirrorName" type="string">
+                    The name of the mirror.
+                    </ParamField>
+                </Expandable>
+                </ResponseField>
+            </Expandable>
+        </ResponseField>
+        <ResponseField name="sourceType" type="string">
+        The source peer type. Example:  `"POSTGRES"`
+        </ResponseField>
+        <ResponseField name="destinationType" type="string">
+        The destination peer type. Example: `"BIGQUERY"`
+        </ResponseField>
+    </Expandable>
+
+</ResponseField>
+</Expandable>
+
+<RequestExample>
+```bash Request
+curl --request POST \
+  --url http://localhost:3000/api/mirrors/state \
+  --header 'Authorization: Basic OnBlZXJkYg==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	`flowJobName`:`testing_bq_2`,
+	`includeFlowInfo`:false
+}'
+```
+
+```bash with includeFlowInfo set
+curl --request POST \
+  --url http://localhost:3000/api/mirrors/state \
+  --header 'Authorization: Basic OnBlZXJkYg==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	`flowJobName`:`testing_bq_2`,
+	`includeFlowInfo`:true
+}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+	"flowJobName": "testing_bq_2",
+	"errorMessage": "",
+	"currentFlowState": "STATUS_RUNNING",
+	"ok": true
+}
+```
+
+```json with includeFlowInfo set
+{
+	"flowJobName": "testing_bq_2",
+	"cdcStatus": {
+		"config": {
+			"flowJobName": "testing_bq_2",
+			"tableMappings": [
+				{
+					"sourceTableIdentifier": "public.sales",
+					"destinationTableIdentifier": "public_sales",
+					"partitionKey": "",
+					"exclude": [] // excluded columns, comma-separated
+				},
+			],
+			"maxBatchSize": 1000000,
+			"idleTimeoutSeconds": "60",
+			"cdcStagingPath": "",
+			"publicationName": "",
+			"replicationSlotName": "",
+			"doInitialSnapshot": true,
+			"snapshotNumRowsPerPartition": 1000000,
+			"snapshotStagingPath": "",
+			"snapshotMaxParallelWorkers": 4,
+			"snapshotNumTablesInParallel": 1,
+			"resync": false,
+			"initialSnapshotOnly": false,
+			"softDelete": true,
+			"softDeleteColName": "_PEERDB_IS_DELETED",
+			"syncedAtColName": "_PEERDB_SYNCED_AT",
+			"script": "",
+			"system": "Q",
+			"sourceName": "postgres_local",
+			"destinationName": "bq_peer"
+		},
+		"snapshotStatus": {
+			"clones": [
+				{
+					"tableName": "public_sales",
+					"startTime": "2024-06-27T14:37:48.701204Z",
+					"numPartitionsCompleted": 1,
+					"numPartitionsTotal": 1,
+					"numRowsSynced": "4",
+					"avgTimePerPartitionMs": "11381",
+					"flowJobName": "clone_testing_bq_2_public_sales_dc500df7_2606_4c19_96c0_e40e0df4e5ec",
+					"sourceTable": "public.sales",
+					"fetchCompleted": true,
+					"consolidateCompleted": true,
+					"mirrorName": "testing_bq_2"
+				}
+			]
+		},
+		"cdcSyncs": [], // coming soon
+		"sourceType": "POSTGRES",
+		"destinationType": "BIGQUERY"
+	},
+	"errorMessage": "",
+	"currentFlowState": "STATUS_RUNNING",
+	"ok": true
+}
+```
+
+```json Error example
+{
+	"flowJobName": "fake_mirror",
+	"errorMessage": "unable to get the workflow ID of mirror fake_mirror",
+	"currentFlowState": "STATUS_UNKNOWN",
+	"ok": false
+}
+```
+</ResponseExample>

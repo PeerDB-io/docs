@@ -1,0 +1,70 @@
+## Resume a mirror with specified number of syncs
+
+```http
+POST /api/mirrors/sync
+```
+
+This endpoint is used to resume a [paused](/features/pause-mirror) mirror and
+trigger a specified number of syncs before the mirror pauses again.
+
+The mirror must be paused for this endpoint to work.
+
+### Request Fields
+<ParamField path="flowJobName" type="string" required>
+The name of the mirror to be resumed.
+</ParamField>
+
+<ParamField path="numberOfSyncs" type="number" required>
+The number of syncs to run before the mirror pauses again.
+Must be less than **32**.
+</ParamField>
+
+### Response Fields
+<ParamField path="flowJobName" type="string">
+The name of the mirror that was resumed.
+</ParamField>
+
+<ParamField path="numberOfSyncs" type="number">
+The number of syncs that are going to be run.
+</ParamField>
+
+<ParamField path="errorMessage" type="string">
+Error message if any.
+</ParamField>
+
+<ParamField path="ok" type="boolean">
+Indicates if the request was successful.
+</ParamField>
+
+<RequestExample>
+```bash Request
+curl --request POST \
+  --url http://localhost:3000/api/mirrors/sync \
+  --header 'Authorization: Basic OnBlZXJkYg==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"flowJobName":"testing_bq_2",
+	"numberOfSyncs":4
+}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json
+{
+	"flowJobName": "testing_bq_2",
+	"numberOfSyncs": 4,
+	"errorMessage": "",
+	"ok": true
+}
+```
+
+```bash Error example
+{
+	"flowJobName": "testing_bq_2",
+	"numberOfSyncs": 0,
+	"errorMessage": "Requested mirror testing_bq_2 is not paused. This is a requirement.\n\t\tThe mirror can be paused via PeerDB UI. Please follow https://docs.peerdb.io/features/pause-mirror",
+	"ok": false
+}
+```
+</ResponseExample>

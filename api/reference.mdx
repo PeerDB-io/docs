@@ -1,0 +1,55 @@
+---
+title: PeerDB API Reference
+---
+
+PeerDB provides multiple API endpoints to interact with it through the UI endpoint as a proxy.
+This is an ongoing effort to eventually expose all of PeerDB's functionality in the form of API endpoints for programmatic use-cases.
+
+## Base endpoint
+The base endpoint is the URL of PeerDB UI.
+
+**PeerDB OSS**
+
+When running PeerDB OSS on Docker, PeerDB UI is exposed at:
+```
+http://localhost:3000
+```
+
+**PeerDB Cloud**
+
+When using PeerDB Cloud, the URL is provided as part of the PeerDB instance you purchase.
+
+## Authentication
+
+PeerDB API uses basic authentication.
+The username is empty and the password is the same password used to login to PeerDB UI.
+
+<CodeGroup>
+
+```bash cURL
+curl --request POST \
+  --url http://localhost:3000/api/mirrors/state \
+  --header
+    'Authorization
+    : Basic
+    OnBlZXJkYg==' \
+--header
+    'Content-Type
+    : application/json' \
+```
+
+```javascript Axios
+axios.post('http://localhost:3000/api/mirrors/state', {}, {
+  headers: {
+    'Authorization': 'Basic OnBlZXJkYg==',
+    'Content-Type': 'application/json'
+  }
+})
+```
+</CodeGroup>
+
+## API Endpoints
+
+1. [Fetching mirror status](/api/endpoints/mirror-status)
+2. [Trigger a specified number of syncs](/api/endpoints/custom-sync)
+
