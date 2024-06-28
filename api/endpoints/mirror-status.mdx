@@ -74,29 +74,23 @@ Information about the mirror configuration and initial load of tables.
             </Expandable>
             </ResponseField>
             <ResponseField name="maxBatchSize" type="number">
-            Pull batch size: the number of rows to pull in a single batch.
+            Pull batch size: the maximum number of rows to pull in a single batch, if `idleTimeoutSeconds` has not been reached.
             </ResponseField>
             <ResponseField name="idleTimeoutSeconds" type="string">
             The time in seconds after which the mirror will flush pulled rows to the target data store,
             if pull batch size has not already been reached.
             </ResponseField>
-            <ResponseField name="cdcStagingPath" type="string">
-            The path where CDC staging files are stored.
-            </ResponseField>
             <ResponseField name="publicationName" type="string">
-            The publication name in the source database.
+            User provided publication name for the mirror, if any.
             </ResponseField>
             <ResponseField name="replicationSlotName" type="string">
-            The replication slot name in the source database.
+            User provided replication slot name for the mirror, if any.
             </ResponseField>
             <ResponseField name="doInitialSnapshot" type="boolean">
-            Indicates if an initial snapshot is to be taken.
+            Indicates if initial snapshot was enabled for this mirror.
             </ResponseField>
             <ResponseField name="snapshotNumRowsPerPartition" type="number">
             The number of rows to sync per partition during initial snapshot.
-            </ResponseField>
-            <ResponseField name="snapshotStagingPath" type="string">
-            The path where initial snapshot staging files are stored.
             </ResponseField>
             <ResponseField name="snapshotMaxParallelWorkers" type="number">
             The maximum number of parallel workers to use during initial snapshot.
@@ -105,10 +99,10 @@ Information about the mirror configuration and initial load of tables.
             The number of tables to sync in parallel during initial snapshot.
             </ResponseField>
             <ResponseField name="resync" type="boolean">
-            Indicates if a resync is to be performed.
+            Indicates if this mirror is a resync
             </ResponseField>
             <ResponseField name="initialSnapshotOnly" type="boolean">
-            Indicates if only an initial snapshot is to be taken.
+            Indicates if this mirror was configured to only run initial load and not CDC.
             </ResponseField>
             <ResponseField name="softDelete" type="boolean">
             Indicates if soft delete is enabled.
@@ -120,7 +114,7 @@ Information about the mirror configuration and initial load of tables.
             The name of the column used for tracking sync time.
             </ResponseField>
             <ResponseField name="script" type="string">
-            The script to run after each sync.
+            Lua script configured for the mirror.
             </ResponseField>
             <ResponseField name="system" type="Q | PG">
             The data type system of the mirror.
@@ -136,10 +130,11 @@ Information about the mirror configuration and initial load of tables.
                 Information about the initial load of tables.
             <Expandable>
                 <ResponseField name="clones" type="object array">
-                Array of clone objects. Each object contains the following fields.
+                Array of clone objects - each indicating initial load information of a table.
+                Each object contains the following fields.
                 <Expandable>
                     <ParamField path="tableName" type="string">
-                    The name of the table.
+                    The name of the destination table.
                     </ParamField>
                     <ParamField path="startTime" type="string">
                     The time when the clone started.
@@ -154,10 +149,10 @@ Information about the mirror configuration and initial load of tables.
                     The number of rows synced.
                     </ParamField>
                     <ParamField path="avgTimePerPartitionMs" type="string">
-                    The average time per partition in milliseconds.
+                    The average time taken to sync each partition, in milliseconds.
                     </ParamField>
                     <ParamField path="flowJobName" type="string">
-                    The name of the clone flow.
+                    The name of the clone job.
                     </ParamField>
                     <ParamField path="sourceTable" type="string">
                     The source table.
@@ -166,7 +161,7 @@ Information about the mirror configuration and initial load of tables.
                     Indicates if fetching is completed.
                     </ParamField>
                     <ParamField path="consolidateCompleted" type="boolean">
-                    Indicates if consolidation is completed.
+                    Indicates if consolidation (loading of stage files to target tables) is completed.
                     </ParamField>
                     <ParamField path="mirrorName" type="string">
                     The name of the mirror.
