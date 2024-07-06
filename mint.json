@@ -69,6 +69,7 @@
       "pages": [
         "peerdb-cloud/cloud-quickstart",
         "peerdb-cloud/cloud-security",
+        "peerdb-cloud/hipaa-eligible-services",
         "peerdb-cloud/peerdb-cloud-pricing-faq",
         "peerdb-cloud/cloud-trust-center"
       ]
