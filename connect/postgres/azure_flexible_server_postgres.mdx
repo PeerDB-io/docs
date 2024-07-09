@@ -35,7 +35,7 @@ Anything on or after Postgres 12
 
 If you are using **PeerDB Cloud**, please follow the below steps to add peerdb ips to your network.
 
-1. Go to the **Networking** tab and add the 3 IPs `100.21.65.249`, `54.213.107.162` and `54.201.178.203` to Firewall 
+1. Go to the **Networking** tab and add the [public IPs of your PeerDB Cloud instance](/peerdb-cloud/ip-table) to the Firewall
 
 <Frame caption="Add PeerDB IPs to Firewall">
     <img src="/images/setup/flexible_server/firewall.png" />
@@ -46,27 +46,27 @@ If you are using **PeerDB Cloud**, please follow the below steps to add peerdb i
 Connect to your Azure Flexible Server Postgrees through the admin user and run the below commands:
 
 1. Create a Postgres user for exclusively PeerDB.
-    
+
     1. ```sql
               CREATE USER peerdb_user PASSWORD 'some-password';
         ```
-        
+
 2. Provide read-only access to the schema from which you are replicating tables to the `peerdb-user`. Below example shows setting up permissions for the `public` schema. If you want to grant access to multiple schemas, you can run these three commands for each schema.
-    
+
     1. ```sql
               GRANT USAGE ON SCHEMA "public" TO peerdb_user;
               GRANT SELECT ON ALL TABLES IN SCHEMA "public" TO peerdb_user;
               ALTER DEFAULT PRIVILEGES IN SCHEMA "public" GRANT SELECT ON TABLES TO peerdb_user;
         ```
-        
+
 3. Grant replication access to this user:
-    
+
     1. ```sql
            ALTER ROLE peerdb_user REPLICATION;
         ```
-        
+
 4. Create publication that you'll be using for creating the MIRROR (replication) in future.
-    
+
     1. ```sql
               CREATE PUBLICATION peerdb_publication FOR ALL TABLES;
         ```
