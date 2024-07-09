@@ -70,7 +70,8 @@
         "peerdb-cloud/cloud-quickstart",
         "peerdb-cloud/cloud-security",
         "peerdb-cloud/peerdb-cloud-pricing-faq",
-        "peerdb-cloud/cloud-trust-center"
+        "peerdb-cloud/cloud-trust-center",
+        "peerdb-cloud/ip-table"
       ]
     },
     {
@@ -79,7 +80,7 @@
         "connect/snowflake",
         "connect/bigquery",
         {
-          "group": "Postgres",
+          "group": "PostgreSQL Setup Guide",
           "pages": [
             "connect/postgres/rds_postgres",
             "connect/postgres/cloudsql_postgres",
