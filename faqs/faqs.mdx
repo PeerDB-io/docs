@@ -11,7 +11,7 @@ Query replication does not spin up/require a replication slot in Postgres.
 
 ## Initial Load FAQs
 ### What is initial load in CDC?
-Initial load or initial snapshot - if enabled - will perform a one-time copy of existing data in the tables you're syncing.
+Initial load or initial snapshot - if enabled - will first perform a one-time copy of existing data in the tables you're syncing, and then proceed with CDC.
 This is useful when you're setting up a new mirror and want to sync all the data from the beginning.
 After initial load is finished, CDC will start syncing newer changes.
 

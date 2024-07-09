@@ -198,6 +198,12 @@
       ]
     },
     {
+      "group": "FAQs",
+      "pages": [
+        "faqs/faqs"
+      ]
+    },
+    {
       "group": "SQL Commands",
       "pages": [
         "sql/reference",
