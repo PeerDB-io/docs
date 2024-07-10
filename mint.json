@@ -71,7 +71,8 @@
         "peerdb-cloud/cloud-security",
         "peerdb-cloud/peerdb-cloud-pricing-faq",
         "peerdb-cloud/cloud-trust-center",
-        "peerdb-cloud/ip-table"
+        "peerdb-cloud/ip-table",
+        "peerdb-cloud/aws-private-link"
       ]
     },
     {
