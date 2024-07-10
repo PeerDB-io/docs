@@ -6,7 +6,12 @@ title: "ClickHouse Setup Guide"
 ```sql
    CREATE DATABASE peerdb;
 ```
-2. Make sure you have a database user who has permissions for DDL, DML and SELECT operations on ClickHouse.
+2. Create a Clickhouse user for PeerDB with permissions:
+```sql
+CREATE USER peerdb_user IDENTIFIED BY '<password>';
+
+GRANT CURRENT GRANTS ON *.* TO peerdb_user;
+```
 3. ClickHouse has several ports exposed, and PeerDB requires to use a port that exposes the `ClickHouse native protocol` which by default is `9440` for the secure TLS-enabled port and `9000` for the non-TLS port. If the default ports have been changed, please adjust them accordingly.
 <Warning>
 We do not recommend using the non-TLS enabled port for ClickHouse. If this is needed, please also check the `Disable TLS?` option.
