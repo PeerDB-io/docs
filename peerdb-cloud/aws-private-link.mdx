@@ -1,0 +1,31 @@
+---
+title: "AWS Private Link"
+icon: "diagram-project"
+iconType: "solid"
+---
+
+
+PeerDB Cloud supports AWS Private Link for secure and private connectivity between VPCs.
+This allows you to connect your VPCs to PeerDB Cloud without exposing your data to the public internet.
+
+## Setting up AWS Private Link with PeerDB Cloud
+
+<Steps>
+    <Step title="Setup Endpoint Service">
+        1. Create the necessary endpoint service as per preference. Some of the common ways to achieve this are (for Postgres):
+            - EC2 with script to fetch DNS records on schedule and update forwarding rules
+            - Lambda with listener to Event Bridge (CloudFormation Template available in [AWS Docs](https://aws.amazon.com/blogs/database/access-amazon-rds-across-vpcs-using-aws-privatelink-and-network-load-balancer/)
+        2. Give access to the PeerDB's AWS ARN `arn:aws:iam::141675317444:root` (or Account ID `141675317444`) so that it can be discovered for establishing the Private Link connection
+        3. (Optionally) Allow network connections from PeerDB's internal CIDR range `10.0.0.0/16` to the Endpoint Service
+        4. Provide PeerDB Team with Endpoint Service Name (`com.amazonaws…`) and the region where the service is located
+           - This can be done either via contacting PeerDB Team via Slack or Email
+    </Step>
+    <Step title="PeerDB Team sets up Endpoint Interface">
+        1. PeerDB Team will setup the necessary Endpoint Interface
+        2. PeerDB Team will provide back the DNS name (for peer connectivity) and the Endpoint Interface ID for Accepting the Endpoint Interface request
+    </Step>
+    <Step title="Accept Endpoint Interface Request, Setup Peer">
+        1. Accept the Endpoint Interface Request
+        2. Create the peer via PeerDB UI (or ask PeerDB Team to perform a health check on the Endpoint Interface DNS from the same network as the PeerDB Cloud Instance)
+    </Step>
+</Steps>
