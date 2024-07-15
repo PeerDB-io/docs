@@ -148,7 +148,8 @@
     {
       "group": "Best practices",
       "pages": [
-        "bestpractices/heartbeat"
+        "bestpractices/heartbeat",
+        "bestpractices/postgres-upgrade"
       ]
     },
     {
