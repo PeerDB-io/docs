@@ -23,9 +23,6 @@ GRANT CREATE TEMPORARY TABLE, s3 on *.* to peerdb_user;
 
 -- For automatic column-addition on the tables in the mirror
 GRANT ALTER ADD COLUMN ON peerdb.* to peerdb_user;
-
--- For setting the synced-at column during resyncing of a mirror
-GRANT ALTER UPDATE ON peerdb.* to peerdb_user;
 ```
 
 <Note>
