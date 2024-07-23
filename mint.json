@@ -24,7 +24,7 @@
     {
       "name": "API Reference",
       "icon": "browser",
-      "url": "api"
+      "url": "peerdb-api"
     },
     {
       "name": "Lua Reference",
@@ -212,9 +212,9 @@
     {
       "group": "API Endpoints",
       "pages": [
-        "api/reference",
-        "api/endpoints/custom-sync",
-        "api/endpoints/mirror-status"
+        "peerdb-api/reference",
+        "peerdb-api/endpoints/custom-sync",
+        "peerdb-api/endpoints/mirror-status"
       ]
     },
     {
