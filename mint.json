@@ -78,8 +78,6 @@
     {
       "group": "Setup",
       "pages": [
-        "connect/snowflake",
-        "connect/bigquery",
         {
           "group": "PostgreSQL Setup Guide",
           "pages": [
@@ -89,8 +87,15 @@
             "connect/postgres/crunchy_bridge"
           ]
         },
-
-        "connect/clickhouse",
+        {
+          "group": "Clickhouse Setup Guide",
+          "pages": [
+            "connect/clickhouse/clickhouse-cloud",
+            "connect/clickhouse/clickhouse"
+          ]
+        },
+        "connect/snowflake",
+        "connect/bigquery",
         "connect/gcs",
         "connect/s3",
         "connect/elasticsearch"
