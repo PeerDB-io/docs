@@ -43,14 +43,17 @@ We do not recommend using the non-TLS enabled port for ClickHouse. If this is ne
 
 ### Troubleshooting
 Here is a list of some validation errors that you might encounter and how to resolve them:
-#### You may need to disable TLS
+
+**You may need to disable TLS**
+
     You may need to disable TLS. Validation errors such as the following may occur if the connection is not successful:
     ```
      failed to ping to Clickhouse peer: tls:
      first record does not look like a TLS handshake
     ```
 
-#### EOF
+**EOF**
+
 If you see the following error, it means that the connection to the ClickHouse peer could not be established:
 ```
 failed to open connection to Clickhouse peer:
@@ -60,5 +63,6 @@ Please try the following:
 1. Ensure that the PeerDB IP is whitelisted in the ClickHouse server. If you are using PeerDB Cloud, you can find the IPs of your PeerDB instance [here](/peerdb-cloud/ip-table).
 2. You may need to enable TLS.
 
-#### Stuck on Validating...
+**Stuck on Validating...**
+
 This means the port entered is incorrect. Please ensure that the port is correct and the ClickHouse server is reachable from the PeerDB server.
