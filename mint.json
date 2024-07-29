@@ -112,10 +112,10 @@
     {
       "group": "Mirror",
       "pages": [
-        "mirror/cdc-pg-bq",
-        "mirror/cdc-pg-sf",
         "mirror/cdc-pg-pg",
         "mirror/cdc-pg-clickhouse",
+        "mirror/cdc-pg-sf",
+        "mirror/cdc-pg-bq",
         "mirror/cdc-pg-kafka",
         "mirror/cdc-pg-elasticsearch",
         "mirror/upgrade"
