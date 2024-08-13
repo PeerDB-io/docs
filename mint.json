@@ -84,7 +84,8 @@
             "connect/postgres/rds_postgres",
             "connect/postgres/cloudsql_postgres",
             "connect/postgres/azure_flexible_server_postgres",
-            "connect/postgres/crunchy_bridge"
+            "connect/postgres/crunchy_bridge",
+            "connect/postgres/neon_postgres"
           ]
         },
         {
