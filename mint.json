@@ -157,6 +157,7 @@
     {
       "group": "Best practices",
       "pages": [
+        "bestpractices/clickhouse_datamodeling",
         "bestpractices/heartbeat",
         "bestpractices/postgres-upgrade"
       ]
