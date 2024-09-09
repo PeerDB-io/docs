@@ -1,0 +1,78 @@
+
+```http
+POST /api/v1/mirrors/state_change
+```
+
+This endpoint can be used for changing the state of a mirror. To be specific, it can be used for:
+1. [Pausing](/features/pause-mirror) a mirror
+2. Resuming a mirror
+3. Dropping a mirror
+
+### Request Fields
+<ParamField path="flowJobName" type="string" required>
+The name of the mirror.
+</ParamField>
+
+<ParamField path="requestedFlowState" type="string" required>
+The state to change the mirror to. Possible values are:
+- `STATUS_PAUSED` - **Pause** the mirror
+- `STATUS_RUNNING` - **Resume** the mirror
+- `STATUS_TERMINATED` - **Drop** the mirror
+</ParamField>
+
+### Response Fields
+<ParamField path="Ok" type="boolean">
+Whether the request was successful.
+</ParamField>
+
+<RequestExample>
+```bash Pausing
+curl --request POST \
+  --url http://localhost:3000/api/v1/mirrors/state_change \
+  --header 'Authorization: Basic OmJkYWNrU3rhbjEyMw==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"flowJobName": "mirror_kick_off",
+	"requestedFlowState": "STATUS_PAUSED"
+}'
+```
+
+```bash Resuming
+curl --request POST \
+  --url http://localhost:3000/api/v1/mirrors/state_change \
+  --header 'Authorization: Basic OmJkYWNrU3rhbjEyMw==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"flowJobName": "mirror_kick_off",
+	"requestedFlowState": "STATUS_RUNNING"
+}'
+```
+
+```bash Dropping
+curl --request POST \
+  --url http://localhost:3000/api/v1/mirrors/state_change \
+  --header 'Authorization: Basic OmJkYWNrU3rhbjEyMw==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"flowJobName": "mirror_kick_off",
+	"requestedFlowState": "STATUS_TERMINATED"
+}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json
+{
+	"ok": true,
+	"errorMessage": ""
+}
+```
+
+```json Error
+{
+	"code": 2,
+	"message": "unable to get workflowID for flow job fake_mirror: no rows in result set",
+	"details": []
+}
+```
+</ResponseExample>
