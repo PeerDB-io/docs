@@ -14,9 +14,9 @@ When using PostgreSQL's generated columns in tables that are being replicated, t
 
 To work around these limitations, consider the following best practices:
 
-1. **Avoid Using Generated Columns in Primary Keys:** When designing tables that will be replicated, it's best to avoid including generated columns as part of the primary key.
+1. **Recreate Generated Columns on the Destination:** Instead of relying on the replication process to handle generated columns, it's recommended to recreate these columns on the destination using tools like dbt (data build tool) or other data transformation mechanisms.
 
-2. **Recreate Generated Columns on the Destination:** Instead of relying on the replication process to handle generated columns, it's recommended to recreate these columns on the destination using tools like dbt (data build tool) or other data transformation mechanisms.
+2. **Avoid Using Generated Columns in Primary Keys:** When designing tables that will be replicated, it's best to avoid including generated columns as part of the primary key.
 
 ## Upcoming improvements to UI
 
