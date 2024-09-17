@@ -43,16 +43,25 @@ PeerDB follows the Principle of Least Privilege wherever possible and requires *
 
 Any and all internal traffic/access across instances is controlled via claim-based and role-based access-control, short-lived credentials and **security best-practices**.
 
-
 ## Encryption
 
 Any data in transit is **fully encrypted**. Additionally customers can leverage SSH Tunneling to ensure that they don’t need to expose the public IP of the source peer/database.
 
 
+## Additional Security Features
+
+### IP Whitelisting
+
+PeerDB Cloud supports IP whitelisting for secure access to your source/target peers. You can find the list of IPs to whitelist [here](/peerdb-cloud/ip-table).
+
 ### [SSH Tunneling for Secure Postgres Replication](https://blog.peerdb.io/ssh-tunneling-for-secure-postgres-replication)
 
-
 We natively support SSH tunneling right from the first connection to your database. A very simple way to get started can be found [here](/connect/postgres/rds_postgres#peerdb-ssh-tunneling-guide-optional)
+
+### AWS PrivateLink
+
+PeerDB Cloud supports AWS PrivateLink for secure and private access to your source/target peers. This ensures that your data never leaves the AWS network and is secure from any external threats.
+This is available on all PeerDB Cloud instances and can be enabled by following the [guide here](/peerdb-cloud/aws-private-link).
 
 
 ## Additional Documents and Compliance
