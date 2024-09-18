@@ -128,6 +128,29 @@ curl --request POST \
 			"user": "default",
 			"password": "clickhouse",
 			"database": "clickhouse",
+			"disable_tls": false
+		}
+	},
+	"allow_update":false
+}'
+```
+
+
+```bash Clickhouse peer with cert auth
+curl --request POST \
+  --url https://ui-lfvomdsjuoecprfp.instances.prod-cloud-1.us-west-2.aws.peerdb.cloud/api/v1/peers/create \
+  --header 'Authorization: Basic OmJsYPNrU3dhbjEyMw==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"peer": {
+		"name": "ch_peer_via_api",
+		"type": 8,
+		"clickhouse_config": {
+			"host": "localhost",
+			"port": 9900,
+			"user": "default",
+			"password": "clickhouse",
+			"database": "clickhouse",
 			"disable_tls": false,
 			"certificate":"",
 			"private_key":"***",
