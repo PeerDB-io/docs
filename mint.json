@@ -223,6 +223,7 @@
       "group": "API Endpoints",
       "pages": [
         "peerdb-api/reference",
+        "peerdb-api/endpoints/create-peer",
         "peerdb-api/endpoints/create-mirror",
         "peerdb-api/endpoints/custom-sync",
         "peerdb-api/endpoints/mirror-status",
