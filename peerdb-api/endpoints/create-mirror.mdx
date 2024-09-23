@@ -125,7 +125,21 @@ curl --request POST \
     {
       "source_table_identifier": "public.payments",
       "destination_table_identifier": "payments_api"
-    }
+    },
+    {
+      "source_table_identifier": "public.optional_ordering_key",
+      "destination_table_identifier": "optional_ordering_key",
+      "columns": [
+        {
+          "name": "id",
+          "ordering": 1
+        },
+        {
+          "name": "created_at",
+          "ordering": 2
+        }
+      ]
+    },
   ],
   "max_batch_size": 1000,
   "idle_timeout_seconds": 300,
