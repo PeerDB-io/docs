@@ -39,6 +39,18 @@ The destination table identifier.
 <ParamField path="exclude" type="string">
 Columns from the source table to exclude, separated by commas.
 </ParamField>
+
+<ParamField path="columns" type="object" required>
+**For Clickhouse Only**. Ordering key setting for Clickhouse target tables created by PeerDB.
+</ParamField>
+<Expandable title="columns">
+<ParamField path="name" type="string" required>
+Name of the column
+</ParamField>
+<ParamField path="ordering" type="number">
+A number indicating the rank of this column in the ordering key of ORDER BY in ReplacingMergeTree.
+</ParamField>
+</Expandable>
 </Expandable>
 
 <ParamField path="do_initial_snapshot" type="boolean" required>
