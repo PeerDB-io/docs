@@ -29,3 +29,38 @@ This allows you to connect your VPCs to PeerDB Cloud without exposing your data 
         2. Create the peer via PeerDB UI (or ask PeerDB Team to perform a health check on the Endpoint Interface DNS from the same network as the PeerDB Cloud Instance)
     </Step>
 </Steps>
+
+## Setting up a ClickHouse Cloud Private Link with PeerDB Cloud
+
+PeerDB cloud _natively_ supports AWS Private Link for destination ClickHouse Cloud instances. This allows you to connect your ClickHouse Cloud instance to PeerDB Cloud without exposing your data to the public internet.
+
+<Steps>
+    <Step title="Setup Endpoint Service on ClickHouse Cloud Console">
+        1. Go to your ClickHouse Cloud instance console
+        2. Navigate to "Settings"
+        3. Click on "Set up private endpoint" under "Settings" -> "Private endpoints"
+        4. You should see a screen like below:
+        <Frame caption="ClickHouse Cloud Console: Setting up a Private Endpoint">
+          <img src="/images/clickhouse/clickhouse-cloud-private-link.jpg" />
+        </Frame>
+        5. Copy the "Service Name" and "DNS Name" from the above dialog and provide it to the PeerDB Team, (along with a helpful description of the cloud instance for reference)
+    </Step>
+    <Step title="PeerDB Team sets up Endpoint Interface">
+        1. PeerDB Team will setup the necessary Endpoint Interface
+        2. PeerDB Team will provide back the the `Endpoint ID`
+    </Step>
+    <Step title="Enabling the Endpoint Service on ClickHouse Cloud Console">
+        1. Go back to the ClickHouse Cloud Console and head over to the same "Set up private endpoint" screen
+        2. Enter the `Endpoint ID` provided by the PeerDB Team in the "Endpoint ID" field and Description can be "PeerDB Cloud Link"
+        <Frame caption="ClickHouse Cloud Console: Enabling the Endpoint Service">
+          <img src="/images/clickhouse/clickhouse-cloud-private-link-endpoint-id.jpg" />
+        </Frame>
+    </Step>
+    <Step title="Setup the Peer in PeerDB Cloud">
+        1. You can now use the DNS name provided earlier under the "Setup Endpoint Service on ClickHouse Cloud Console" step to create a peer in PeerDB Cloud.
+    <Frame caption="Configure PeerDB UI with ClickHouse Cloud Connection details">
+      <img src="/images/clickhouse/clickhouse-cloud-setup-private-link-peer.jpg" />
+    </Frame>
+        2. For further details on how to create a ClickHouse Cloud peer, refer to the [ClickHouse Cloud Setup Guide](/connect/clickhouse/clickhouse-cloud#clickhouse-cloud-setup-guide)
+    </Step>
+</Steps>
