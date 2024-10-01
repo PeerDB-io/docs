@@ -4,7 +4,7 @@ title: "Upgrading the PostgreSQL Peer Of An Ongoing CDC Mirror"
 
 This is a guide on how you can upgrade your PostgreSQL instance that is part of an ongoing CDC mirror.
 <Note>
-For PeerDB Cloud users: Note that one of the steps below requires the intervention of [PeerDB support](https://join.slack.com/t/peerdb-public/shared_invite/zt-1wo9jydev-EXInbMtCtpAKFFWdi7QvLQ).
+For PeerDB Cloud users: Note that one of the steps below requires the intervention of [PeerDB support](https://slack.peerdb.io).
 </Note>
 
 ## Steps
@@ -40,7 +40,7 @@ You can `psql` into that container and run :
 ```sql
 UPDATE metadata_last_sync_state SET last_offset = 0 ;
 ```
-**If you are using PeerDB Cloud**: Contact PeerDB Support on [PeerDB Slack](https://join.slack.com/t/peerdb-public/shared_invite/zt-1wo9jydev-EXInbMtCtpAKFFWdi7QvLQ).
+**If you are using PeerDB Cloud**: Contact PeerDB Support on [PeerDB Slack](https://slack.peerdb.io).
 
 9. Resume all mirrors.
 10. Remove application from maintenance.
