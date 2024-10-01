@@ -10,6 +10,10 @@ TOAST (The Oversized-Attribute Storage Technique) is PostgreSQL's mechanism for 
 
 It's important to note that during Change Data Capture (CDC), unchanged TOAST columns are not included in the replication stream. This can lead to incomplete data replication if not handled properly.
 
+<Info>
+During the initial load (snapshot), all column values, including TOAST columns, will be replicated correctly regardless of their size. The limitations described in this guide primarily affect the ongoing CDC process after the initial load.
+</Info>
+
 You can read more about TOAST and its implementation in PostgreSQL here: https://www.postgresql.org/docs/current/storage-toast.html
 
 ## Identifying TOAST columns in a table
