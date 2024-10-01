@@ -6,7 +6,7 @@ When replicating data from PostgreSQL to ClickHouse, it's important to understan
 
 ## What are TOAST columns in PostgreSQL?
 
-TOAST (The Oversized-Attribute Storage Technique) is PostgreSQL's mechanism for handling large field values. When a row exceeds the maximum row size (typically 8KB), PostgreSQL automatically moves large field values into a separate TOAST table, storing only a pointer in the main table.
+TOAST (The Oversized-Attribute Storage Technique) is PostgreSQL's mechanism for handling large field values. When a row exceeds the maximum row size (typically 2KB, but this can vary depending on the PostgreSQL version and exact settings), PostgreSQL automatically moves large field values into a separate TOAST table, storing only a pointer in the main table.
 
 It's important to note that during Change Data Capture (CDC), unchanged TOAST columns are not included in the replication stream. This can lead to incomplete data replication if not handled properly.
 
@@ -26,7 +26,7 @@ WHERE c.relname = 'your_table_name'
   AND a.attnum > 0;
 ```
 
-This query will return the names and data types of columns that could potentially be TOASTed. However, it's important to note that this query only identifies columns that are eligible for TOAST storage based on their data type and storage attributes. To determine if these columns actually contain TOASTed data, you'll need to consider whether the values in these columns exceed 8KB in size. The actual TOASTing of data depends on the specific content stored in these columns.
+This query will return the names and data types of columns that could potentially be TOASTed. However, it's important to note that this query only identifies columns that are eligible for TOAST storage based on their data type and storage attributes. To determine if these columns actually contain TOASTed data, you'll need to consider whether the values in these columns exceed the size. The actual TOASTing of data depends on the specific content stored in these columns.
 
 ## Ensuring proper handling of TOAST columns
 
