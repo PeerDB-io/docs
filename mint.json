@@ -160,7 +160,8 @@
         "bestpractices/clickhouse_datamodeling",
         "bestpractices/heartbeat",
         "bestpractices/postgres-upgrade",
-        "bestpractices/generated_columns"
+        "bestpractices/generated_columns",
+        "bestpractices/clickhouse_toast_columns"
       ]
     },
     {

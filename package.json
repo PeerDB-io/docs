@@ -1,8 +1,10 @@
 {
   "dependencies": {
-    "mintlify": "^4.0.132"
+    "mintlify": "^4.0.231"
   },
   "scripts": {
-    "dev": "mintlify dev"
+    "dev": "mintlify dev",
+    "build": "mintlify build",
+    "broken-links": "mintlify broken-links"
   }
 }
