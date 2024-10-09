@@ -83,6 +83,7 @@
           "pages": [
             "connect/postgres/rds_postgres",
             "connect/postgres/supabase_postgres_peerdb_cloud",
+            "connect/postgres/supabase_postgres",
             "connect/postgres/cloudsql_postgres",
             "connect/postgres/azure_flexible_server_postgres",
             "connect/postgres/crunchy_bridge",

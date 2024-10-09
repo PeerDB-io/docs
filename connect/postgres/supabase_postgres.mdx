@@ -1,0 +1,83 @@
+---
+title: "Supabase Postgres Source Setup Guide"
+---
+
+This is a guide on how to create a supabase PostgreSQL peer which you can use for replication in PeerDB.
+<Info>
+PeerDB Cloud supports Supabase via IPv6 natively for seemless replication.
+</Info>
+
+
+<Steps titleSize='h2'>
+<Step title='Creating a user with permissions and replication slot'>
+
+Let's create a new user for PeerDB with the necessary permissions suitable for CDC,
+and also create a publication that we'll use for replication.
+
+For this, you can head over to the **SQL Editor** for your Suapabase Project.
+Here, we can run the following SQL commands:
+```sql
+  CREATE USER peerdb_user PASSWORD 'peerdb_password';
+  GRANT USAGE ON SCHEMA "public" TO peerdb_user;
+  GRANT SELECT ON ALL TABLES IN SCHEMA "public" TO peerdb_user;
+  ALTER DEFAULT PRIVILEGES IN SCHEMA "public" GRANT SELECT ON TABLES TO peerdb_user;
+
+-- Give replication permission to the USER
+  ALTER USER peerdb_user REPLICATION;
+
+-- Create a publication. We will use this when creating the mirror
+  CREATE PUBLICATION peerdb_publication FOR ALL TABLES;
+```
+
+<Frame caption="User and publication commands">
+<img src="/images/supabase-setup/supabase-commands.jpg" />
+</Frame>
+
+Click on **Run** to have a publication and a user ready.
+<Note>
+Make sure to replace `peerdb_user` and `peerdb_password` with your desired username and password.
+
+Also, remember to use the same publication name when creating the mirror in PeerDB.
+</Note>
+
+</Step>
+
+<Step title='Create the Supabase Peer on PeerDB OSS'>
+
+1. Head over to your Supabase Project's `Project Settings` -> `Database` (under `Configuration`).
+
+**Important**: Disable `Display connection pooler` on this page and head over to the `Connection parameters` section and note/copy the parameters.
+
+<Frame caption="Create the Supabase Peer">
+<img src="/images/supabase-setup/supabase-connection-details.jpg" />
+</Frame>
+
+
+2. Head over to PeerDB UI and click on **Create Peer**. Select **Postgres** as the source.
+
+3. Now you can fill in the connection details you copied earlier, but make sure to use the username and password you created earlier in the SQL Editor in Step 1.
+
+<Frame caption="Create the Supabase Peer">
+<img src="/images/supabase-setup/supabase-peer.jpg" />
+</Frame>
+
+4. Click on **Validate** and once that's green, you can go ahead and click on **Create** to create the peer!
+
+
+</Step>
+<Step title='Increase max_slot_wal_keep_size'>
+This is a recommended configuration change to ensure that large transactions/commits do not cause the replication slot to be dropped.
+
+<Warning>
+This step will restart your Supabase database and may cause a brief downtime.
+</Warning>
+
+You can increase the `max_slot_wal_keep_size` parameter for your Supabase database to a higher value (at least 100GB or `102400`) by following the [Supabase Docs](https://supabase.com/docs/guides/database/custom-postgres-config#cli-supported-parameters)
+
+For better recommendation of this value you can contact the PeerDB team.
+
+</Step>
+</Steps>
+<Note>
+When creating the Mirror, make sure to reuse the same publication you created earlier in Step 1
+</Note>
