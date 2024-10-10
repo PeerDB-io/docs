@@ -67,7 +67,7 @@ Connect to your RDS postgres through the admin user and run the below commands:
           GRANT rds_replication TO peerdb_user ;
         ```
 
-4. Create publication that you'll be using for creating the MIRROR (replication) in future.
+4. Create a publication that you'll be using for creating the MIRROR (replication) in future.
 It's recommended to create a publication for only the tables that you want to replicate, like below:
 
     1. ```sql
