@@ -84,3 +84,21 @@ Fill in the Neon connection details that we copied earlier in the following form
 </Frame>
 
 Click on **Validate** and once that's green, you can go ahead and click on **Create** to create the peer!
+
+## Important Gotchas
+
+In Neon databases that are idle (no activity), slots can be dropped. To prevent this, you need to ensure that the replication slot actively receives database changes. You can use pg_logical_emit_message()—a system function for emitting a logical decoding message into the WAL. PeerDB picks up the message as part of its WAL processing and flushes the slot at the frequency of the CDC sync interval.
+
+You'd need to grant EXECUTE permissions for the peerdb replication user on this function: 
+```SQL
+GRANT EXECUTE ON FUNCTION pg_logical_emit_message( transactional boolean, prefix text, content text )
+TO <postgres_peer_user>;
+```
+
+Edit the current value fields of the following settings in the **Settings** tab in UI:
+- `PEERDB_ENABLE_WAL_HEARTBEAT`: Set this to `true` (no quotes or anything)
+- `PEERDB_WAL_HEARTBEAT_QUERY`: Set this to the emit_message function call command to be run periodically:
+```sql
+SELECT pg_logical_emit_message(false,'heartbeat','')
+```
+Currently, PeerDB emits a message every 12 minutes. This will soon be configurable.
