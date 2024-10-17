@@ -1,0 +1,80 @@
+
+```http
+GET /api/v1/scripts/{id}
+```
+
+This endpoint is used to get a script by its ID. If the ID is -1, it returns all scripts.
+
+<Info>
+Scripts by default is disabled in [PeerDB Cloud](https://auth.peerdb.cloud/en/login).
+It is enabled in [PeerDB OSS](https://github.com/PeerDB-io/peerdb) and [PeerDB Enterprise](https://github.com/PeerDB-io/peerdb-enterprise).
+</Info>
+
+### Request Fields
+<ParamField path="id" type="number" required>
+Describe a script by its ID. If the ID is -1, it returns all scripts.
+</ParamField>
+
+### Response Fields
+<ParamField path="scripts" type="array">
+An array of scripts.
+</ParamField>
+
+<Expandable title="scripts">
+<ParamField path="id" type="number">
+The ID of the script.
+</ParamField>
+
+<ParamField path="name" type="string">
+The name of the script.
+</ParamField>
+
+<ParamField path="lang" type="string">
+The language of the script.
+</ParamField>
+
+<ParamField path="source" type="string">
+The source code of the script.
+</ParamField>
+</Expandable>
+
+<RequestExample>
+```bash Get all scripts
+curl --request GET \
+  --url http://localhost:3000/api/v1/scripts/-1 \
+  --header 'Authorization: Basic OmJsYWNrU7dhbjEyMw==' \
+```
+
+```bash Get a script by ID
+curl --request GET \
+  --url http://localhost:3000/api/v1/scripts/2 \
+  --header 'Authorization: Basic OmJsYWNrU7dhbjEyMw==' \
+```
+</RequestExample>
+
+<ResponseExample>
+```json
+{
+	"scripts": [
+		{
+			"id": 2,
+			"lang": "lua",
+			"name": "new_script",
+			"source": "\n-- This is a sample script\n-- Fill in the onRecord function to transform the incoming record\nlocal json = require \"json\"\n\nfunction onRecord(r)\n  return json.encode(r.row)\nend"
+		},
+		{
+			"id": 3,
+			"lang": "lua",
+			"name": "good_script",
+			"source": "\n-- This is a sample script\n-- Fill in the onRecord function to transform the incoming record\nlocal json = require \"json\"\n\nfunction onRecord(r)\n  return json.encode(r.row)\nend"
+		},
+		{
+			"id": 4,
+			"lang": "lua",
+			"name": "bad_script",
+			"source": "\n-- This is a sample script\n-- Fill in the onRecord function to transform the incoming record\nlocal json = require \"json\"\n\nfunction onRecord(r)\n  return json.encode(r.row)\nend"
+		}
+	]
+}
+```
+</ResponseExample>
