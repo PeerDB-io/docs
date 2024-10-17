@@ -184,7 +184,7 @@ Information about the mirror configuration and initial load of tables.
 <RequestExample>
 ```bash Request
 curl --request POST \
-  --url http://localhost:3000/api/mirrors/state \
+  --url http://localhost:3000/api/v1/mirrors/status \
   --header 'Authorization: Basic OnBlZXJkYg==' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -195,7 +195,7 @@ curl --request POST \
 
 ```bash with includeFlowInfo set
 curl --request POST \
-  --url http://localhost:3000/api/mirrors/state \
+  --url http://localhost:3000/api/v1/mirrors/status \
   --header 'Authorization: Basic OnBlZXJkYg==' \
   --header 'Content-Type: application/json' \
   --data '{
