@@ -84,10 +84,10 @@ Connect to your CloudSQL Postgres through the admin user and run the below comma
            ALTER ROLE peerdb_user REPLICATION;
         ```
 
-4. Create publication that you'll be using for creating the MIRROR (replication) in future.
+4. Create a publication that you'll be using for creating the MIRROR (replication) in future.
 
     1. ```sql
-              CREATE PUBLICATION peerdb_publication FOR ALL TABLES;
+          CREATE PUBLICATION peerdb_publication FOR TABLE table1, table2, table3....;
         ```
 
 <SSHTunnel />
