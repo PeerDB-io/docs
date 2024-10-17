@@ -1,0 +1,10 @@
+---
+title: "Unsupported PostgreSQL Providers"
+---
+
+The following providers do not support CDC (Change Data Capture) via Logical Replication and thus are not supported by PeerDB for CDC based replication:
+1. Heroku - [Support Article](https://help.heroku.com/TVS8OHTR/does-heroku-postgres-support-logical-replication)
+2. DigitalOcean Managed Databases - [Community Question](https://www.digitalocean.com/community/questions/managed-postgres-logical-streaming-or-wal-replication-from-do-to-outside-do?comment=197259)
+
+
+However they can still be used for PeerDB's [Query Based Mirrors](/features/feature-matrix#query-based-or-watermark-based-replication).
