@@ -1,0 +1,132 @@
+---
+title: "Generic PostgreSQL Source Setup Guide"
+---
+
+This is a guide on how to create a generic PostgreSQL peer which you can use for replication in PeerDB.
+
+<Info>
+If you use one of the supported providers (in the sidebar), please refer to the specific guide for that provider.
+</Info>
+
+
+<Steps titleSize='h2'>
+
+<Step title="Enabling Replication on the Postgres Instance">
+
+1. To enable replication on your PostgreSQL instance, we need to make sure that the following settings are set:
+
+    ```sql
+    wal_level = logical
+    ```
+    To check the same, you can run the following SQL command:
+    ```sql
+    SHOW wal_level;
+    ```
+
+    The output should be `logical`. If not, run:
+    ```sql
+    ALTER SYSTEM SET wal_level = logical;
+    ```
+
+2. Additionally, the following settings are recommended to be set on the PostgreSQL instance:
+    ```sql
+    max_wal_senders > 1
+    max_replication_slots >= 4
+    ```
+    To check the same, you can run the following SQL commands:
+    ```sql
+    SHOW max_wal_senders;
+    SHOW max_replication_slots;
+    ```
+
+    If the values do not match the recommended values, you can run the following SQL commands to set them:
+    ```sql
+    ALTER SYSTEM SET max_wal_senders = 10;
+    ALTER SYSTEM SET max_replication_slots = 10;
+    ```
+3. If you have made any changes to the configuration as mentioned above, you NEED to RESTART the PostgreSQL instance for the changes to take effect.
+
+</Step>
+
+<Step title='Creating a user with permissions and replication slot'>
+
+Let's create a new user for PeerDB with the necessary permissions suitable for CDC,
+and also create a publication that we'll use for replication.
+
+For this, you can connect to your PostgreSQL instance and run the following SQL commands:
+```sql
+  CREATE USER peerdb_user PASSWORD 'peerdb_password';
+  GRANT USAGE ON SCHEMA "public" TO peerdb_user;
+  GRANT SELECT ON ALL TABLES IN SCHEMA "public" TO peerdb_user;
+  ALTER DEFAULT PRIVILEGES IN SCHEMA "public" GRANT SELECT ON TABLES TO peerdb_user;
+
+-- Give replication permission to the USER
+  ALTER USER peerdb_user REPLICATION;
+
+-- Create a publication. We will use this when creating the mirror
+  CREATE PUBLICATION peerdb_publication FOR ALL TABLES;
+```
+
+
+<Note>
+Make sure to replace `peerdb_user` and `peerdb_password` with your desired username and password.
+
+Also, remember to use the same publication name when creating the mirror in PeerDB.
+</Note>
+
+</Step>
+
+<Step title='Enabling connections in pg_hba.conf to the PeerDB User'>
+
+If you are self serving, you need to allow connections to the PeerDB user from the PeerDB IP addresses by following the below steps. If you are using a managed service, you can do the same by following the provider's documentation.
+
+1. Make necessary changes to the `pg_hba.conf` file to allow connections to the PeerDB user from the PeerDB IP addresses. An example entry in the `pg_hba.conf` file would look like:
+    ```
+    host    all   peerdb_user     0.0.0.0/0          scram-sha-256
+    ```
+
+2. Reload the PostgreSQL instance for the changes to take effect:
+    ```sql
+    SELECT pg_reload_conf();
+    ```
+
+</Step>
+
+
+<Step title='Create the Peer on PeerDB'>
+
+
+1. Head over to PeerDB UI and click on **Create Peer**. Select **Postgres** as the source.
+
+2. Now you can fill in the connection details of the PostgreSQL instance, but make sure to use the username and password you created earlier in the SQL commands in Step 2.
+
+<Frame caption="Create the PostgreSQL Peer">
+<img src="/images/generic-pg-setup/create_peer.jpg" />
+</Frame>
+
+4. Click on **Validate** and once that's green, you can go ahead and click on **Create** to create the peer!
+
+
+</Step>
+<Step title='Increase max_slot_wal_keep_size'>
+This is a recommended configuration change to ensure that large transactions/commits do not cause the replication slot to be dropped.
+
+You can increase the `max_slot_wal_keep_size` parameter for your PostgreSQL instance to a higher value (at least 100GB or `102400`) by updating the `postgresql.conf` file.
+
+```sql
+max_slot_wal_keep_size = 102400
+```
+
+You can reload the PostgreSQL instance for the changes to take effect:
+```sql
+SELECT pg_reload_conf();
+```
+
+
+For better recommendation of this value you can contact the PeerDB team.
+
+</Step>
+</Steps>
+<Note>
+When creating the Mirror, make sure to reuse the same publication you created earlier in Step 2
+</Note>
