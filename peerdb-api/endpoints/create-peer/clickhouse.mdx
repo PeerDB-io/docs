@@ -2,9 +2,13 @@
 title: "Create a ClickHouse peer"
 ---
 You can create a Clickhouse peer using this endpoint. Here is the request and response format for creating a Clickhouse peer.
+
+<Info>
 Note that the Clickhouse peer uses an intermediary S3 stage under the hood for performance. The S3 fields related to this are optional, because:
 - For PeerDB Cloud, the S3 bucket is managed by PeerDB
 - For PeerDB OSS, a minio bucket is provided as part of the stack.
+</Info>
+
 ### Request Fields
 <ParamField path="peer" type="object" required>
 Configuration of the peer to be created.
