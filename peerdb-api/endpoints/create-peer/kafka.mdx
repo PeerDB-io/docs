@@ -1,0 +1,101 @@
+---
+title: "Create a Kafka peer"
+---
+You can create a Kafka peer using this endpoint. Here is the request and response format for creating a Kafka peer.
+
+### Request Fields
+<ParamField path="peer" type="object" required>
+Configuration of the peer to be created.
+</ParamField>
+
+<Expandable title="peer">
+<ParamField path="name" type="string" required>
+The name of the peer to be created.
+</ParamField>
+
+<ParamField path="type" type="9" required>
+The type of peer to be created. The value for Kafka is **9**.
+</ParamField>
+
+<ParamField path="kafka_config" type="object" required>
+Configuration for the Kafka peer
+</ParamField>
+
+<Expandable title="kafka_config">
+<ParamField path="servers" type="string" required>
+Array of Kafka servers. Ex: `["localhost:9092"]`
+</ParamField>
+
+<ParamField path="username" type="string" required>
+The username to connect to the Kafka server.
+</ParamField>
+
+<ParamField path="password" type="string" required>
+The password associated with the Kafka user.
+</ParamField>
+
+<ParamField path="sasl" type="PLAIN|SCRAM-SHA-256|SCRAM-SHA-512" required>
+The SASL mechanism to use. Ex: `PLAIN`
+</ParamField>
+
+<ParamField path="disable_tls" type="boolean">
+Whether the Kafka server is running without TLS. Default is `false`.
+</ParamField>
+
+<ParamField path="partitioner" type="LeastBackup|Manual|RoundRobin|StickyKey|Sticky|" required>
+The partitioner to use. Default is empty string.
+</ParamField>
+</Expandable>
+</Expandable>
+<ParamField path="allow_update" type="boolean">
+Whether you wish to update a peer with this name if it already exists. Default is `false`.
+</ParamField>
+
+### Response Fields
+<ParamField path="status" type="CREATED|FAILED">
+Whether the creation/update was successful. If yes, the value will be `CREATED`. Else it will be `FAILED`.
+</ParamField>
+
+<ParamField path="message" type="string">
+Error message if any
+</ParamField>
+
+<RequestExample>
+```bash Kafka peer
+curl --request POST \
+  --url http://localhost:3000/api/v1/peers/create \
+  --header 'Authorization: Basic OmJsYWNrU3dhbpEyMw==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"peer": {
+		"name": "kafka_peer_via_api",
+		"type": 9,
+		"kafka_config": {
+            "servers": ["localhost:9092"],
+            "username": "kafka",
+            "password": "kafka",
+            "sasl": "PLAIN",
+            "disable_tls": false,
+            "partitioner": "RoundRobin"
+		}
+	},
+	"allow_update":false
+}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success
+{
+	"status": "CREATED",
+	"message": ""
+}
+```
+
+```json Kafka error
+{
+	"status": "FAILED",
+	"message": "failed to establish active connection to KAFKA peer kafka_peer_via_api: unable to dial: dial tcp [::1]:9092: connect: connection refused"
+}
+```
+</ResponseExample>

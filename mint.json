@@ -226,11 +226,21 @@
       "group": "API Endpoints",
       "pages": [
         "peerdb-api/reference",
-        "peerdb-api/endpoints/create-peer",
+        {
+          "group": "Create Peer",
+          "pages": [
+            "peerdb-api/endpoints/create-peer/overview",
+            "peerdb-api/endpoints/create-peer/postgres",
+            "peerdb-api/endpoints/create-peer/clickhouse",
+            "peerdb-api/endpoints/create-peer/kafka"
+          ]
+        }
+        ,
         "peerdb-api/endpoints/create-mirror",
         "peerdb-api/endpoints/custom-sync",
         "peerdb-api/endpoints/mirror-status",
-        "peerdb-api/endpoints/change-mirror-state"
+        "peerdb-api/endpoints/change-mirror-state",
+        "peerdb-api/endpoints/list-scripts"
       ]
     },
     {

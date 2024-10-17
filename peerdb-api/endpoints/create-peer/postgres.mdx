@@ -1,0 +1,148 @@
+---
+title: "Create a Postgres peer"
+---
+Here is the request and response format for creating a Postgres peer. SSH tunneling is optional for peer creation.
+
+### Request Fields
+<ParamField path="peer" type="object" required>
+Configuration of the peer to be created.
+</ParamField>
+
+<Expandable title="peer">
+<ParamField path="name" type="string" required>
+The name of the peer to be created.
+</ParamField>
+
+<ParamField path="type" type="3" required>
+The type of peer to be created. The value for Postgres is **3**.
+</ParamField>
+
+<ParamField path="postgres_config" type="object" required>
+Postgres config
+</ParamField>
+
+<Expandable title="postgres_config">
+<ParamField path="host" type="string" required>
+Host of the PG server.
+</ParamField>
+
+<ParamField path="port" type="number" required>
+Port on which the PG server is running. Ex: 5432
+</ParamField>
+
+<ParamField path="user" type="string" required>
+The user to connect to the PG server.
+</ParamField>
+
+<ParamField path="password" type="string" required>
+The password associated with the user.
+</ParamField>
+
+<ParamField path="database" type="string" required>
+The database to connect to.
+</ParamField>
+
+<ParamField path="ssh_config" type="object">
+Configuration for SSH tunneling
+</ParamField>
+
+<Expandable title="ssh_config">
+<ParamField path="host" type="string" required>
+The host of the SSH server.
+</ParamField>
+
+<ParamField path="port" type="number" required>
+The port on which the SSH server is running.
+</ParamField>
+
+<ParamField path="user" type="string" required>
+The user to connect to the SSH server.
+</ParamField>
+
+<ParamField path="password" type="string">
+The password associated with the user.
+</ParamField>
+
+<ParamField path="private_key" type="string" required>
+The private key as a string to connect to the SSH server.
+</ParamField>
+</Expandable>
+</Expandable>
+</Expandable>
+<ParamField path="allow_update" type="boolean">
+Whether you wish to update a peer with this name if it already exists. Default is `false`.
+</ParamField>
+
+### Response Fields
+<ParamField path="status" type="CREATED|FAILED">
+Whether the creation/update was successful. If yes, the value will be `CREATED`. Else it will be `FAILED`.
+</ParamField>
+
+<ParamField path="message" type="string">
+Error message if any
+</ParamField>
+
+<RequestExample>
+```bash Postgres peer
+curl --request POST \
+  --url http://localhost:3000/api/v1/peers/create \
+  --header 'Authorization: Basic OmJsYWNrU3dhbpEyMw==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"peer": {
+		"name": "pg_peer_via_api",
+		"type": 3,
+		"postgres_config": {
+			"host": "localhost",
+			"port": 5432,
+			"user": "postgres",
+			"password": "postgres",
+			"database": "postgres"
+		}
+	},
+	"allow_update":false
+}'
+```
+
+```bash Postgres peer with SSH tunneling
+curl --request POST \
+  --url http://localhost:3000/api/v1/peers/create \
+  --header 'Authorization: Basic OmJsYWNrU3dhbpEyMw==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"peer": {
+		"name": "pg_peer_via_api",
+		"type": 3,
+		"postgres_config": {
+			"host": "localhost",
+			"port": 5432,
+			"user": "postgres",
+			"password": "postgres",
+			"database": "postgres",
+			"ssh_config": {
+				"host":"1.2.3.4",
+				"port":22,
+				"user":"ubuntu",
+				"private_key":"***"
+			}
+		}
+	}
+}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success
+{
+	"status": "CREATED",
+	"message": ""
+}
+```
+
+```json Postgres error
+{
+	"status": "FAILED",
+	"message": "POSTGRES peer pg_peer_via_api was invalidated: failed to create ssh tunnel: no authentication methods provided"
+}
+```
+</ResponseExample>

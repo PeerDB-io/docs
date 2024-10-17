@@ -1,0 +1,172 @@
+---
+title: "Create a ClickHouse peer"
+---
+You can create a Clickhouse peer using this endpoint. Here is the request and response format for creating a Clickhouse peer.
+
+<Info>
+Note that the Clickhouse peer uses an intermediary S3 stage under the hood for performance. The S3 fields related to this are optional, because:
+- For PeerDB Cloud, the S3 bucket is managed by PeerDB
+- For PeerDB OSS, a minio bucket is provided as part of the stack.
+</Info>
+
+### Request Fields
+<ParamField path="peer" type="object" required>
+Configuration of the peer to be created.
+</ParamField>
+
+<Expandable title="peer">
+<ParamField path="name" type="string" required>
+The name of the peer to be created.
+</ParamField>
+
+<ParamField path="type" type="8" required>
+The type of peer to be created. The value for Clickhouse is **8**.
+</ParamField>
+
+<ParamField path="clickhouse_config" type="object" required>
+Configuration for the Clickhouse peer
+</ParamField>
+
+<Expandable title="clickhouse_config">
+<ParamField path="host" type="string" required>
+Host of the Clickhouse server.
+</ParamField>
+
+<ParamField path="port" type="number" required>
+Port on which the Clickhouse server is running. Ex: 9440
+
+Make sure this is the **native TCP port**.
+</ParamField>
+
+<ParamField path="user" type="string" required>
+The user to connect to the Clickhouse server.
+</ParamField>
+
+<ParamField path="password" type="string" required>
+The password associated with the Clickhouse user.
+</ParamField>
+
+<ParamField path="database" type="string" required>
+The database to connect to.
+</ParamField>
+
+<ParamField path="disable_tls" type="boolean">
+Whether the Clickhouse server is running without TLS. Default is `false`.
+</ParamField>
+
+<ParamField path="certificate" type="string">
+Certificate to connect to the Clickhouse server.
+</ParamField>
+
+<ParamField path="private_key" type="string">
+Private key to connect to the Clickhouse server.
+</ParamField>
+
+<ParamField path="root_ca" type="string">
+Root CA to connect to the Clickhouse server.
+</ParamField>
+
+<ParamField path="s3_path" type="string">
+The S3 path to use for the stage. It is of the form `s3://bucket-name/path`.
+</ParamField>
+
+<ParamField path="access_key_id" type="string">
+The access key ID for the S3 bucket.
+</ParamField>
+
+<ParamField path="secret_access_key" type="string">
+The secret access key for the S3 bucket.
+</ParamField>
+
+<ParamField path="secret_access_key" type="string">
+The secret access key for the S3 bucket.
+</ParamField>
+
+<ParamField path="region" type="string">
+The region of the S3 bucket.
+</ParamField>
+
+<ParamField path="endpoint" type="string">
+The endpoint of the S3 bucket.
+</ParamField>
+
+</Expandable>
+</Expandable>
+<ParamField path="allow_update" type="boolean">
+Whether you wish to update a peer with this name if it already exists. Default is `false`.
+</ParamField>
+
+### Response Fields
+<ParamField path="status" type="CREATED|FAILED">
+Whether the creation/update was successful. If yes, the value will be `CREATED`. Else it will be `FAILED`.
+</ParamField>
+
+<ParamField path="message" type="string">
+Error message if any
+</ParamField>
+
+<RequestExample>
+```bash Clickhouse peer
+curl --request POST \
+  --url http://localhost:3000/api/v1/peers/create \
+  --header 'Authorization: Basic OmJsXPNrU3dhbjEyMw==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"peer": {
+		"name": "ch_peer_via_api",
+		"type": 8,
+		"clickhouse_config": {
+			"host": "localhost",
+			"port": 9900,
+			"user": "default",
+			"password": "clickhouse",
+			"database": "clickhouse",
+			"disable_tls": false
+		}
+	},
+	"allow_update":false
+}'
+```
+
+
+```bash Clickhouse peer with cert auth
+curl --request POST \
+  --url http://localhost:3000/api/v1/peers/create \
+  --header 'Authorization: Basic OmJsXPNrU3dhbjEyMw==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"peer": {
+		"name": "ch_peer_via_api",
+		"type": 8,
+		"clickhouse_config": {
+			"host": "localhost",
+			"port": 9900,
+			"user": "default",
+			"password": "clickhouse",
+			"database": "clickhouse",
+			"disable_tls": false,
+			"certificate":"",
+			"private_key":"***",
+			"root_ca":""
+		}
+	},
+	"allow_update":false
+}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success
+{
+	"status": "CREATED",
+	"message": ""
+}
+```
+
+```json Clickhouse error
+{
+	"status": "FAILED",
+	"message": "CLICKHOUSE peer ch_peer_via_api was invalidated: failed to open connection to Clickhouse peer: failed to ping to Clickhouse peer: dial tcp [::1]:9900: connect: connection refused"
+}
+```
+</ResponseExample>
