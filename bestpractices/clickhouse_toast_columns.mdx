@@ -42,7 +42,7 @@ You can set the `REPLICA IDENTITY` to `FULL` using the following SQL command:
 ALTER TABLE your_table_name REPLICA IDENTITY FULL;
 ```
 
-Refer to [this blog post](https://xata.io/blog/replica-identity-full-performance) for performance considerations when setting `REPLICA IDENTITY FULL`.
+Refer to [this blog post](https://xata.io/blog/replica-identity-full-performance) for performance considerations when setting `REPLICA IDENTITY FULL`. **TL;DR** the impact from REPLICA IDENTITY FULL will likely be manageable as long as the replicated tables have a primary key!
 
 ## Replication behavior when REPLICA IDENTITY FULL is not set
 
