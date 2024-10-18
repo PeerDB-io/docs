@@ -63,7 +63,6 @@ PeerDB will try to match the data types of the source and destination tables as 
     </Step>
 </Steps>
 
-
 ## Data Modeling on ClickHouse [IMPORTANT]
 
 Once you've moved data from Postgres to ClickHouse, the next obvious question is how to model your data in ClickHouse to make the most of it. Please refer to this page on [ClickHouse Data Modeling Tips for Postgres users](/bestpractices/clickhouse_datamodeling) to help you model data in ClickHouse.
@@ -72,6 +71,9 @@ Once you've moved data from Postgres to ClickHouse, the next obvious question is
 [This](/bestpractices/clickhouse_datamodeling) is especially important as ClickHouse differs from Postgres, and you might encounter some surprises. This guide helps address potential pitfalls and ensures you can take full advantage of ClickHouse.
 </Info>
 
+## If Ordering Key in ClickHouse is different from PRIMARY KEY in Postgres
+
+If you are defining a Ordering Key in ClickHouse differently from the Primary Key in Postgres, please don't forget to read all the [considerations](/mirror/ordering-key-different) around it!
 
 ## Handling TOAST Columns
 

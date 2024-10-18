@@ -58,3 +58,23 @@ PeerDB will try to match the data types of the source and destination tables as 
     Review the mirror configuration and click on the `Validate Mirror` button. If there are any errors, you will see them on the screen. If there are no errors, you will see a success message. Once you see the success message, click on the `Create Mirror` button to create the mirror ✨.
     </Step>
 </Steps>
+
+## Data Modeling on ClickHouse [IMPORTANT]
+
+Once you've moved data from Postgres to ClickHouse, the next obvious question is how to model your data in ClickHouse to make the most of it. Please refer to this page on [ClickHouse Data Modeling Tips for Postgres users](/bestpractices/clickhouse_datamodeling) to help you model data in ClickHouse.
+
+<Info>
+[This](/bestpractices/clickhouse_datamodeling) is especially important as ClickHouse differs from Postgres, and you might encounter some surprises. This guide helps address potential pitfalls and ensures you can take full advantage of ClickHouse.
+</Info>
+
+## If Ordering Key in ClickHouse is different from PRIMARY KEY in Postgres
+
+If you are defining a Ordering Key in ClickHouse differently from the Primary Key in Postgres, please don't forget to read all the [considerations](/mirror/ordering-key-different) around it!
+
+## Handling TOAST Columns
+
+When replicating data from PostgreSQL to ClickHouse, it's important to understand the limitations and special considerations for TOAST (The Oversized-Attribute Storage Technique) columns. This guide will help you identify and properly handle TOAST columns in your replication process.
+
+<Info>
+Please refer to this page on [Handling TOAST Columns](/bestpractices/clickhouse_toast_columns) to help you handle TOAST columns in your replication process.
+</Info>
