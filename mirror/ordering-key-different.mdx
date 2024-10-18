@@ -13,7 +13,7 @@ Users might select an Ordering Key that differs from the Primary Key in Postgres
 
 ### Prerequisites for the Ordering Key in ClickHouse to differ from the Primary Key in Postgres
 
-If you go through the below steps, there will not be any deduplication inconsistencies on 
+If you follow the steps below, there will be no deduplication inconsistencies, even if you define an Ordering Key in ClickHouse that differs from the Primary Key in Postgres:
 
 1. **\[IGNORE, already handled by PeerDB\] Primary Key in PG should be a suffix to the Ordering Key in Clickhouse:** Ensure that the Primary Key in Postgres is a suffix to the Ordering Key in ClickHouse. If you define Ordering Keys through PeerDB, we automatically handle this for you. This is essential for accurate deduplication, as the Primary Key in Postgres represents the lowest granularity for a row. Defining an Ordering Key without the Primary Key can lead to lost rows.
     
