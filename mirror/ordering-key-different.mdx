@@ -15,7 +15,7 @@ Users might select an Ordering Key that differs from the Primary Key in Postgres
 
 If you follow the steps below, there will be no deduplication inconsistencies, even if you define an Ordering Key in ClickHouse that differs from the Primary Key in Postgres:
 
-1. **\[IGNORE, already handled by PeerDB\] Primary Key in PG should be a suffix to the Ordering Key in Clickhouse:** Ensure that the Primary Key in Postgres is a suffix to the Ordering Key in ClickHouse. If you define Ordering Keys through PeerDB, we automatically handle this for you. This is essential for accurate deduplication, as the Primary Key in Postgres represents the lowest granularity for a row. Defining an Ordering Key without the Primary Key can lead to lost rows.
+1. **Primary Key in PG should be a suffix to the Ordering Key in Clickhouse:** Ensure that the Primary Key in Postgres is a suffix to the Ordering Key in ClickHouse. This is essential for accurate deduplication, as the Primary Key in Postgres represents the lowest granularity for a row. Defining an Ordering Key without the Primary Key can lead to lost rows.
     
 2. **Define REPLICA IDENTITY as FULL or UNIQUE INDEX:** If you define the REPLICA IDENTITY of a table as FULL or as a UNIQUE INDEX on the columns in the Ordering Key, Postgres logical replication provides both the older and newer versions of the row, with the Ordering Key column values populated. This enables PeerDB to accurately handle the scenarios of updating an Ordering Key column and deletions.
     
