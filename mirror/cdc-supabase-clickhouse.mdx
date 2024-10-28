@@ -1,14 +1,15 @@
 ---
-title: "CDC Setup from Neon Postgres to ClickHouse"
+title: "CDC Setup from Supabase to ClickHouse"
 ---
 
 
 ## Prerequisites
 
-To perform CDC from Neon to ClickHouse, you first need to create a source and destination Peer.
+To perform CDC from Supabase to ClickHouse, you first need to create a source and destination Peer.
 
-1. Create a Source Peer for Neon. Follow the instructions depending on your Neon instance:
-    * [Neon](/connect/postgres/neon_postgres)
+1. Create a Source Peer for Supabase. Follow the instructions depending on where you are running PeerDB:
+    * [PeerDB Cloud](/connect/postgres/supabase_postgres_peerdb_cloud)
+    * [Self-hosted PeerDB](/connect/postgres/supabase_postgres)
 2. Create a Destination Peer for ClickHouse
     * [ClickHouse](/connect/clickhouse)
 
@@ -17,7 +18,7 @@ To perform CDC from Neon to ClickHouse, you first need to create a source and de
 
 import MirrorOverview from '/snippets/pg-cdc-clickhouse/mirror-overview.mdx';
 
-<MirrorOverview postgresProviderType="Neon Postgres" />
+<MirrorOverview postgresProviderType="Supabase Instance" />
 
 
 ## Data Modeling on ClickHouse [IMPORTANT]
