@@ -77,7 +77,8 @@ Connect to your RDS postgres through the admin user and run the below commands:
 
 ## Safe list PeerDB Cloud IPs
 
-If you are using PeerDB Cloud [safelist public IPs of your PeerDB Cloud instance](/peerdb-cloud/ip-table) by editing the `Inbound rules` of the `Security group` in which your RDS Postgres is located.
+If you are using PeerDB Cloud [safelist public IPs of your PeerDB Cloud instance](/peerdb-cloud/ip-table) by editing the `Inbound rules` of the `Security group` in which your
+RDS Postgres (OR the Jump Server/Bastion if you are using SSH tunneling) is located.
 
 <Frame caption="Where to find security group in RDS Postgres?">
 <img src="/images/setup/security_group_in_rds_postgres.png" />

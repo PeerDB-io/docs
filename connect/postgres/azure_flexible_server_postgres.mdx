@@ -31,16 +31,6 @@ Anything on or after Postgres 12
 </Frame>
 
 
-## Add PeerDB Cloud IPs to Firewall
-
-If you are using **PeerDB Cloud**, please follow the below steps to add peerdb ips to your network.
-
-1. Go to the **Networking** tab and add the [public IPs of your PeerDB Cloud instance](/peerdb-cloud/ip-table) to the Firewall
-
-<Frame caption="Add PeerDB IPs to Firewall">
-    <img src="/images/setup/flexible_server/firewall.png" />
-</Frame>
-
 ## Creating PeerDB User and Granting permissions
 
 Connect to your Azure Flexible Server Postgrees through the admin user and run the below commands:
@@ -77,6 +67,18 @@ Connect to your Azure Flexible Server Postgrees through the admin user and run t
 ```
 
 <SSHTunnel />
+
+
+## Add PeeDB Cloud IPs to Firewall
+
+If you are using **PeerDB Cloud**, please follow the below steps to add peerdb ips to your network.
+
+1. Go to the **Networking** tab and add the [public IPs of your PeerDB Cloud instance](/peerdb-cloud/ip-table) to the Firewall
+of your Azure Flexible Server Postgres OR the Jump Server/Bastion if you are using SSH tunneling.
+
+<Frame caption="Add PeerDB IPs to Firewall">
+    <img src="/images/setup/flexible_server/firewall.png" />
+</Frame>
 
 
 ## Create Azure Flexible Server Postgres Peer in PeerDB

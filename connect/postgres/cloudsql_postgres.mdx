@@ -33,33 +33,6 @@ Anything on or after Postgres 12
     <img src="/images/setup/cloudsql_postgres/cloudsql_logical_decoding3.png" />
 </Frame>
 
-
-## Add PeerDB Cloud IPs to Firewall
-
-If you are using **PeerDB Cloud**, please follow the below steps to add PeerDB IPs to your network.
-
-1. Go to **Connections** section
-
-<Frame caption="CloudSQL Connection Connection Section">
-    <img src="/images/setup/cloudsql_postgres/connections.png" />
-</Frame>
-
-2. Go to the Networking subsection
-
-<Frame caption="Networking Sub Section in the Conenction Section">
-    <img src="/images/setup/cloudsql_postgres/coconnections_networking.png" />
-</Frame>
-
-3. Add the [public IPs of your PeerDB Cloud instance](/peerdb-cloud/ip-table)
-
-<Frame caption="Add PeerDB Networks">
-    <img src="/images/setup/cloudsql_postgres/firewall1.png" />
-</Frame>
-
-<Frame caption="PeerDB Networks Added">
-    <img src="/images/setup/cloudsql_postgres/firewall2.png" />
-</Frame>
-
 ## Creating PeerDB User and Granting permissions
 
 Connect to your CloudSQL Postgres through the admin user and run the below commands:
@@ -91,6 +64,37 @@ Connect to your CloudSQL Postgres through the admin user and run the below comma
         ```
 
 <SSHTunnel />
+
+## Add PeerDB Cloud IPs to Firewall
+
+If you are using **PeerDB Cloud**, please follow the below steps to add PeerDB IPs to your network.
+
+<Note>
+If your are using SSH Tunnel, then you need to add the PeerDB Cloud IPs to the firewall rules of the Jump Server/Bastion.
+</Note>
+
+1. Go to **Connections** section
+
+<Frame caption="CloudSQL Connection Connection Section">
+    <img src="/images/setup/cloudsql_postgres/connections.png" />
+</Frame>
+
+2. Go to the Networking subsection
+
+<Frame caption="Networking Sub Section in the Conenction Section">
+    <img src="/images/setup/cloudsql_postgres/coconnections_networking.png" />
+</Frame>
+
+3. Add the [public IPs of your PeerDB Cloud instance](/peerdb-cloud/ip-table)
+
+<Frame caption="Add PeerDB Networks">
+    <img src="/images/setup/cloudsql_postgres/firewall1.png" />
+</Frame>
+
+<Frame caption="PeerDB Networks Added">
+    <img src="/images/setup/cloudsql_postgres/firewall2.png" />
+</Frame>
+
 
 ## Create CloudSQL Postgres Peer in PeerDB
 

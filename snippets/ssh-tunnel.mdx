@@ -1,6 +1,11 @@
 ## PeerDB SSH Tunneling Guide (Optional)
 
-Sometimes to connect to your Postgres database you need to use an SSH tunnel. This is typically used when your database is not publicly accessible and you need to connect to it a jump server in your VPC. This is done by creating an SSH tunnel to the jump server and then connecting to the database through the tunnel.
+Sometimes to connect to your Postgres database you may need PeerDB to use an SSH tunnel.
+
+This is typically used when your database is not publicly accessible and you need to connect to it a jump server in your VPC.
+
+This is done by creating an SSH tunnel to your jump server and then connecting to the database through the tunnel. All
+of this is handled by PeerDB natively.
 
 <Steps>
     <Step title="Generate a key-pair">
