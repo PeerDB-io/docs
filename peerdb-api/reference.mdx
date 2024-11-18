@@ -28,7 +28,7 @@ The username is empty and the password is the same password used to login to Pee
 
 ```bash cURL
 curl --request POST \
-  --url http://localhost:3000/api/mirrors/state \
+  --url http://localhost:3000/api/v1/mirrors/status \
   --header
     'Authorization
     : Basic
@@ -39,7 +39,7 @@ curl --request POST \
 ```
 
 ```javascript Axios
-axios.post('http://localhost:3000/api/mirrors/state', {}, {
+axios.post('http://localhost:3000/api/v1/mirrors/status', {}, {
   headers: {
     'Authorization': 'Basic OnBlZXJkYg==',
     'Content-Type': 'application/json'

@@ -1,0 +1,83 @@
+
+```http
+POST /api/v1/scripts
+```
+
+This endpoint is used to create a new script or update an existing one.
+- If the script ID in the request is -1, a new script is created.
+- Otherwise, the existing script with the given ID, if existing, is updated.
+
+<Info>
+Scripts are disabled by default in [PeerDB Cloud](https://auth.peerdb.cloud/en/login).
+It is enabled in [PeerDB OSS](https://github.com/PeerDB-io/peerdb) and [PeerDB Enterprise](https://github.com/PeerDB-io/peerdb-enterprise).
+</Info>
+
+### Request Fields
+<ParamField path="script" type="object" required>
+Describe the new script to be created or updated.
+</ParamField>
+
+<Expandable title="script">
+
+<ParamField path="id" type="number" required>
+The ID of the script. If -1, a new script is created.
+</ParamField>
+
+<ParamField path="name" type="string" required>
+The name of the script.
+</ParamField>
+
+<ParamField path="lang" type="string" required>
+The language of the script.
+</ParamField>
+
+<ParamField path="source" type="string" required>
+The source code of the script.
+</ParamField>
+
+</Expandable>
+
+### Response Fields
+<ParamField path="id" type="number">
+If successful, returns the ID of the created or updated script
+</ParamField>
+
+<RequestExample>
+```bash Create a new script
+curl --request POST \
+  --url http://localhost:3000/api/v1/scripts \
+  --header 'Authorization: Basic OmJsYWNrU3dhbjEyMw==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"script":{
+			"id": -1,
+			"lang": "lua",
+			"name": "new_script_created",
+			"source": "\n-- This is a sample script\n-- Fill in the onRecord function to transform the incoming record\nlocal json = require \"json\"\n\nfunction onRecord(r)\n  return json.encode(r.row)\nend"
+		}
+}'
+```
+
+```bash Update existing script
+curl --request POST \
+  --url http://localhost:3000/api/v1/scripts \
+  --header 'Authorization: Basic OmJsYWNrU3dhbjEyMw==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"script":{
+			"id": 1,
+			"lang": "lua",
+			"name": "new_script_updated",
+			"source": "\n-- This is a sample script\n-- Fill in the onRecord function to transform the incoming record\nlocal json = require \"json\"\n\nfunction onRecord(r)\n  return json.encode(r.row)\nend"
+		}
+}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json
+{
+	"id": 1
+}
+```
+</ResponseExample>

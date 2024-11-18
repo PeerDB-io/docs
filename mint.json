@@ -243,7 +243,13 @@
         "peerdb-api/endpoints/custom-sync",
         "peerdb-api/endpoints/mirror-status",
         "peerdb-api/endpoints/change-mirror-state",
-        "peerdb-api/endpoints/list-scripts"
+        {
+          "group": "Scripts",
+          "pages": [
+            "peerdb-api/endpoints/scripts/list-scripts",
+            "peerdb-api/endpoints/scripts/create-script"
+          ]
+        }
       ]
     },
     {
