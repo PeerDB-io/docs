@@ -10,7 +10,7 @@ Anything on or after Postgres 12
 
 ## Enable Logical Replication
 
-**You don't need** to follow the below steps if the settings `wal_level`. This setting should mostly be pre-configured if you are migrating from another data replication tool.
+**You don't need** to follow the below steps if `wal_level` is set to `logical`. This setting should mostly be pre-configured if you are migrating from another data replication tool.
 
 1. Click on the **Server parameters** section
 
@@ -33,7 +33,7 @@ Anything on or after Postgres 12
 
 ## Creating PeerDB User and Granting permissions
 
-Connect to your Azure Flexible Server Postgrees through the admin user and run the below commands:
+Connect to your Azure Flexible Server Postgres through the admin user and run the below commands:
 
 1. Create a Postgres user for exclusively PeerDB.
 
@@ -41,7 +41,7 @@ Connect to your Azure Flexible Server Postgrees through the admin user and run t
               CREATE USER peerdb_user PASSWORD 'some-password';
         ```
 
-2. Provide read-only access to the schema from which you are replicating tables to the `peerdb-user`. Below example shows setting up permissions for the `public` schema. If you want to grant access to multiple schemas, you can run these three commands for each schema.
+2. Provide read-only access to the schema from which you are replicating tables to the `peerdb_user`. Below example shows setting up permissions for the `public` schema. If you want to grant access to multiple schemas, you can run these three commands for each schema.
 
     1. ```sql
               GRANT USAGE ON SCHEMA "public" TO peerdb_user;
@@ -69,7 +69,7 @@ Connect to your Azure Flexible Server Postgrees through the admin user and run t
 <SSHTunnel />
 
 
-## Add PeeDB Cloud IPs to Firewall
+## Add PeerDB Cloud IPs to Firewall
 
 If you are using **PeerDB Cloud**, please follow the below steps to add peerdb ips to your network.
 

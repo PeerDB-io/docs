@@ -53,7 +53,7 @@ Connect to your RDS postgres through the admin user and run the below commands:
           CREATE USER peerdb_user PASSWORD 'some-password';
         ```
 
-2. Grant read-only access to the schema from which you are replicating tables to `peerdb-user`. Below example shows granting permissions for the `public` schema. If you want to grant access to multiple schemas, you can run these three commands for each schema.
+2. Grant read-only access to the schema from which you are replicating tables to `peerdb_user`. Below example shows granting permissions for the `public` schema. If you want to grant access to multiple schemas, you can run these three commands for each schema.
 
     1. ```sql
           GRANT USAGE ON SCHEMA "public" TO peerdb_user;

@@ -43,7 +43,7 @@ Connect to your CloudSQL Postgres through the admin user and run the below comma
               CREATE USER peerdb_user PASSWORD 'some-password';
         ```
 
-2. Provide read-only access to the schema from which you are replicating tables to the `peerdb-user`. Below example shows setting up permissions for the `public` schema. If you want to grant access to multiple schemas, you can run these three commands for each schema.
+2. Provide read-only access to the schema from which you are replicating tables to the `peerdb_user`. Below example shows setting up permissions for the `public` schema. If you want to grant access to multiple schemas, you can run these three commands for each schema.
 
     1. ```sql
               GRANT USAGE ON SCHEMA "public" TO peerdb_user;
@@ -82,7 +82,7 @@ If your are using SSH Tunnel, then you need to add the PeerDB Cloud IPs to the f
 2. Go to the Networking subsection
 
 <Frame caption="Networking Sub Section in the Conenction Section">
-    <img src="/images/setup/cloudsql_postgres/coconnections_networking.png" />
+    <img src="/images/setup/cloudsql_postgres/connections_networking.png" />
 </Frame>
 
 3. Add the [public IPs of your PeerDB Cloud instance](/peerdb-cloud/ip-table)
