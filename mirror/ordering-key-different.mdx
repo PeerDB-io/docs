@@ -1,6 +1,16 @@
 ---
 title: "Defining the Ordering Key in ClickHouse differently from the Primary Key in Postgres"
 ---
+<Note>
+<b>PeerDB is now natively integrated with ClickHouse Cloud!</b>
+
+We recently announced the Postgres CDC connector in ClickPipes, now available in Private Preview.
+This connector is fully powered by PeerDB.
+
+As a ClickHouse Cloud customer, you get a seamless, native experience for moving data from your Postgres databases to ClickHouse Cloud. Simply navigate to the **Data Sources** tab and add a Postgres source to start ingesting data.
+
+👉 You can sign up to the private preview by following this [link](https://clickhouse.com/cloud/clickpipes/postgres-cdc-connector). Our team will provide access within a day or 2.
+</Note>
 
 Deduplication inconsistencies in ReplacingMergeTree could occur when the Ordering Key in ClickHouse differs from the Primary Key in Postgres. In ClickHouse, the Ordering Key defines: a) the skip index and data order on disk, and b) the deduplication key - group of columns on which data de-duplication occurs.
 
