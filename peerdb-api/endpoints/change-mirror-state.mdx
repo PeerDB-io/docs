@@ -6,7 +6,8 @@ POST /api/v1/mirrors/state_change
 This endpoint can be used for changing the state of a mirror. To be specific, it can be used for:
 1. [Pausing](/features/pause-mirror) a mirror
 2. Resuming a mirror
-3. Dropping a mirror
+3. [Editing](/features/edit-mirror) a paused mirror
+4. Dropping a mirror
 
 ### Request Fields
 <ParamField path="flowJobName" type="string" required>
@@ -19,11 +20,61 @@ The state to change the mirror to. Possible values are:
 - `STATUS_RUNNING` - **Resume** the mirror
 - `STATUS_TERMINATED` - **Drop** the mirror
 </ParamField>
+<b> Resuming via editing a mirror </b>
+
+If you are editing a paused CDC mirror, you can include the following fields.
+
+<Warning>
+  Editing a mirror resumes it automatically.
+</Warning>
+
+<ParamField path="flowConfigUpdate" type="object"/>
+<Expandable title="flowConfigUpdate">
+<ParamField path="cdcFlowConfigUpdate" type="object"/>
+<Expandable title="cdcFlowConfigUpdate">
+<ParamField path="idle_timeout" type="number">
+The sync interval of the CDC mirror in seconds.
+</ParamField>
+<ParamField path="batch_size" type="number">
+The pull batch size of the CDC mirror
+</ParamField>
+<ParamField path="additional_tables" type="string">
+Additional tables to sync. <b> You cannot add and remove the same table in the same request.</b>
+You can also specify column exclusion here.
+</ParamField>
+<Expandable path="additional_tables" type="array">
+<ParamField path="sourceTableIdentifier" type="string">
+The source table identifier.
+</ParamField>
+<ParamField path="destinationTableIdentifier" type="string">
+The destination table identifier.
+</ParamField>
+<ParamField path="exclude" type="array">
+Columns to exclude from the sync.
+</ParamField>
+</Expandable>
+<ParamField path="removed_tables" type="string">
+Tables to remove from the sync. You cannot remove just a few columns.
+<b> You cannot add and remove the same table in the same request.</b>
+</ParamField>
+<Expandable path="removed_tables" type="array">
+<ParamField path="sourceTableIdentifier" type="string">
+The source table identifier.
+</ParamField>
+<ParamField path="destinationTableIdentifier" type="string">
+The destination table identifier.
+</ParamField>
+</Expandable>
+</Expandable>
+</Expandable>
+
 
 ### Response Fields
 <ParamField path="Ok" type="boolean">
 Whether the request was successful.
 </ParamField>
+
+For an edit request, the response is empty if successful.
 
 <RequestExample>
 ```bash Pausing
@@ -48,6 +99,34 @@ curl --request POST \
 }'
 ```
 
+```bash Edit and resume
+curl --request POST \
+  --url http://localhost:3000/api/v1/mirrors/state_change \
+  --header 'Authorization: Basic Xk5hY3VhXXXZTP0IP==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"flowJobName": "mirror_kick_off",
+	"requestedFlowState": "STATUS_RUNNING",
+	"flowConfigUpdate": {
+		"cdcFlowConfigUpdate":{
+      "idle_timeout": 600,
+      "batch_size": 100000,
+			"additional_tables":[
+        {
+          "sourceTableIdentifier": "public.added_table",
+          "destinationTableIdentifier": "added_table_destination"
+        },
+        {
+          "sourceTableIdentifier": "public.added_table_2",
+          "destinationTableIdentifier": "added_table_destination_2",
+          "exclude": ["column1", "column2"]
+        }
+      ]
+		}
+	}
+}'
+```
+
 ```bash Dropping
 curl --request POST \
   --url http://localhost:3000/api/v1/mirrors/state_change \
@@ -61,11 +140,15 @@ curl --request POST \
 </RequestExample>
 
 <ResponseExample>
-```json
+```json Success
 {
 	"ok": true,
 	"errorMessage": ""
 }
+```
+
+```json Success for edit request
+{}
 ```
 
 ```json Error
