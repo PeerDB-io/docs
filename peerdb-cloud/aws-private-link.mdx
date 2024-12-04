@@ -15,7 +15,7 @@ This allows you to connect your VPCs to PeerDB Cloud without exposing your data 
         1. Create the necessary endpoint service as per preference. Some of the common ways to achieve this are (for Postgres):
             - EC2 with script to fetch DNS records on schedule and update forwarding rules
             - Lambda with listener to Event Bridge (CloudFormation Template available in [AWS Docs](https://aws.amazon.com/blogs/database/access-amazon-rds-across-vpcs-using-aws-privatelink-and-network-load-balancer/)
-       <Warning>Make sure the RDS instance endpoint used in case of RDS DB Cluster/Aurora is the WRITER Endpoint and NOT the common endpoint.</Warning>
+       <Warning>Make sure the RDS instance endpoint used in case of RDS DB Cluster/Aurora is ONLY the WRITER Endpoint and NOT the common endpoint.</Warning>
         2. Give access to the PeerDB's AWS ARN `arn:aws:iam::141675317444:root` (or Account ID `141675317444`) so that it can be discovered for establishing the Private Link connection
         3. (Optionally) Allow network connections from PeerDB's internal CIDR range `10.0.0.0/16` to the Endpoint Service
         4. Provide PeerDB Team with Endpoint Service Name (`com.amazonaws…`) and the region where the service is located
