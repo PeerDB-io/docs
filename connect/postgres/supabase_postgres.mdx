@@ -25,8 +25,9 @@ Here, we can run the following SQL commands:
 -- Give replication permission to the USER
   ALTER USER peerdb_user REPLICATION;
 
--- Create a publication. We will use this when creating the mirror
-  CREATE PUBLICATION peerdb_publication FOR ALL TABLES;
+-- Create a publication with the tables you wish to replicate. We will use this when creating the mirror
+  CREATE PUBLICATION peerdb_publication FOR TABLE table1, table2, table3....;
+
 ```
 
 <Frame caption="User and publication commands">
