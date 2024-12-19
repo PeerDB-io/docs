@@ -166,7 +166,8 @@
         "bestpractices/heartbeat",
         "bestpractices/postgres-upgrade",
         "bestpractices/generated_columns",
-        "bestpractices/clickhouse_toast_columns"
+        "bestpractices/clickhouse_toast_columns",
+        "bestpractices/ordering-key-different.mdx"
       ]
     },
     {
