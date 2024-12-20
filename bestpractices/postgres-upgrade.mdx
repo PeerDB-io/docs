@@ -35,10 +35,10 @@ SELECT pg_create_logical_replication_slot('peerflow_slot_<mirror_name>', 'pgoutp
 SELECT pg_create_logical_replication_slot('<replication_slot_name>', 'pgoutput');
 ```
 8. **If you are using PeerDB OSS**:
-Set the `last_offset` field of the mirrors to 0 in the `metadata_last_sync_state` table in the `catalog` Postgres container.
+Set the `last_offset` field of the mirrors (whose source peer you are upgrading) to 0 in the `metadata_last_sync_state` table in the `catalog` Postgres container.
 You can `psql` into that container and run :
 ```sql
-UPDATE metadata_last_sync_state SET last_offset = 0 ;
+UPDATE metadata_last_sync_state SET last_offset = 0 WHERE job_name = <mirror_name_of_this_peer>;
 ```
 **If you are using PeerDB Cloud**: Contact PeerDB Support on [PeerDB Slack](https://slack.peerdb.io).
 
