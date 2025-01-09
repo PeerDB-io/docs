@@ -3,6 +3,7 @@ title: "RDS Postgres Source Setup Guide"
 ---
 
 import SSHTunnel from '/snippets/ssh-tunnel.mdx';
+import RLSNote from '/snippets/rls-note.mdx';
 
 ## Supported Postgres versions
 
@@ -72,6 +73,8 @@ Connect to your RDS postgres through the admin user and run the below commands:
     1. ```sql
           CREATE PUBLICATION peerdb_publication FOR ALL TABLES;
         ```
+
+<RLSNote />
 
 <SSHTunnel />
 

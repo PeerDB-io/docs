@@ -2,6 +2,8 @@
 title: "Crunchy Bridge Postgres Source Setup Guide"
 ---
 
+import RLSNote from '/snippets/rls-note.mdx';
+
 ## Enable Logical Replication
 
 Crunchy Bridge comes with logical replication enabled by [default](https://docs.crunchybridge.com/how-to/logical-replication). Ensure that the settings below are configured correctly. If not, adjust them accordingly.
@@ -41,6 +43,8 @@ Connect to your Crunchy Bridge Postgres through the `postgres` user and run the 
     1. ```sql
           CREATE PUBLICATION peerdb_publication FOR ALL TABLES;
         ```
+
+<RLSNote />
 
 <SSHTunnel />
 

@@ -2,6 +2,8 @@
 title: "Supabase Postgres Source Setup Guide on PeerDB Cloud"
 ---
 
+import RLSNote from '/snippets/rls-note.mdx';
+
 This is a guide on how to create a supabase PostgreSQL peer which you can use for replication in PeerDB.
 <Check>
 PeerDB Cloud supports Supabase via IPv6 natively for seemless replication.
@@ -34,6 +36,7 @@ Here, we can run the following SQL commands:
 </Frame>
 
 Click on **Run** to have a publication and a user ready.
+
 <Note>
 Make sure to replace `peerdb_user` and `peerdb_password` with your desired username and password.
 
@@ -77,7 +80,7 @@ Fill in the username and password you created earlier in the SQL Editor in Step 
 </Frame>
 
 5. Click on **Validate** and once that's green, you can go ahead and click on **Create** to create the peer!
-
+<RLSNote />
 
 </Step>
 <Step title='Increase max_slot_wal_keep_size'>

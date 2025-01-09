@@ -2,6 +2,8 @@
 title: "Generic PostgreSQL Source Setup Guide"
 ---
 
+import RLSNote from '/snippets/rls-note.mdx';
+
 This is a guide on how to create a generic PostgreSQL peer which you can use for replication in PeerDB.
 
 <Info>
@@ -52,6 +54,8 @@ If you use one of the supported providers (in the sidebar), please refer to the 
 
 Let's create a new user for PeerDB with the necessary permissions suitable for CDC,
 and also create a publication that we'll use for replication.
+
+<RLSNote />
 
 For this, you can connect to your PostgreSQL instance and run the following SQL commands:
 ```sql
