@@ -17,23 +17,23 @@ Deduplication inconsistencies in ReplacingMergeTree could occur when the Orderin
 Users might select an Ordering Key that differs from the Primary Key in Postgres to optimize query performance, without realizing that this choice can lead to deduplication inconsistencies in the data. Below are scenarios where deduplication can go wrong:
 
 * **UPDATE on an Ordering Key Column:** For a row, if a column in the Ordering Key is updated, PeerDB replicates the latest version of that row from Postgres, as Postgres logical replication provides only the latest version by default. ClickHouse does not deduplicate this row with the previous version because the Ordering Key value has changed and is distinct from the previous version. This results in an additional row in ClickHouse compared to Postgres.
-    
+
 * **DELETEs:**  If you delete a row, PeerDB replicates the deleted row with null values in all columns (including those in the Ordering Key) except for the Primary Key. This occurs because Postgres logical replication only provides the value of the Primary Key column for the row being deleted. As a result, ClickHouse does not deduplicate the existing row with the new row marked as deleted (soft delete), since the Ordering Key column values of the incoming deleted row are different from those of the existing row. This again results in an additional row in ClickHouse compared to Postgres.
-    
+
 
 ### Prerequisites for the Ordering Key in ClickHouse to differ from the Primary Key in Postgres
 
 If you follow the steps below, there will be no deduplication inconsistencies, even if you define an Ordering Key in ClickHouse that differs from the Primary Key in Postgres:
 
 1. **Primary Key in PG should be a suffix to the Ordering Key in Clickhouse:** Ensure that the Primary Key in Postgres is a suffix to the Ordering Key in ClickHouse. This is essential for accurate deduplication, as the Primary Key in Postgres represents the lowest granularity for a row. Defining an Ordering Key without the Primary Key can lead to lost rows.
-    
+
 2. **Define REPLICA IDENTITY as FULL or UNIQUE INDEX:** If you define the REPLICA IDENTITY of a table as FULL or as a UNIQUE INDEX on the columns in the Ordering Key, Postgres logical replication provides both the older and newer versions of the row, with the Ordering Key column values populated. This enables PeerDB to accurately handle the scenarios of updating an Ordering Key column and deletions.
-    
+
 
 <Info>
 To ensure accurate de-duplication, PeerDB internally treats the update as a DELETE of the old row and an INSERT of the new row, allowing ClickHouse to manage deduplication correctly. Similarly, for deletions, PeerDB marks the older row with the appropriate Ordering Key columns as deleted, ensuring accurate deduplication.
 </Info>
- 
+
 To Define REPLICA IDENTITY FULL, you could run the below command:
 
 ```sql
@@ -42,7 +42,7 @@ ALTER TABLE table_name REPLICA IDENTITY FULL;
 ```
 
 <Info>
-**Impact of REPLICA IDENTITY FULL**: 
+**Impact of REPLICA IDENTITY FULL**:
 [This](https://xata.io/blog/replica-identity-full-performance) is a great blog regarding the impact on your instance if you define REPLICA IDENTITY FULL. **TL;DR** the impact from REPLICA IDENTITY FULL will likely be manageable as long as the replicated tables have a primary key!
 </Info>
 
@@ -52,10 +52,10 @@ To define REPLICA IDENTITY using a UNIQUE INDEX, you can use the following comma
 
 ```sql
 -- Create an index on the Ordering Key columns if it doesn't exist
-CREATE UNIQUE INDEX orderingkey_index ON 
+CREATE UNIQUE INDEX orderingkey_index ON
 table_name (ordering_key_column1, ordering_key_column2, ...);
 
 -- Create index on the Ordering Key Column if it doesnt exists
-ALTER TABLE table_name REPLICA IDENTITY USING 
+ALTER TABLE table_name REPLICA IDENTITY USING
 INDEX orderingkey_index;
 ```
