@@ -235,12 +235,14 @@
             "peerdb-api/endpoints/create-peer/overview",
             "peerdb-api/endpoints/create-peer/postgres",
             "peerdb-api/endpoints/create-peer/clickhouse",
-            "peerdb-api/endpoints/create-peer/kafka"
+            "peerdb-api/endpoints/create-peer/kafka",
+            "peerdb-api/endpoints/create-peer/snowflake"
           ]
         }
         ,
         "peerdb-api/endpoints/create-mirror",
         "peerdb-api/endpoints/custom-sync",
+        "peerdb-api/endpoints/peer-info",
         "peerdb-api/endpoints/mirror-status",
         "peerdb-api/endpoints/change-mirror-state",
         {

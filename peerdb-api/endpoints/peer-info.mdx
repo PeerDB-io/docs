@@ -1,0 +1,51 @@
+
+```http
+GET /api/v1/peers/info/{peer_name}
+```
+
+This endpoint is used to get information about a peer.
+A peer represents a data store. Sensitive information such as passwords are not returned.
+
+
+### Request Fields
+<ParamField path="peer_name" type="string" required>
+Describe a peer by its peer name.
+</ParamField>
+
+### Response Fields
+
+<ParamField path="peer" type="object">
+The description of the peer object. To see the fields of the peer object, refer to the [Create Peer](/peerdb-api/endpoints/create-peer/overview) endpoint.
+</ParamField>
+
+<ParamField path="version" type="string">
+This is the version of the peer. Currently returned for Postgres and ClickHouse peers.
+</ParamField>
+
+<RequestExample>
+```bash Get a peer
+curl --request GET \
+  --url http://localhost:3000/api/v1/peers/info/my_postgres_peer \
+  --header 'Authorization: Basic OmJsYWNrU3dhbjEyMw==' \
+```
+</RequestExample>
+
+
+<ResponseExample>
+```json
+{
+	"peer": {
+		"name": "my_postgres_peer",
+		"type": "POSTGRES",
+		"postgresConfig": {
+			"host": "my_postgres_peer.rpolkfgn.us-east-1.rds.amazonaws.com",
+			"port": 5432,
+			"user": "postgres",
+			"password": "********",
+			"database": "postgres"
+		}
+	},
+	"version": "PostgreSQL 16.3 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 7.3.1 20180712 (Red Hat 7.3.1-12), 64-bit"
+}
+```
+</ResponseExample>
