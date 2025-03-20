@@ -38,8 +38,10 @@ SELECT pg_create_logical_replication_slot('<replication_slot_name>', 'pgoutput')
 Set the `last_offset` field of the mirrors to 0 in the `metadata_last_sync_state` table in the `catalog` Postgres container.
 You can `psql` into that container and run :
 ```sql
-UPDATE metadata_last_sync_state SET last_offset = 0 ;
+UPDATE metadata_last_sync_state SET last_offset = 0 WHERE job_name = <mirror_name>;
 ```
+for every mirror which has this Postgres instance as its source peer.
+
 **If you are using PeerDB Cloud**: Contact PeerDB Support on [PeerDB Slack](https://slack.peerdb.io).
 
 9. Resume all mirrors.
