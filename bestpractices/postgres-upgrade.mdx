@@ -1,0 +1,49 @@
+---
+title: "Upgrading the PostgreSQL Peer Of An Ongoing CDC Mirror"
+---
+
+This is a guide on how you can upgrade your PostgreSQL instance that is part of an ongoing CDC mirror.
+<Note>
+For PeerDB Cloud users: Note that one of the steps below requires the intervention of [PeerDB support](https://slack.peerdb.io).
+</Note>
+
+## Steps
+1. Create a dummy table, and [add the table to all mirrors](/features/edit-mirror#adding-tables)
+```sql
+CREATE TABLE _peerdb_heartbeat (
+  id SERIAL PRIMARY KEY,
+  last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+2. Make sure ALL writes to the database stop. In other words, put the application in maintenance/downtime.
+3. Add a row to the dummy table using :
+```sql
+INSERT INTO _peerdb_heartbeat DEFAULT VALUES;
+```
+4. Wait for PeerDB to catch up. You can check the syncs of the mirrors in PeerDB UI in the **Overview** tab.
+5. [Pause](/features/pause-mirror) all mirrors.
+6. Upgrade your PostgreSQL instance.
+7. After the upgrade is complete, create new logical replication slots for the mirrors.
+It is very important that the name of these slots are the same as the previous slots which the mirrors were using.
+If PeerDB created the replication slot of a mirror, then the slot name will be `peerflow_slot_<mirror_name>`.
+If you provided the replication slot name, then you should use that name.
+```sql
+-- If PeerDB created the replication slot:
+SELECT pg_create_logical_replication_slot('peerflow_slot_<mirror_name>', 'pgoutput');
+
+-- If you provided the replication slot name:
+SELECT pg_create_logical_replication_slot('<replication_slot_name>', 'pgoutput');
+```
+8. **If you are using PeerDB OSS**:
+Set the `last_offset` field of the mirrors to 0 in the `metadata_last_sync_state` table in the `catalog` Postgres container.
+You can `psql` into that container and run :
+```sql
+UPDATE metadata_last_sync_state SET last_offset = 0 WHERE job_name = <mirror_name>;
+```
+for every mirror which has this Postgres instance as its source peer.
+
+**If you are using PeerDB Cloud**: Contact PeerDB Support on [PeerDB Slack](https://slack.peerdb.io).
+
+9. Resume all mirrors.
+10. Remove application from maintenance.
+11. Check if the mirrors are syncing correctly.
