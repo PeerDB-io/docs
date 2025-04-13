@@ -15,7 +15,7 @@ CREATE TABLE _peerdb_heartbeat (
   last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
-2. Make sure all writes to the database stop. In other words, put the application in maintenance/downtime.
+2. Make sure ALL writes to the database stop. In other words, put the application in maintenance/downtime.
 3. Add a row to the dummy table using :
 ```sql
 INSERT INTO _peerdb_heartbeat DEFAULT VALUES;
