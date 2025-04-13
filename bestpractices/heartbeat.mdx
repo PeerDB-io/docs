@@ -3,8 +3,8 @@ title: "Heartbeat Table For CDC"
 ---
 
 <Info>
-**Disclamer**: The below guide is more relevant if your Postgres instance is below Postgres 14.
-PeerDB now has inbuilt functionality to mitigate slot growth by default.
+**Disclaimer**: The below guide is more relevant if your Postgres instance is below Postgres 14.
+For Postgres versions 14 and above, PeerDB now has inbuilt functionality to mitigate slot growth by default.
 </Info>
 
 Consider a scenario where you kick off a CDC mirror from PostgreSQL to a data warehouse to sync one table. The mirror creates a logical replication slot in PostgreSQL to stream changes.
