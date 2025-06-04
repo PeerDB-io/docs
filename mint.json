@@ -243,6 +243,7 @@
         "peerdb-api/endpoints/create-mirror",
         "peerdb-api/endpoints/custom-sync",
         "peerdb-api/endpoints/peer-info",
+        "peerdb-api/endpoints/mirror-logs",
         "peerdb-api/endpoints/mirror-status",
         "peerdb-api/endpoints/change-mirror-state",
         {
