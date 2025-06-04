@@ -1,0 +1,110 @@
+
+```http
+POST /v1/mirrors/logs
+```
+This endpoint is used to get logs of a mirror (even one which has been deleted) or all mirrors.
+A mirror represents a data movement pipeline between two peers.
+
+### Request Fields
+<ParamField path="flow_job_name" type="string">
+The name of the mirror to get logs for.
+An empty string will return logs for all mirrors in the PeerDB instance.
+</ParamField>
+
+<ParamField path="level" type="string">
+The log level to filter logs by. Can be one of `ALL`, `INFO`, `WARN`, or `ERROR`. Defaults to `ALL`.
+</ParamField>
+
+<ParamField path="page" type="number">
+The page number to retrieve.
+</ParamField>
+
+<ParamField path="num_per_page" type="number">
+The number of logs to retrieve per page. If set to 0 or unset, no logs will be returned and a total count of logs will be returned.
+</ParamField>
+
+<ParamField path="before_id" type="number">
+The ID of the last log to retrieve logs before.
+</ParamField>
+
+<ParamField path="after_id" type="number">
+The ID of the first log to retrieve logs after.
+</ParamField>
+
+### Response Fields
+<ParamField path="errors" type="array">
+An array of logs. The name is misleading here - it can contain info and warns as well, not just errors.
+</ParamField>
+
+<Expandable title="errors">
+<ParamField path="flow_name" type="string">
+The name of the mirror that the log belongs to.
+</ParamField>
+
+<ParamField path="error_message" type="string">
+The log message - could be an info, warning or error.
+</ParamField>
+
+<ParamField path="error_type" type="string">
+The type of error - could be `INFO`, `WARN`, or `ERROR`.
+</ParamField>
+
+<ParamField path="error_timestamp" type="number">
+The timestamp of the log in milliseconds since epoch.
+</ParamField>
+
+<ParamField path="id" type="number">
+The ID of the log.
+</ParamField>
+</Expandable>
+
+<ParamField path="total" type="number">
+The total number of logs available.
+</ParamField>
+
+<ParamField path="page" type="number">
+The current page number.
+</ParamField>
+
+<RequestExample>
+```bash Get all mirror logs
+curl --request POST \
+  --url http://localhost:3000/api/v1/mirrors/logs \
+  --header 'Authorization: Basic something==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "level": "error",
+  "flowJobName": "",
+  "beforeId": -1,
+  "afterId": -1,
+  "numPerPage": 2,
+  "page": 0
+}
+'
+```
+</RequestExample>
+
+<ResponseExample>
+```json
+{
+	"errors": [
+		{
+			"flowName": "mirror_development",
+			"errorMessage": "failed to push data to ClickHouse: table users does not exist",
+			"errorType": "error",
+			"errorTimestamp": 1748972135285,
+			"id": 702169
+		},
+		{
+			"flowName": "mirror_staging",
+			"errorMessage": "failed to connect to Postgres",
+			"errorType": "error",
+			"errorTimestamp": 1748972135047,
+			"id": 702168
+		}
+	],
+	"total": 63,
+	"page": 1
+}
+```
+</ResponseExample>
