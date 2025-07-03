@@ -47,7 +47,7 @@ GRANT CREATE TEMPORARY TABLE, s3 on *.* to peerdb_user ON CLUSTER '{cluster}';
 GRANT ALTER ADD COLUMN ON peerdb.* to peerdb_user ON CLUSTER '{cluster}';
 ```
 <Note>
-When selecting the ReplicatedReplacingMergeTree/ReplicatedMergeTree table engine you need change [defaul settings](https://clickhouse.com/docs/operations/settings/settings#database_replicated_allow_replicated_engine_arguments).
+When selecting the ReplicatedReplacingMergeTree/ReplicatedMergeTree table engine you need change [default settings](https://clickhouse.com/docs/operations/settings/settings#database_replicated_allow_replicated_engine_arguments).
 ```
 <clickhouse>
   <profiles>
