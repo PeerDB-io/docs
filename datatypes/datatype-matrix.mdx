@@ -70,6 +70,8 @@ For BigQuery, we map PostgreSQL's `numeric` type as follows:
 
 For Clickhouse, we map PostgreSQL's `numeric` type as follows:
 - `numeric` with no specified precision and scale is mapped to `Decimal(76,38)`.
+  - Values with more than 38 fractional digits will be truncated to 38 fractional digits and log a warning.
+  - Values with more than 38 integer digits will be set to 0 and log a warning.
 - `numeric` with precision OR scale which is beyond 76 and 38 respectively, is mapped to `Decimal(76,38)`.
 - `numeric` with precision AND scale within the above limits is mapped to `Decimal(precision, scale)`.
 
