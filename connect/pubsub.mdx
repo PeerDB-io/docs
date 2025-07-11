@@ -25,5 +25,12 @@ for PeerDB through Google Cloud Console and specify the following roles:
     <img src="/images/setup/pubsub-create-peer.png" />
    </Frame>
 ----
-PeerDB mirrors will automatically create topics if they don't already exist,
-but you must create a subscription on the topic for messages to be retained.
+
+### Topic creation
+By default, you would need to create the destination topic in PubSub before creating a mirror.
+However, if you'd like PeerDB to create the topic for you, you can turn on the following setting in PeerDB UI:
+   <Frame caption="Add Key to the Service Account">
+    <img src="/images/cdc_kafka/topiccreate.png" />
+   </Frame>
+
+Note that you must create a subscription on the topic for messages to be retained.
