@@ -5,7 +5,7 @@ Below table shows supported source and target connectors for [Real-time Change D
 | PostgreSQL   | Snowflake       |       ✅       |            ✅              |[Change Data Capture](/mirror/cdc-pg-sf),[Streaming Query Replication](/usecases/Streaming%20Query%20Replication/postgres-to-snowflake)|
 | PostgreSQL   | BigQuery        |       ✅       |            ✅              |[Change Data Capture](/mirror/cdc-pg-bq),[Streaming Query Replication](/usecases/Streaming%20Query%20Replication/postgres-to-bigquery)|
 | PostgreSQL   | PostgreSQL     |       ✅       |            ✅              |[Change Data Capture](/mirror/cdc-pg-pg),[Streaming Query Replication](/usecases/Streaming%20Query%20Replication/postgres-to-postgres)|
-| PostgreSQL   | Clickhouse          |      ✅      |            ✅             | [Change Data Capture](/mirror/cdc-pg-clickhouse) |
+| PostgreSQL   | ClickHouse          |      ✅      |            ✅             | [Change Data Capture](/mirror/cdc-pg-clickhouse) |
 | PostgreSQL   | Kafka          |      ✅      |            N/A             | [Setup Kafka Peer](/connect/kafka) |
 | PostgreSQL   | Redpanda          |      ✅      |            N/A             | [Setup Redpanda Peer](/connect/kafka) |
 | PostgreSQL   | Google PubSub          |     ✅       |            N/A             | [Setup PubSub Peer](/connect/pubsub) |
@@ -13,5 +13,16 @@ Below table shows supported source and target connectors for [Real-time Change D
 | PostgreSQL   | S3              |       ✅       |            ✅              |[Change Data Capture](/usecases/Real-time%20CDC/postgres-to-cloud),[Streaming Query Replication](/usecases/Streaming%20Query%20Replication/postgres-to-s3)|
 | PostgreSQL   | GCS              |       ✅       |            ✅              |[Change Data Capture](/usecases/Real-time%20CDC/postgres-to-cloud),[Streaming Query Replication](/usecases/Streaming%20Query%20Replication/postgres-to-s3)|
 | SQL Server   | PostgreSQL     |      🛑      |            ✅             |[Streaming Query Replication](/usecases/Streaming%20Query%20Replication/sqlserver-to-postgres)|
+| MySQL        | Snowflake       |       ✅       |            ✅              | |
+| MySQL        | BigQuery        |       ✅       |            ✅              | |
+| MySQL        | PostgreSQL      |       ✅       |            ✅              | |
+| MySQL        | ClickHouse      |       ✅       |            ✅              | |
+| MySQL        | Kafka           |       ✅       |            N/A             | |
+| MySQL        | Redpanda        |       ✅       |            N/A             | |
+| MySQL        | Google PubSub   |       ✅       |            N/A             | |
+| MySQL        | Azure EventHubs |       ✅       |            N/A             | |
+| MySQL        | S3              |       ✅       |            ✅              | |
+| MySQL        | GCS             |       ✅       |            ✅              | |
+| MongoDB      | ClickHouse      |       ✅       |            ✅              | |
 
 We are actively adding more sources and targets. If you need any specific connector as a source or target to your PostgreSQL database reach out to us at contact@peerdb.io
