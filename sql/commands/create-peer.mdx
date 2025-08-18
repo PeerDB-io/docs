@@ -8,7 +8,6 @@ PeerDB currently supports the below types of Peers. To connect a database to Pee
 1. [BigQuery](#bigquery-peer)
 2. [Snowflake](#snowflake-peer)
 3. [PostgreSQL](#postgresql-peer)
-4. [SQL Server](#sqlserver-peer)
 5. [MySQL](#mysql-peer)
 6. [Storage Peers - S3 and Google Cloud](#storage-peers-s3-and-gcs)
 7. [Azure EventHubs](#eventhub-peer)
@@ -309,24 +308,6 @@ WITH
 );
 
 ```
-
-## SQLServer Peer
-
-```sql
-CREATE PEER sqlserver_peer FROM SQLSERVER WITH (
-  server='<your-hostname>',
-  port='<your-port>',
-  user='<user>',
-  password='<password>',
-  database='<database>'
-);
-```
-
-If you are connecting to a Docker SQL Server/Azure SQL Edge instance on the same docker network as PeerDB, then the hostname will be the service name of the SQL server and the port will be `5432`.
-
-### Considerations
-
-1. Currently only data-movement is supported for this type of peer. Querying this peer from PeerDB's interface is not supported.
 
 ## MySQL Peer
 
