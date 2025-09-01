@@ -1,0 +1,136 @@
+
+```http
+POST api/v1/mirrors/cdc/batches
+```
+This endpoint retrieves change data capture (CDC) batches for a specified mirror.
+
+### Request Fields
+<ParamField path="flow_job_name" type="string">
+The name of the mirror to get CDC batches for.
+</ParamField>
+
+<ParamField path="level" type="string">
+The log level to filter logs by. Can be one of `ALL`, `INFO`, `WARN`, or `ERROR`. Defaults to `ALL`.
+</ParamField>
+
+<ParamField path="limit" type="number">
+The maximum number of CDC batches to retrieve. Set this to 0 or lower to retrieve all batches.
+</ParamField>
+
+<ParamField path="ascending" type="boolean">
+Whether to sort the CDC batches in ascending order based on their IDs. Defaults to `false`.
+</ParamField>
+
+<ParamField path="before_id" type="number">
+The ID of the last CDC batch to retrieve batches before. Set to -1 to ignore this filter.
+</ParamField>
+
+<ParamField path="after_id" type="number">
+The ID of the first CDC batch to retrieve batches after. Set to -1 to ignore this filter.
+</ParamField>
+
+### Response Fields
+<ParamField path="cdcBatches" type="array">
+An array of CDC batches.
+</ParamField>
+
+<Expandable title="cdcBatches">
+<ParamField path="batch_id" type="string">
+The unique identifier for the CDC batch.
+</ParamField>
+
+<ParamField path="start_time" type="string">
+The timestamp when the batch started. A batch starts only upon receiving the first change event.
+</ParamField>
+
+<ParamField path="end_time" type="string">
+The timestamp when the batch has been completed.
+</ParamField>
+
+<ParamField path="num_rows" type="number">
+The number of rows in the CDC batch.
+</ParamField>
+
+<ParamField path="start_lsn" type="string">
+The starting Log Sequence Number (LSN) for the batch.
+</ParamField>
+
+<ParamField path="end_lsn" type="string">
+The ending Log Sequence Number (LSN) for the batch.
+</ParamField>
+
+</Expandable>
+
+<ParamField path="total" type="number">
+The total number of CDC batches returned.
+</ParamField>
+
+<ParamField path="page" type="number">
+The current page number.
+</ParamField>
+
+<RequestExample>
+```bash Get the 5 most recent CDC batches
+curl --request POST \
+  --url http://localhost:3000/api/v1/cdc/batches \
+  --header 'Authorization: Basic something==' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "flow_job_name": "mirror_development",
+    "limit": 5,
+    "ascending": false
+}
+'
+```
+</RequestExample>
+
+<ResponseExample>
+```json
+{
+	"cdcBatches": [
+		{
+			"startLsn": "0",
+			"endLsn": "0",
+			"numRows": "0",
+			"startTime": "2025-09-01T12:31:36.932056Z",
+			"endTime": null,
+			"batchId": "168730"
+		},
+		{
+			"startLsn": "0",
+			"endLsn": "46637208645632",
+			"numRows": "60452",
+			"startTime": "2025-09-01T12:30:36.504532Z",
+			"endTime": "2025-09-01T12:31:38.472191Z",
+			"batchId": "168729"
+		},
+		{
+			"startLsn": "0",
+			"endLsn": "4663711103356",
+			"numRows": "59476",
+			"startTime": "2025-09-01T12:29:36.097869Z",
+			"endTime": "2025-09-01T12:30:37.925048Z",
+			"batchId": "168728"
+		},
+		{
+			"startLsn": "0",
+			"endLsn": "46637036715864",
+			"numRows": "131025",
+			"startTime": "2025-09-01T12:28:34.860097Z",
+			"endTime": "2025-09-01T12:29:38.814718Z",
+			"batchId": "168727"
+		},
+		{
+			"startLsn": "0",
+			"endLsn": "46636882418728",
+			"numRows": "238256",
+			"startTime": "2025-09-01T12:27:34.396289Z",
+			"endTime": "2025-09-01T12:28:38.964550Z",
+			"batchId": "168726"
+		}
+	],
+	"total": 168730,
+	"page": 1
+}
+```
+</ResponseExample>
