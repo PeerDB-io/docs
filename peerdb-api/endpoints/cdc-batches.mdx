@@ -1,3 +1,6 @@
+---
+title: CDC batches
+---
 
 ```http
 POST api/v1/mirrors/cdc/batches
@@ -5,12 +8,8 @@ POST api/v1/mirrors/cdc/batches
 This endpoint retrieves change data capture (CDC) batches for a specified mirror.
 
 ### Request Fields
-<ParamField path="flow_job_name" type="string">
+<ParamField path="flowJobName" type="string">
 The name of the mirror to get CDC batches for.
-</ParamField>
-
-<ParamField path="level" type="string">
-The log level to filter logs by. Can be one of `ALL`, `INFO`, `WARN`, or `ERROR`. Defaults to `ALL`.
 </ParamField>
 
 <ParamField path="limit" type="number">
@@ -21,11 +20,11 @@ The maximum number of CDC batches to retrieve. Set this to 0 or lower to retriev
 Whether to sort the CDC batches in ascending order based on their IDs. Defaults to `false`.
 </ParamField>
 
-<ParamField path="before_id" type="number">
+<ParamField path="beforeId" type="number">
 The ID of the last CDC batch to retrieve batches before. Set to -1 to ignore this filter.
 </ParamField>
 
-<ParamField path="after_id" type="number">
+<ParamField path="afterId" type="number">
 The ID of the first CDC batch to retrieve batches after. Set to -1 to ignore this filter.
 </ParamField>
 
@@ -35,15 +34,15 @@ An array of CDC batches.
 </ParamField>
 
 <Expandable title="cdcBatches">
-<ParamField path="batch_id" type="string">
+<ParamField path="batch_id" type="number">
 The unique identifier for the CDC batch.
 </ParamField>
 
-<ParamField path="start_time" type="string">
+<ParamField path="start_time" type="timestamp">
 The timestamp when the batch started. A batch starts only upon receiving the first change event.
 </ParamField>
 
-<ParamField path="end_time" type="string">
+<ParamField path="end_time" type="timestamp">
 The timestamp when the batch has been completed.
 </ParamField>
 
@@ -51,11 +50,11 @@ The timestamp when the batch has been completed.
 The number of rows in the CDC batch.
 </ParamField>
 
-<ParamField path="start_lsn" type="string">
+<ParamField path="start_lsn" type="number">
 The starting Log Sequence Number (LSN) for the batch.
 </ParamField>
 
-<ParamField path="end_lsn" type="string">
+<ParamField path="end_lsn" type="number">
 The ending Log Sequence Number (LSN) for the batch.
 </ParamField>
 
@@ -70,17 +69,18 @@ The current page number.
 </ParamField>
 
 <RequestExample>
-```bash Get the 5 most recent CDC batches
+```bash Get the 5 most recent CDC batches for a mirror
 curl --request POST \
-  --url http://localhost:3000/api/v1/cdc/batches \
-  --header 'Authorization: Basic something==' \
+  --url http://localhost:3000/api/v1/mirrors/cdc/batches \
+  --header 'Authorization: Basic Xp9dY3Rhc0suZiQ0Iw==' \
   --header 'Content-Type: application/json' \
   --data '{
-    "flow_job_name": "mirror_development",
-    "limit": 5,
-    "ascending": false
-}
-'
+  "flowJobName": "mirror_production",
+  "limit": 5,
+  "beforeId": -1,
+  "afterId": -1,
+  "ascending": false
+}'
 ```
 </RequestExample>
 
