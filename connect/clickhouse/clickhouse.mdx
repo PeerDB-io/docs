@@ -18,6 +18,10 @@ This is a document on setting a Clickhouse peer for PeerDB. PeerDB supports Clic
 ```sql
    CREATE DATABASE peerdb;
 ```
+Or if you have a ClickHouse cluster
+```sql
+   CREATE DATABASE peerdb ON CLUSTER '{cluster}' ENGINE = Replicated('/clickhouse/databases/peerdb/{uuid}/', '{replica}');
+```
 2. Create a Clickhouse user for PeerDB with the following permissions:
 ```sql
 -- We recommend creating a separate user for PeerDB
@@ -33,7 +37,25 @@ GRANT CREATE TEMPORARY TABLE, s3 on *.* to peerdb_user;
 -- For automatic column-addition on the tables in the mirror
 GRANT ALTER ADD COLUMN ON peerdb.* to peerdb_user;
 ```
-
+on ClickHouse cluster
+```sql
+CREATE USER peerdb_user IDENTIFIED BY '<password>' ON CLUSTER '{cluster}';
+GRANT INSERT, SELECT, DROP, CREATE TABLE ON peerdb.* to peerdb_user ON CLUSTER '{cluster}';
+GRANT CREATE TEMPORARY TABLE, s3 on *.* to peerdb_user ON CLUSTER '{cluster}';
+GRANT ALTER ADD COLUMN ON peerdb.* to peerdb_user ON CLUSTER '{cluster}';
+```
+<Note>
+When selecting the ReplicatedReplacingMergeTree/ReplicatedMergeTree table engine you need change [default settings](https://clickhouse.com/docs/operations/settings/settings#database_replicated_allow_replicated_engine_arguments).
+```
+<clickhouse>
+  <profiles>
+    <default>
+      <database_replicated_allow_replicated_engine_arguments>2</database_replicated_allow_replicated_engine_arguments>
+    </default>
+  </profiles>
+</clickhouse>
+```
+</Note>
 <Note>
 If you need to whitelist PeerDB IPs in Clickhouse Cloud, you can find the IPs of your PeerDB instance [here](/peerdb-cloud/ip-table).
 </Note>
