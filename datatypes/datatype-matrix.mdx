@@ -75,6 +75,10 @@ For Clickhouse, we map PostgreSQL's `numeric` type as follows:
 - `numeric` with precision OR scale which is beyond 76 and 38 respectively, is mapped to `Decimal(76,38)`.
 - `numeric` with precision AND scale within the above limits is mapped to `Decimal(precision, scale)`.
 
+#### JSON/JSONB Data
+
+Postgres JSON/JSONB supports very long numbers that are not IEEE754 compliant and can cause issues for the destination stores. PeerDB converts numeric fields it can't parse as float64 to strings at pull time.
+
 #### Geospatial Data
 PeerDB detects invalid shapes (for example, a `linestring` with only one point) among PostGIS values it pulls, and writes them as null on the destination.
 We keep a log of this data and it can be retrieved if needed.
