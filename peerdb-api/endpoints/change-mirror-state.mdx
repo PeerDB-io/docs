@@ -16,9 +16,9 @@ The name of the mirror.
 
 <ParamField path="requestedFlowState" type="string" required>
 The state to change the mirror to. Possible values are:
-- `STATUS_PAUSED` - **Pause** the mirror
-- `STATUS_RUNNING` - **Resume** the mirror
-- `STATUS_TERMINATED` - **Drop** the mirror
+- `STATUS_PAUSED` (2) - **Pause** the mirror
+- `STATUS_RUNNING` (1) - **Resume** the mirror
+- `STATUS_TERMINATING` (6) - **Drop** the mirror
 </ParamField>
 <b> Resuming via editing a mirror </b>
 
@@ -134,7 +134,7 @@ curl --request POST \
   --header 'Content-Type: application/json' \
   --data '{
 	"flowJobName": "mirror_kick_off",
-	"requestedFlowState": "STATUS_TERMINATED"
+	"requestedFlowState": 6
 }'
 ```
 </RequestExample>
