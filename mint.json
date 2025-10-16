@@ -220,8 +220,23 @@
       "group": "SQL Commands",
       "pages": [
         "sql/reference",
-        "sql/commands/create-peer",
-        "sql/commands/create-mirror",
+        {
+          "group": "Peer Commands",
+          "pages": [
+            "sql/commands/create-peer",
+            "sql/commands/drop-peer"
+          ]
+        },
+        {
+          "group": "Mirror Commands",
+          "pages": [
+            "sql/commands/create-mirror",
+            "sql/commands/drop-mirror",
+            "sql/commands/pause-mirror",
+            "sql/commands/resume-mirror",
+            "sql/commands/resync-mirror"
+          ]
+        },
         "sql/commands/supported-connectors"
       ]
     },

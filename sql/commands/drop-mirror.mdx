@@ -1,0 +1,21 @@
+---
+title: Dropping Mirrors
+description: "Guide to removing Mirrors in PeerDB"
+---
+
+Use `DROP MIRROR` to remove a mirror configuration from PeerDB.
+
+## Syntax
+
+```sql
+DROP MIRROR [IF EXISTS] <mirror_name>;
+```
+
+## Behavior
+
+- Removes the mirror configuration and stops any scheduled syncs for the mirror.
+- If the mirror does not exist and `IF EXISTS` is omitted, the command returns an error.
+
+## Considerations
+
+1. Dropping a mirror will not automatically remove data from the target peer; it only stops synchronization.
