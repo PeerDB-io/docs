@@ -1,0 +1,18 @@
+---
+title: Resuming Mirrors
+description: "Guide to resuming paused Mirrors in PeerDB"
+---
+
+Use `RESUME MIRROR` to restart a mirror that was previously [paused](/sql/commands/pause-mirror).
+
+## Syntax
+
+```sql
+RESUME MIRROR [IF EXISTS] <mirror_name>;
+```
+
+## Behavior
+
+- When `IF EXISTS` is provided, the command is a no-op if the mirror is missing.
+- The mirror will be scheduled to continue syncing according to its configuration.
+- If the mirror is already running, the command is a no-op.
