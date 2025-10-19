@@ -1,0 +1,42 @@
+---
+title: Executing Raw Queries
+description: "Guide to executing raw queries against a Peer using EXECUTE"
+---
+
+Use the EXECUTE command to send a raw SQL query directly to a configured Peer. This bypasses PeerDB's query-rewriting layer and sends the provided query text to the remote database behind the named peer.
+
+## Syntax
+
+```sql
+EXECUTE <peer_name>(<query_text>);
+```
+
+Notes:
+
+- `<peer_name>` must be the name of an [existing peer](/sql/commands/create-peer).
+- `<query_text>` is a string literal containing the SQL to run on the remote peer.
+
+## Examples
+
+Run a simple select on a Postgres peer:
+
+```sql
+EXECUTE postgres_peer('SELECT id, name FROM public.users WHERE id < 10;');
+```
+
+Run a statement that creates a temporary table on the remote peer:
+
+```sql
+EXECUTE postgres_peer('CREATE TEMP TABLE tmp_select AS SELECT id FROM public.users LIMIT 100;');
+```
+
+## Behavior
+
+- The query text is forwarded verbatim to the remote database connection associated with the peer.
+- Results are returned to the caller exactly as the remote database would return them.
+
+## Considerations
+
+1. The remote query runs with the credentials configured for the peer. Ensure the peer's credentials have the minimal privileges required.
+2. Since the query runs directly on the remote system, it can modify data or schema. Be cautious when running DDL or DML via `EXECUTE` in production environments.
+3. The query must use the dialect and capabilities of the remote database type.
