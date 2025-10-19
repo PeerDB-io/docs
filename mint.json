@@ -224,6 +224,7 @@
           "group": "Peer Commands",
           "pages": [
             "sql/commands/create-peer",
+            "sql/commands/execute",
             "sql/commands/drop-peer"
           ]
         },
