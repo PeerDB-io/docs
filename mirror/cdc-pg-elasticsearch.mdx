@@ -29,7 +29,7 @@ To perform CDC from Postgres to Elasticsearch, you first need to create a source
 
 Once PeerDB is connected to your PostgreSQL database or read replica, we will first do a full initial load of all the selected tables from your database. Then the continuous sync process will start using WAL to capture changes from the source database and apply them to the destination database.
 
-By default, PeerDB uses Elasticsearch [dynamic mapping](https://www.elastic.co/guide/en/elasticsearch/reference/current/dynamic-field-mapping.html) to map Postgres source types to Elasticsearch types. For reference, please refer to the [Data Type Mapping](/datatypes/datatye-matrix) page. In case a stricter mapping is required, you can use the [Elasticsearch Mapping API](https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-put-mapping.html) to define the mapping for your index before creating the mirror.
+By default, PeerDB uses Elasticsearch [dynamic mapping](https://www.elastic.co/guide/en/elasticsearch/reference/current/dynamic-field-mapping.html) to map Postgres source types to Elasticsearch types. For reference, please refer to the [Data Type Mapping](/datatypes/datatype-matrix) page. In case a stricter mapping is required, you can use the [Elasticsearch Mapping API](https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-put-mapping.html) to define the mapping for your index before creating the mirror.
 
 <Steps>
     <Step title="Create Mirror Screen">
