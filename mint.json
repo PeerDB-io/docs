@@ -175,23 +175,22 @@
         {
           "group": "Real-time Change Data Capture from Postgres",
           "pages": [
-            "usecases/Real-time CDC/overview",
-            "usecases/Real-time CDC/postgres-to-postgres",
-            "usecases/Real-time CDC/postgres-to-bigquery",
-            "usecases/Real-time CDC/postgres-to-snowflake",
-            "usecases/Real-time CDC/postgres-to-azure-eventhubs",
-            "usecases/Real-time CDC/postgres-to-cloud"
+            "usecases/real-time-cdc/overview",
+            "usecases/real-time-cdc/postgres-to-postgres",
+            "usecases/real-time-cdc/postgres-to-bigquery",
+            "usecases/real-time-cdc/postgres-to-snowflake",
+            "usecases/real-time-cdc/postgres-to-azure-eventhubs",
+            "usecases/real-time-cdc/postgres-to-cloud"
           ]
         },
         {
           "group": "Streaming Query Replication",
           "pages": [
-            "usecases/Streaming Query Replication/overview",
-            "usecases/Streaming Query Replication/postgres-to-postgres",
-            "usecases/Streaming Query Replication/postgres-to-bigquery",
-            "usecases/Streaming Query Replication/postgres-to-s3",
-            "usecases/Streaming Query Replication/postgres-to-snowflake",
-            "usecases/Streaming Query Replication/sqlserver-to-postgres"
+            "usecases/streaming-query-replication/overview",
+            "usecases/streaming-query-replication/postgres-to-postgres",
+            "usecases/streaming-query-replication/postgres-to-bigquery",
+            "usecases/streaming-query-replication/postgres-to-s3",
+            "usecases/streaming-query-replication/postgres-to-snowflake"
           ]
         },
         "usecases/postgres-compatible-layer-for-bigquery-and-snowflake"
@@ -220,8 +219,24 @@
       "group": "SQL Commands",
       "pages": [
         "sql/reference",
-        "sql/commands/create-peer",
-        "sql/commands/create-mirror",
+        {
+          "group": "Peer Commands",
+          "pages": [
+            "sql/commands/create-peer",
+            "sql/commands/execute",
+            "sql/commands/drop-peer"
+          ]
+        },
+        {
+          "group": "Mirror Commands",
+          "pages": [
+            "sql/commands/create-mirror",
+            "sql/commands/drop-mirror",
+            "sql/commands/pause-mirror",
+            "sql/commands/resume-mirror",
+            "sql/commands/resync-mirror"
+          ]
+        },
         "sql/commands/supported-connectors"
       ]
     },
@@ -272,5 +287,17 @@
     "ga4": {
       "measurementId": "G-1V9ZZCZMB7"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/usecases/Real-time CDC/:slug*",
+      "destination": "/usecases/real-time-cdc/:slug*",
+      "permanent": true
+    },
+    {
+      "source": "/usecases/Streaming Query Replication/:slug*",
+      "destination": "/usecases/streaming-query-replication/:slug*",
+      "permanent": true
+    }
+  ]
 }

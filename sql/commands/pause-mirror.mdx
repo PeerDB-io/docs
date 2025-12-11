@@ -1,0 +1,30 @@
+---
+title: Pausing Mirrors
+description: "Guide to pausing Mirrors in PeerDB"
+---
+
+`PAUSE MIRROR` temporarily stops a mirror from syncing. Use this to perform maintenance, inspections, or configuration changes without deleting the mirror.
+
+1. As of today, mirrors can only be paused during CDC and not during initial load or query replication.
+2. The PostgreSQL source replication slot will still exist and it will continue to grow as long the mirror is paused.
+3. Pausing a mirror enables you to then add tables to the CDC mirror, along with editing the Sync Interval and Pull Batch Size.
+
+<Info>
+At the moment, there is no syntax available to add tables or edit the sync interval and pull batch size using SQL commands; you need to use [the UI](/features/edit-mirror) or [API](/peerdb-api/endpoints/change-mirror-state) to perform these actions.
+</Info>
+
+## Syntax
+
+```sql
+PAUSE MIRROR [IF EXISTS] <mirror_name>;
+```
+
+## Behavior
+
+- When `IF EXISTS` is provided, the command is a no-op if the mirror is missing.
+- If the mirror is currently active, the command will stop future sync runs and attempt to gracefully pause any in-flight work.
+- If the mirror is already paused, the command is a no-op.
+
+## Considerations
+
+1. Pausing preserves the mirror configuration and state so it can be resumed later with [Resume Mirror](/sql/commands/resume-mirror).

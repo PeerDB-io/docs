@@ -44,7 +44,7 @@ Columns from the source table to exclude, separated by commas.
 **For Clickhouse Only And Optional**. Ordering key setting for Clickhouse target tables created by PeerDB.
 </ParamField>
 <Expandable title="columns">
-<ParamField path="name" type="string" required>
+<ParamField path="sourceName" type="string" required>
 Name of the column
 </ParamField>
 <ParamField path="ordering" type="number">
@@ -131,11 +131,11 @@ curl --request POST \
       "destination_table_identifier": "optional_ordering_key",
       "columns": [
         {
-          "name": "id",
+          "sourceName": "id",
           "ordering": 1
         },
         {
-          "name": "created_at",
+          "sourceName": "created_at",
           "ordering": 2
         }
       ]

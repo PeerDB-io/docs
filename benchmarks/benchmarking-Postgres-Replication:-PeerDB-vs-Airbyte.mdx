@@ -14,7 +14,7 @@ So we generated a dataset and tested PeerDB and Airbyte against it, using instan
 
 While Airbyte provided the schema of the table, it wasn’t enough to generate a dataset, as we didn’t know the size of a row or the number of rows in the table. We decided to run the test on a table with 6 billion rows and a 1.5TB size.
 
-We worked out that each row should be around 230-235 bytes. We then arrived at a size for each variable length field that should get us the table size we wanted. We also converted one of the columns in the table to be a generated primary key because PeerDB currently [requires](https://docs.peerdb.io/usecases/Real-time%20CDC/postgres-to-snowflake#prerequisites) one for CDC mirroring.
+We worked out that each row should be around 230-235 bytes. We then arrived at a size for each variable length field that should get us the table size we wanted. We also converted one of the columns in the table to be a generated primary key because PeerDB currently [requires](https://docs.peerdb.io/usecases/real-time-cdc/postgres-to-snowflake#prerequisites) one for CDC mirroring.
 
 ```sql
 CREATE TABLE IF NOT EXISTS public.xxxxx

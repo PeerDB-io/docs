@@ -23,7 +23,7 @@ To perform CDC from Postgres to Postgres, you first need to create a source and 
 
 Once PeerDB is connected to your PostgreSQL database or read replica, we will first do a full initial load of all the selected tables from your database. Then the continuous sync process will start using WAL to capture changes from the source database and apply them to the destination database.
 
-PeerDB will try to match the data types of the source and destination tables as closely as possible. If there are any data types that we are unable to match, we will use `TEXT` as the default data type. For data type mapping reference, please refer to the [Data Type Mapping](/datatypes/datatye-matrix) page.
+PeerDB will try to match the data types of the source and destination tables as closely as possible. If there are any data types that we are unable to match, we will use `TEXT` as the default data type. For data type mapping reference, please refer to the [Data Type Mapping](/datatypes/datatype-matrix) page.
 
 <Steps>
     <Step title="Create Mirror Screen">

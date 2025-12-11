@@ -1,0 +1,23 @@
+---
+title: Dropping Peers
+description: "Guide to removing Peers from PeerDB"
+---
+
+Use `DROP PEER` to remove a peer configuration from PeerDB.
+
+## Syntax
+
+```sql
+DROP PEER [IF EXISTS] <peer_name>;
+```
+
+## Behavior
+
+- When `IF EXISTS` is provided, the command is a no-op if the peer is missing.
+- Dropping a peer removes its connection metadata from PeerDB and prevents any future queries or mirrors from using it.
+
+## Considerations
+
+1. All mirrors referencing this peer should be [deleted first](/sql/commands/drop-mirror); dropping a peer with active mirrors will have no effect.
+2. Dropping a peer does not remove any data that was previously synced to target peers.
+3. For safety in production, prefer `IF EXISTS` and ensure mirrors are removed or migrated beforehand.

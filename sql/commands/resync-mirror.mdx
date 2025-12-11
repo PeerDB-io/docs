@@ -1,0 +1,22 @@
+---
+title: Resyncing Mirrors
+description: "Guide to resyncing Mirrors in PeerDB"
+---
+
+PeerDB allows you to resync a Change-Data Capture (CDC) mirror. Resync is currently supported for the following target connectors:
+
+1. Clickhouse
+2. PostgreSQL
+3. Snowflake
+4. BigQuery
+
+## Syntax
+
+```sql
+RESYNC MIRROR [IF EXISTS] <mirror_name>;
+```
+
+## Behavior
+
+- When `IF EXISTS` is provided, the command is a no-op if the mirror is missing.
+- For more details on mirror resync, refer to the [documentation](/features/resync-mirror).
