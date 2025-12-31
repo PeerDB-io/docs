@@ -2,6 +2,7 @@
 title: "Supabase Postgres Source Setup Guide"
 ---
 import RLSNote from '/snippets/rls-note.mdx';
+import PubNote from '/snippets/pg-publication-note.mdx';
 
 This is a guide on how to create a Supabase PostgreSQL peer which you can use for replication in PeerDB.
 <Note>
@@ -36,6 +37,8 @@ and also create a publication that we'll use for replication. For this, you can 
         ```
 
 4. Create a [publication](https://www.postgresql.org/docs/current/logical-replication-publication.html) with the tables you want to replicate. We strongly recommend only including the tables you need in the publication to avoid performance overhead.
+
+    <PubNote />
 
     1. To create a publication for specific tables:
 

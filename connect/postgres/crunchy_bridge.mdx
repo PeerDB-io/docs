@@ -3,6 +3,7 @@ title: "Crunchy Bridge Postgres Source Setup Guide"
 ---
 
 import RLSNote from '/snippets/rls-note.mdx';
+import PubNote from '/snippets/pg-publication-note.mdx';
 
 ## Enable Logical Replication
 
@@ -39,6 +40,8 @@ Connect to your Crunchy Bridge Postgres through the `postgres` user and run the 
         ```
 
 4. Create a [publication](https://www.postgresql.org/docs/current/logical-replication-publication.html) with the tables you want to replicate. We strongly recommend only including the tables you need in the publication to avoid performance overhead.
+
+    <PubNote />
 
     1. To create a publication for specific tables:
 
