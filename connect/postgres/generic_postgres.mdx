@@ -3,6 +3,7 @@ title: "Generic PostgreSQL Source Setup Guide"
 ---
 
 import RLSNote from '/snippets/rls-note.mdx';
+import PubNote from '/snippets/pg-publication-note.mdx';
 
 This is a guide on how to create a generic PostgreSQL peer which you can use for replication in PeerDB.
 
@@ -53,30 +54,47 @@ If you use one of the supported providers (in the sidebar), please refer to the 
 <Step title='Creating a user with permissions and publication'>
 
 Let's create a new user for PeerDB with the necessary permissions suitable for CDC,
-and also create a publication that we'll use for replication.
+and also create a publication that we'll use for replication. For this, you can connect to your PostgreSQL instance and run the following SQL commands:
 
 <RLSNote />
 
-For this, you can connect to your PostgreSQL instance and run the following SQL commands:
-```sql
-  CREATE USER peerdb_user PASSWORD 'peerdb_password';
-  GRANT USAGE ON SCHEMA "public" TO peerdb_user;
-  GRANT SELECT ON ALL TABLES IN SCHEMA "public" TO peerdb_user;
-  ALTER DEFAULT PRIVILEGES IN SCHEMA "public" GRANT SELECT ON TABLES TO peerdb_user;
+1. Create a dedicated user for PeerDB:
 
--- Give replication permission to the USER
-  ALTER USER peerdb_user REPLICATION;
+    1. ```sql
+            CREATE USER peerdb_user PASSWORD 'some-password';
+       ```
 
--- Create a publication. We will use this when creating the mirror
-  CREATE PUBLICATION peerdb_publication FOR ALL TABLES;
-```
+2. Grant schema-level, read-only access to the user you created in the previous step. The following example shows permissions for the `public` schema. Repeat these commands for each schema containing tables you want to replicate:
 
+    1. ```sql
+            GRANT USAGE ON SCHEMA "public" TO peerdb_user;
+            GRANT SELECT ON ALL TABLES IN SCHEMA "public" TO peerdb_user;
+            ALTER DEFAULT PRIVILEGES IN SCHEMA "public" GRANT SELECT ON TABLES TO peerdb_user;
+       ```
 
-<Note>
-Make sure to replace `peerdb_user` and `peerdb_password` with your desired username and password.
+3. Grant replication privileges to the user:
 
-Also, remember to use the same publication name when creating the mirror in PeerDB.
-</Note>
+    1. ```sql
+           ALTER ROLE peerdb_user REPLICATION;
+       ```
+
+4. Create a [publication](https://www.postgresql.org/docs/current/logical-replication-publication.html) with the tables you want to replicate. We strongly recommend only including the tables you need in the publication to avoid performance overhead.
+
+    <PubNote />
+
+    1. To create a publication for specific tables:
+
+      ```sql
+            CREATE PUBLICATION peerdb_publication FOR TABLE table_to_replicate, table_to_replicate2;
+      ```
+
+   2. To create a publication for all tables in a specific schema:
+
+      ```sql
+            CREATE PUBLICATION peerdb_publication FOR TABLES IN SCHEMA "public";
+      ```
+
+   The `peerdb_publication` publication will contain the set of change events generated from the specified tables, and will later be used to create the MIRROR (replication).
 
 </Step>
 
