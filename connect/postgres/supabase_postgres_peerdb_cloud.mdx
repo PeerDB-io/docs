@@ -34,7 +34,7 @@ and also create a publication that we'll use for replication. For this, you can 
 3. Grant replication privileges to the user:
 
     1. ```sql
-            ALTER ROLE peerdb_user REPLICATION;
+            ALTER USER peerdb_user WITH REPLICATION;
        ```
 
 4. Create a [publication](https://www.postgresql.org/docs/current/logical-replication-publication.html) with the tables you want to replicate. We strongly recommend only including the tables you need in the publication to avoid performance overhead.
