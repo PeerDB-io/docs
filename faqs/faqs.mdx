@@ -1,0 +1,88 @@
+---
+title: Frequently Asked Questions
+---
+
+Here we cover some of the frequently asked questions about PeerDB.
+
+### What is the difference between CDC and Query Replication?
+At a high level, CDC mirrors are a way to replicate changes (inserts/updates/deletes) for tables in a database. CDC uses logical replication of Postgres and reads the WAL.
+Query replication is a technique to periodically replicate the results of a query, for example - `SELECT * FROM table`. It streams the results of the query to a single table in your destination peer.
+Query replication does not spin up/require a replication slot in Postgres.
+
+## Initial Load FAQs
+### What is initial load in CDC?
+Initial load or initial snapshot - if enabled - will first perform a one-time copy of existing data in the tables you're syncing, and then proceed with CDC.
+This is useful when you're setting up a new mirror and want to sync all the data from the beginning.
+After initial load is finished, CDC will start syncing newer changes.
+
+### If I kick off an initial load + CDC mirror with pre-existing data, will it duplicate the data?
+Yes. Unlike CDC, initial load blindly copies all the data from the source to the destination.
+If you have existing source data in the destination, it can be duplicated.
+For restarting a mirror/doing a fresh sync with the same tables, we recommend performing a resync via UI, if supported for the target peer. 
+Otherwise, drop the target tables and start the mirror again.
+
+## CDC FAQs
+### What is sync interval in PeerDB CDC?
+**For Warehouse peers (Postgres, Snowflake, BigQuery, Clickhouse etc.):
+PeerDB continuously reads rows from the WAL and stores them as internal, temporary staging files.
+Once the sync interval is reached, PeerDB starts to flush the rows that it has read uptil that point into the target warehouse.
+
+**For PeerDB Streams**:
+Sync interval is not applicable. PeerDB Streams syncs data to your queue as soon as it is read from the WAL.
+
+### What is pull batch size in PeerDB CDC?
+**For Warehouse peers (Postgres, Snowflake, BigQuery, Clickhouse etc.):
+PeerDB continuously reads rows from the WAL and stores them as internal, temporary staging files.
+Once PeerDB has read `pull_batch_size` amount of rows, PeerDB starts to flush the rows that it has read uptil that point into the target warehouse.
+
+### The current sync has read more than pull batch size number of rows/has been running for more than sync interval time. Why is it still running?
+Probably because you have long running transactions in your source database. PeerDB waits for the transactions to commit before flushing the rows to the destination.
+
+### Does pausing a mirror stop replication slot growth?
+No. The replication slot will continue to grow. The only way to make the slot size drop is having a mirror running and syncing the changes.
+
+### Can I pause a mirror during initial load or setup phase?
+No.
+
+## Schema changes FAQs
+### If I add a table to my source schema, will PeerDB automatically pick it up and sync it?
+No. For adding tables, you must [edit the mirror](/features/edit-mirror).
+
+### If I add a column to a table which is part of a mirror, will that column automatically be added in destination?
+Yes. The column will be synced in the next CDC sync (or the first CDC sync if you did this during initial load).
+
+### If I rename a column, will PeerDB automatically rename the column in the destination?
+No. The old column will be present in destination and all future rows will have this column as null.
+
+### If I drop a column from a table which is part of a mirror, will PeerDB automatically drop the column in the destination?
+No. The column will remain and future values of it will be null in destination.
+
+### If I change the data type of a column on source, will PeerDB automatically change the data type in destination?
+No. The column will remain with the old data type in destination. The sync may fail if the data type change is incompatible.
+
+## Drop/Delete Mirror FAQs
+### Does PeerDB drop the replication slot once I delete the mirror?
+If the slot was created by PeerDB (i.e, starts with peerflow_slot_something), then it will drop the slot.
+If you provided a slot while creating a mirror, that slot will not be dropped.
+
+### Does PeerDB drop the publication once I delete the mirror?
+If the publication was created by PeerDB (i.e, starts with peerflow_pub_something), then it will drop the publication.
+If you provided a publication while creating a CDC mirror, that publication will not be dropped.
+
+## Miscellaneous FAQs
+### My CDC mirror is not working with my Supabase Postgres instance. What should I do?
+Make sure to use direct connections instead of the connection pooler, and use IPv4 hostnames.
+
+## Query Replication FAQs
+### When should I use query replication ?
+Some use-cases are:
+1. You need to replicate a view.
+2. You need to replicate a join of two tables or a complex query.
+3. You need to replicate a table with no primary key/replica identity.
+4. You don't want/cannot to have a replication slot in your Postgres instance.
+
+### Does Query Replication support deletes?
+No. Use CDC if you want deletes to be synced.
+
+### Can I edit a query replication mirror?
+No. You can only edit CDC mirrors. If you need to change the query, you will have to create a new mirror.
