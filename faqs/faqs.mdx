@@ -70,7 +70,7 @@ If the publication was created by PeerDB (i.e, starts with peerflow_pub_somethin
 If you provided a publication while creating a CDC mirror, that publication will not be dropped.
 
 ## Miscellaneous FAQs
-### My CDC mirror is not working with my Supabase Postgres instance. What should I do?
+### My CDC mirror is not working with my Supabase/CloudNativePg/pgbouncer Postgres instance. What should I do?
 Make sure to use direct connections instead of the connection pooler, and use IPv4 hostnames.
 
 ## Query Replication FAQs
@@ -79,7 +79,7 @@ Some use-cases are:
 1. You need to replicate a view.
 2. You need to replicate a join of two tables or a complex query.
 3. You need to replicate a table with no primary key/replica identity.
-4. You don't want/cannot to have a replication slot in your Postgres instance.
+4. You don't want/cannot have a replication slot in your Postgres instance.
 
 ### Does Query Replication support deletes?
 No. Use CDC if you want deletes to be synced.
