@@ -167,7 +167,7 @@
         "bestpractices/postgres-upgrade",
         "bestpractices/generated_columns",
         "bestpractices/clickhouse_toast_columns",
-        "bestpractices/ordering-key-different.mdx"
+        "bestpractices/ordering-key-different"
       ]
     },
     {
@@ -304,6 +304,11 @@
     {
       "source": "/usecases/Streaming Query Replication/:slug*",
       "destination": "/usecases/streaming-query-replication/:slug*",
+      "permanent": true
+    },
+    {
+      "source": "/mirror/ordering-key-different",
+      "destination": "/bestpractices/ordering-key-different",
       "permanent": true
     }
   ]
