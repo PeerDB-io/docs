@@ -2,6 +2,10 @@
 title: "Kafka Setup Guide"
 ---
 
+<Warning>
+Kafka as a destination (including the Confluent and Redpanda variants) is deprecated and no longer actively maintained. It remains fully functional and no code is currently being removed. For new mirrors, we recommend ClickHouse, ClickHouse Cloud, or Postgres as the destination.
+</Warning>
+
 If looking to try out without an already setup Kafka endpoint, [see Redpanda quickstart,](https://docs.redpanda.com/current/get-started/quick-start) by default no authentication is necessary.
 
 To get the above redpanda container to work with PeerDB on OSS, you can first add it to the PeerDB containers' network:
