@@ -2,6 +2,10 @@
 title: "PubSub Setup Guide"
 ---
 
+<Warning>
+Google Pub/Sub as a destination is deprecated and no longer actively maintained. It remains fully functional and no code is currently being removed. For new mirrors, we recommend ClickHouse, ClickHouse Cloud, or Postgres as the destination.
+</Warning>
+
 1. [Create a dedicated Service Account](https://cloud.google.com/iam/docs/keys-create-delete#iam-service-account-keys-create-console) 
 for PeerDB through Google Cloud Console and specify the following roles:
 - `Pub/Sub Viewer` : PeerDB requires this role to check if your provided topic exists.

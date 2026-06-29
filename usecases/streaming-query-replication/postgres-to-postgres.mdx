@@ -2,6 +2,10 @@
 title: "PostgreSQL to PostgreSQL"
 ---
 
+<Warning>
+Streaming Query Replication (QRep) is a deprecated mirror type and no longer actively maintained. It remains fully functional and no code is currently being removed. We recommend [CDC (Change Data Capture)](/usecases/real-time-cdc/overview) as the actively-maintained mirror type for new mirrors.
+</Warning>
+
 ### Step 1: CREATE Two Postgres Peers
 
     There is a guide available for creating a PostgreSQL peer here: [CREATE Postgres PEER](/sql/commands/create-peer#postgresql-peer)

@@ -2,6 +2,10 @@
 title: "Overview"
 ---
 
+<Warning>
+Streaming Query Replication (QRep), including XMIN-based replication, is a deprecated mirror type and no longer actively maintained. It remains fully functional and no code is currently being removed. We recommend [CDC (Change Data Capture)](/usecases/real-time-cdc/overview) as the actively-maintained mirror type for new mirrors.
+</Warning>
+
 PeerDB introduces the **CREATE MIRROR FOR SELECT** SQL command for continuous sync of data from PostgreSQL to the desired target Peer based on any SELECT query on PostgreSQL. This command allows you to perform a pre-transform of the data on the source before syncing it to the target.
 Currently we support **ClickHouse**, **PostgreSQL (running anywhere)**, **AWS S3**, **BigQuery** and **Snowflake** as the target Peers.
 
