@@ -2,6 +2,10 @@
 title: "GCS Setup Guide"
 ---
 
+<Warning>
+GCS (a Google Cloud Storage destination) is deprecated and no longer actively maintained. It remains fully functional and no code is currently being removed. For new mirrors, we recommend ClickHouse, ClickHouse Cloud, or Postgres as the destination.
+</Warning>
+
 1. Create a new Cloud Storage bucket or ensure an existing bucket is available for use.
 2. We need to create an access key pair, for connecting to this bucket. This access key can be on a user account or on a service account. We recommend [creating](https://cloud.google.com/iam/docs/service-accounts-create) a dedicated service account for PeerDB, with the `Storage Object User` role. After this, [create a HMAC key-pair](https://cloud.google.com/storage/docs/authentication/managing-hmackeys) for the service account.
 <Frame caption="Creating SA for PeerDB">

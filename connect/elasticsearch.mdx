@@ -2,6 +2,10 @@
 title: "Elasticsearch Setup Guide"
 ---
 
+<Warning>
+Elasticsearch as a destination is deprecated and no longer actively maintained. It remains fully functional and no code is currently being removed. For new mirrors, we recommend ClickHouse, ClickHouse Cloud, or Postgres as the destination.
+</Warning>
+
 # Prerequisites
 PeerDB can authenticate with Elasticsearch via either basic auth or an API key, or no auth at all. In general, Elasticsearch Cloud authenticates via API keys and self-hosted Elasticsearch can vary. If applicable, atleast the following privileges need to be granted to the PeerDB role: `auto_configure`, `create_doc`, `write`.
 

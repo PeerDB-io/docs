@@ -2,6 +2,10 @@
 title: "PostgreSQL to BigQuery"
 ---
 
+<Warning>
+Streaming Query Replication (QRep) is a deprecated mirror type and no longer actively maintained. It remains fully functional and no code is currently being removed. We recommend [CDC (Change Data Capture)](/usecases/real-time-cdc/overview) as the actively-maintained mirror type for new mirrors. BigQuery as a destination is also deprecated, though BigQuery remains a supported source.
+</Warning>
+
 ### Scenario
 
 Let's consider a scenario where we have an events table in PostgreSQL. We want to periodically sync data from this table in PostgreSQL to BigQuery. However, we only want to sync a few columns filtered based on the country (USA) and create a single denormalized view of the data in BigQuery. Let's see how we can achieve this within a few minutes and a few SQL commands using PeerDB.

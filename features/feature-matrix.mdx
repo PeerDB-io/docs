@@ -1,3 +1,9 @@
+<Warning>
+The actively-maintained destinations are **ClickHouse**, **ClickHouse Cloud**, and **Postgres**. Snowflake, ElasticSearch, Kafka (including the Confluent and Redpanda variants), Azure Event Hubs, Google Pub/Sub, S3, GCS, and BigQuery as a destination are deprecated and no longer actively maintained. They remain fully functional and no code is currently being removed. BigQuery is deprecated **only as a destination**; it remains a **supported source**.
+
+Query Based or Watermark Based Replication (QRep), including XMIN-based replication, is also a deprecated mirror type. We recommend [CDC (Change Data Capture)](/usecases/real-time-cdc/overview) as the actively-maintained mirror type for new mirrors.
+</Warning>
+
 # WAL or Change Data Capture (CDC) Based Replication
 
 Below table shows supported features and features we are working on for WAL or CDC Based replication from **Postgres** to different targets.
@@ -33,6 +39,10 @@ Below table shows supported features and features we are working on for WAL or C
 | Resync Mirrors | 🛠️ | N/A | N/A | N/A |
 | Column Exclusion | ✅ | ✅ | ✅ | ✅ |
 # Query Based or Watermark Based Replication
+
+<Warning>
+Query Based or Watermark Based Replication (QRep), including XMIN-based replication, is a deprecated mirror type and no longer actively maintained. It remains fully functional and no code is currently being removed. We recommend [CDC (Change Data Capture)](/usecases/real-time-cdc/overview) as the actively-maintained mirror type for new mirrors.
+</Warning>
 
 Below table shows supported features and features we are working on for Query Based or Watermark Based Replication from **Postgres** to different targets.
 ✅ means supported. 🛠️ means **Work in Progress and Coming Soon!**.

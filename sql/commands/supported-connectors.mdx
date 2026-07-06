@@ -1,15 +1,21 @@
 
+<Warning>
+The actively-maintained destinations are **ClickHouse**, **ClickHouse Cloud**, and **Postgres**. The destinations marked _(deprecated)_ below (Snowflake, ElasticSearch, Kafka including the Confluent and Redpanda variants, Azure Event Hubs, Google Pub/Sub, S3, GCS, and BigQuery) are deprecated and no longer actively maintained. They remain fully functional and no code is currently being removed. BigQuery is deprecated **only as a destination**; it remains a **supported source**.
+
+Streaming Query Replication (QRep), including XMIN-based replication, is also a deprecated mirror type. We recommend [CDC (Change Data Capture)](/usecases/real-time-cdc/overview) as the actively-maintained mirror type for new mirrors.
+</Warning>
+
 Below table shows supported source and target connectors for [Real-time Change Data Capture](/usecases/real-time-cdc/overview) and [Streaming Query Replication](/usecases/streaming-query-replication/overview). ✅ means supported. ⚠️  means beta. 🛑 means unsupported
 | Source       | Target          | Real-time Change Data Capture (CDC) | Streaming Query or Watermark Based Replication | Guides |
 |--------------|-----------------|---------------|----------------------------|----------------------------|
-| PostgreSQL   | Snowflake       |       ✅       |            ✅              |[CDC](/usecases/real-time-cdc/postgres-to-snowflake),[Streaming Query Replication](/usecases/streaming-query-replication/postgres-to-snowflake)|
-| PostgreSQL   | BigQuery        |       ✅       |            ✅              |[CDC](/usecases/real-time-cdc/postgres-to-bigquery),[Streaming Query Replication](/usecases/streaming-query-replication/postgres-to-bigquery)|
+| PostgreSQL   | Snowflake _(deprecated)_       |       ✅       |            ✅              |[CDC](/usecases/real-time-cdc/postgres-to-snowflake),[Streaming Query Replication](/usecases/streaming-query-replication/postgres-to-snowflake)|
+| PostgreSQL   | BigQuery _(deprecated as destination)_        |       ✅       |            ✅              |[CDC](/usecases/real-time-cdc/postgres-to-bigquery),[Streaming Query Replication](/usecases/streaming-query-replication/postgres-to-bigquery)|
 | PostgreSQL   | PostgreSQL     |       ✅       |            ✅              |[CDC](/usecases/real-time-cdc/postgres-to-postgres),[Streaming Query Replication](/usecases/streaming-query-replication/postgres-to-postgres)|
 | PostgreSQL   | Clickhouse          |      ✅      |            ✅             | https://docs.peerdb.io/mirror/cdc-pg-clickhouse |
-| PostgreSQL   | S3              |       ✅       |            ✅              |[CDC](/usecases/real-time-cdc/postgres-to-cloud),[Streaming Query Replication](/usecases/streaming-query-replication/postgres-to-s3)|
-| PostgreSQL   | GCS              |       ✅       |            ✅              |[CDC](/usecases/real-time-cdc/postgres-to-cloud),[Streaming Query Replication](/usecases/streaming-query-replication/postgres-to-s3)|
-| PostgreSQL   | Azure EventHubs |      ✅      |            🛑             |[CDC](/usecases/real-time-cdc/postgres-to-azure-eventhubs)|
-| PostgreSQL   | Kafka          |      ⚠️      |            🛑             | Coming soon ! |
-| PostgreSQL   | Google PubSub          |     ⚠️       |            ⚠️             | Coming soon ! |
+| PostgreSQL   | S3 _(deprecated)_              |       ✅       |            ✅              |[CDC](/usecases/real-time-cdc/postgres-to-cloud),[Streaming Query Replication](/usecases/streaming-query-replication/postgres-to-s3)|
+| PostgreSQL   | GCS _(deprecated)_              |       ✅       |            ✅              |[CDC](/usecases/real-time-cdc/postgres-to-cloud),[Streaming Query Replication](/usecases/streaming-query-replication/postgres-to-s3)|
+| PostgreSQL   | Azure EventHubs _(deprecated)_ |      ✅      |            🛑             |[CDC](/usecases/real-time-cdc/postgres-to-azure-eventhubs)|
+| PostgreSQL   | Kafka _(deprecated)_         |      ⚠️      |            🛑             | Coming soon ! |
+| PostgreSQL   | Google PubSub _(deprecated)_         |     ⚠️       |            ⚠️             | Coming soon ! |
 
 We are actively adding more sources and targets. If you need any specific connector as a source or target to your PostgreSQL database reach out to us at contact@peerdb.io

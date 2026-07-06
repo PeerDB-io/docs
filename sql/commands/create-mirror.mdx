@@ -59,6 +59,10 @@ This is optional as PeerDB creates the slot it needs by default. A use-case for 
 
 ### MIRROR for Streaming Query Results
 
+<Warning>
+Streaming Query Replication (QRep), including XMIN-based replication, is a deprecated mirror type and no longer actively maintained. It remains fully functional and no code is currently being removed. We recommend the **MIRROR for CDC** type above as the actively-maintained mirror type for new mirrors.
+</Warning>
+
 This type of MIRROR periodically streams query results on the source peer to the target peer.
 
 ```sql
@@ -100,6 +104,11 @@ The `OPTIONS` clause provides granular control when configuring the MIRROR:
 7. `if_not_exists`: If specified, the MIRROR will be created only if it does not exist.
 
 #### XMIN Query Replication
+
+<Warning>
+XMIN Query Replication is a deprecated mirror type and no longer actively maintained. It remains fully functional and no code is currently being removed. We recommend the **MIRROR for CDC** type as the actively-maintained mirror type for new mirrors.
+</Warning>
+
 PeerDB supports `xmin` as watermark column. Note that DELETEs are not supported in XMIN Query Replication.
 
 ```sql
