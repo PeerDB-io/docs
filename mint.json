@@ -92,6 +92,7 @@
             "connect/postgres/unsupported_providers"
           ]
         },
+        "connect/cockroachdb",
         {
           "group": "Clickhouse Setup Guide",
           "pages": [
