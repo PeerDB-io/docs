@@ -1,0 +1,168 @@
+---
+title: "CockroachDB Source Setup Guide"
+---
+
+This is a guide on how to set up a CockroachDB peer which you can use as a source for replication in PeerDB. It applies to self-hosted CockroachDB as well as CockroachDB Cloud.
+
+## Supported CockroachDB versions
+
+PeerDB's test suite runs against CockroachDB v24.1, v25.4 (LTS) and v26.2. Older versions may work but are not tested. Snapshot timestamp protection (described below) requires v24.1 or later.
+
+<Steps titleSize='h2'>
+
+<Step title="Creating a user with permissions">
+
+Let's create a dedicated user for PeerDB with the necessary permissions. Connect to your CockroachDB cluster and run the following SQL commands:
+
+1. Create a dedicated user for PeerDB:
+
+    ```sql
+    CREATE USER peerdb_user WITH PASSWORD 'some-password';
+    ```
+
+2. Grant read access on the tables you want to replicate. The following example shows permissions for the `public` schema. Repeat these commands for each schema containing tables you want to replicate:
+
+    ```sql
+    GRANT SELECT ON ALL TABLES IN SCHEMA "public" TO peerdb_user;
+    ```
+
+3. If you plan to use Change Data Capture (CDC), also grant the `CHANGEFEED` privilege on the tables you want to replicate:
+
+    ```sql
+    GRANT CHANGEFEED ON ALL TABLES IN SCHEMA "public" TO peerdb_user;
+    ```
+
+4. Mirror validation reads cluster settings to check that rangefeeds are enabled, which requires the `VIEWCLUSTERSETTING` privilege:
+
+    ```sql
+    GRANT SYSTEM VIEWCLUSTERSETTING TO peerdb_user;
+    ```
+
+5. Optionally, grant `REPLICATION` so PeerDB can protect the initial snapshot's timestamp from garbage collection during long loads (see [snapshot timestamp protection](#snapshot-timestamp-protection)). Without it, PeerDB logs a warning and the snapshot relies on `gc.ttlseconds` alone:
+
+    ```sql
+    GRANT SYSTEM REPLICATION TO peerdb_user;
+    ```
+
+<Note>
+On insecure (non-TLS) clusters, the `root` user can connect without a password. In that case you can leave the password empty when creating the peer.
+</Note>
+
+</Step>
+
+<Step title="Enabling rangefeeds for CDC">
+
+PeerDB performs CDC from CockroachDB using [changefeeds](https://www.cockroachlabs.com/docs/stable/change-data-capture-overview), which require rangefeeds to be enabled on the cluster. See the [changefeed prerequisites](https://www.cockroachlabs.com/docs/stable/create-and-configure-changefeeds) in the CockroachDB docs for details.
+
+1. On self-hosted CockroachDB, enable rangefeeds by running:
+
+    ```sql
+    SET CLUSTER SETTING kv.rangefeed.enabled = true;
+    ```
+
+    This requires the `admin` role or the `MODIFYCLUSTERSETTING` privilege.
+
+2. On CockroachDB Cloud Standard and Basic clusters, rangefeeds are enabled by default and no action is needed.
+
+Mirror validation fails with an explanatory error if rangefeeds are disabled and the mirror does CDC.
+
+</Step>
+
+<Step title="Configuring garbage collection">
+
+CockroachDB garbage-collects old row versions after the interval configured by the [`gc.ttlseconds`](https://www.cockroachlabs.com/docs/stable/configure-replication-zones#gc-ttlseconds) zone variable. PeerDB's changefeed cursor can only resume from a timestamp that has not yet been garbage collected. If PeerDB is down for longer than `gc.ttlseconds`, the cursor expires and the mirror needs a resync. The same window bounds the initial snapshot, which reads all tables `AS OF SYSTEM TIME` at one fixed timestamp.
+
+Mirror validation requires an effective `gc.ttlseconds` of at least 24 hours (86400 seconds) on every replicated table. The effective value is the minimum across the table's zone configuration and any partition zone configurations, since a partition-level setting overrides the table's. When validation fails, the error message names the table or partition and includes the exact `CONFIGURE ZONE` statement to raise the setting. For example, to allow up to 48 hours:
+
+```sql
+ALTER TABLE my_table CONFIGURE ZONE USING gc.ttlseconds = 172800;
+```
+
+See the [CockroachDB docs](https://www.cockroachlabs.com/docs/stable/configure-replication-zones#gc-ttlseconds) for default values, which differ between self-hosted and CockroachDB Cloud cluster types. On cluster types whose default is below 24 hours, raise the zone configuration for the replicated tables before creating the mirror.
+
+<Note>
+Increasing `gc.ttlseconds` causes CockroachDB to retain more row versions, which increases storage usage and can slow down reads on frequently updated tables. Pick a value that covers your expected downtime while accounting for these costs.
+</Note>
+
+</Step>
+
+<Step title="TLS configuration">
+
+TLS is enabled by default for CockroachDB peers. CockroachDB Cloud clusters and secure self-hosted clusters require it.
+
+1. If your cluster's certificate is not signed by a publicly trusted certificate authority, provide the cluster's root CA certificate (`root_ca`). For CockroachDB Cloud, you can download the CA certificate from the cluster's **Connect** dialog in the Cloud Console.
+2. If you connect through a load balancer or tunnel where the hostname you dial differs from the hostname in the server certificate, set **TLS Hostname** (`tls_host`) to the certificate's hostname.
+3. For certificate-based client authentication, provide a client certificate and private key (`client_tls`).
+4. For insecure self-hosted clusters, turn on **Disable TLS?** (`disable_tls`).
+
+`skip_cert_verification` disables server certificate verification and should only be used for testing.
+
+</Step>
+
+<Step title="Create the Peer on PeerDB">
+
+You can create the CockroachDB peer through the PeerDB UI or via SQL.
+
+**Using the UI:**
+
+1. Head over to the PeerDB UI and click on **Create Peer**. Select **CockroachDB** as the source.
+2. Fill in the connection details of your CockroachDB cluster, using the user you created earlier. The default port is `26257`.
+3. For TLS clusters, provide the **Root Certificate** if needed. For insecure clusters, turn on **Disable TLS?**.
+4. To connect through an SSH tunnel, turn on **Configure SSH Tunnel** and fill in the SSH host, port, user and credentials.
+5. Click on **Validate** and once that's green, you can go ahead and click on **Create** to create the peer!
+
+**Using SQL:**
+
+```sql
+CREATE PEER cockroachdb_peer FROM COCKROACHDB WITH
+(
+    host = '<hostname>',
+    port = '26257',
+    user = 'peerdb_user',
+    password = '<password>',
+    database = '<dbname>',
+    root_ca = '<root_ca_certificate_pem>'
+);
+```
+
+See [Creating Peers](/sql/commands/create-peer#cockroachdb-peer) for the full list of options.
+
+</Step>
+</Steps>
+
+## How replication works
+
+CDC is the recommended mirror type for CockroachDB sources. A CDC mirror runs in two phases:
+
+1. **Initial snapshot.** PeerDB captures a cluster logical timestamp and reads table data in consistent partitioned chunks using `AS OF SYSTEM TIME` queries at that timestamp, with watermark-based partitioning.
+2. **Change streaming.** A sinkless changefeed then streams changes starting from that same timestamp, so the snapshot and the change stream line up exactly. Resolved timestamps from the changefeed drive checkpointing, so PeerDB can resume from where it left off after a restart.
+
+### Delivery semantics
+
+Delivery is at least once. Each sync cycle resumes the changefeed from the last checkpointed resolved timestamp, so a bounded window of already-delivered events can be re-delivered, both between sync cycles and after restarts. ClickHouse destination tables use the ReplacingMergeTree engine with a version column, so re-delivered rows collapse to a single row on merge.
+
+### Snapshot timestamp protection
+
+While the initial snapshot runs, PeerDB automatically attempts to protect the snapshot timestamp from garbage collection. The protection is refreshed periodically while the snapshot runs, released when the initial load completes, and expires on its own after a bounded window as a safety guard.
+
+Protection requires CockroachDB v24.1 or later, the `REPLICATION` privilege for the PeerDB user, and on v26.1 or later the `allow_unsafe_internals` session setting or its cluster-wide override. If protection cannot be engaged, PeerDB logs a warning and proceeds; the initial load then relies on `gc.ttlseconds` alone.
+
+## Monitoring
+
+The CockroachDB connector emits the following metrics through PeerDB's [OpenTelemetry metrics](/metrics/native-metrics), with the standard flow name attributes:
+
+| Metric | Description |
+| --- | --- |
+| `cockroachdb_resolved_lag` | How many seconds the changefeed's resolved timestamp trails the current wall clock time. |
+| `cockroachdb_records_received` | Counter of changefeed data records received on the CDC pull path. |
+
+## Connecting through a proxy
+
+Connection proxies with short idle timeouts (for example, haproxy defaults to around 30 seconds) can drop idle PeerDB connections between sync cycles. PeerDB reconnects automatically, but raising the proxy's idle timeout reduces reconnect noise in the logs.
+
+## Limitations
+
+1. Newly added columns are detected from changefeed data and propagated to the destination. Column drops, renames and type changes are not replicated and require a resync of the mirror.
+2. `TRUNCATE` or `DROP` of a replicated table stops the mirror with a terminal error; recreate or resync the mirror afterwards.
+3. Changefeeds with webhook or Kafka sinks are not supported; PeerDB only uses sinkless changefeeds.
+4. If PeerDB is down for longer than the table's effective `gc.ttlseconds`, the changefeed cursor expires and the mirror needs a resync.

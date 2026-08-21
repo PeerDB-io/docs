@@ -9,9 +9,10 @@ PeerDB currently supports the below types of Peers. To connect a database to Pee
 2. [Snowflake](#snowflake-peer)
 3. [PostgreSQL](#postgresql-peer)
 5. [MySQL](#mysql-peer)
-6. [Storage Peers - S3 and Google Cloud](#storage-peers-s3-and-gcs)
-7. [Azure EventHubs](#eventhub-peer)
-8. [ClickHouse](#clickhouse-peer)
+6. [CockroachDB](#cockroachdb-peer)
+7. [Storage Peers - S3 and Google Cloud](#storage-peers-s3-and-gcs)
+8. [Azure EventHubs](#eventhub-peer)
+9. [ClickHouse](#clickhouse-peer)
 
 ## BigQuery Peer
 
@@ -327,6 +328,56 @@ CREATE PEER mysql_peer FROM MYSQL WITH (
 
 1. Currently only querying is supported for this type of peer. Mirrors are not supported.
 2. `setup` is optional, but can be used to run queries when connection setup. Useful for setting transactions as read only by default, or setting catalog/database with `use catalog.database` for [StarRocks](https://www.starrocks.io)
+
+## CockroachDB Peer
+
+```sql
+CREATE PEER cockroachdb_peer FROM COCKROACHDB WITH
+(
+    host = '<hostname>',
+    port = '26257',
+    user = '<user>',
+    password = '<password>',
+    database = '<dbname>',
+    root_ca = '<root_ca_certificate_pem>',
+    tls_host = '<tls_hostname>'
+);
+```
+
+To connect through an SSH tunnel, add an `ssh_config` option with the same JSON shape as the [PostgreSQL peer](#postgresql-peer):
+
+```sql
+    ssh_config = '{
+        "host": "<ssh_host>",
+        "port": 22,
+        "user": "<ssh_user>",
+        "password": "<ssh_password>",
+        "private_key": "<base64_encoded_ssh_private_key>"
+    }'
+```
+
+**Parameters:**
+
+| Parameter | Description | Required |
+| --- | --- | --- |
+| `host` | Hostname of the CockroachDB cluster. | Yes |
+| `port` | SQL port of the cluster. Defaults to `26257`. | Yes |
+| `user` | User PeerDB connects as. | Yes |
+| `password` | Password of the user. Can be omitted for `root` connections to insecure clusters. | No |
+| `database` | Database to replicate from. | Yes |
+| `disable_tls` | Set to `'true'` only for insecure clusters. TLS is enabled by default, and CockroachDB Cloud requires it. | No |
+| `root_ca` | Root CA certificate (PEM) used to verify the server certificate, for clusters whose certificate is not signed by a publicly trusted CA. | No |
+| `tls_host` | Hostname to verify the server certificate against, if it differs from `host` (for example when connecting through a load balancer). | No |
+| `skip_cert_verification` | Set to `'true'` to skip server certificate verification. Only for testing. | No |
+| `client_tls` | JSON object with `certificate` and `private_key` (PEM) for certificate-based client authentication. | No |
+| `ssh_config` | JSON object describing an SSH tunnel, see above. | No |
+
+### Considerations
+
+1. PeerDB's test suite runs against CockroachDB v24.1, v25.4 (LTS) and v26.2.
+2. CDC mirrors require the cluster setting `kv.rangefeed.enabled = true` on self-hosted clusters. It is enabled by default on CockroachDB Cloud Standard and Basic clusters. See the [changefeed prerequisites](https://www.cockroachlabs.com/docs/stable/create-and-configure-changefeeds) in the CockroachDB docs.
+3. Mirror validation requires an effective `gc.ttlseconds` of at least 24 hours on every replicated table.
+4. See the [CockroachDB Setup Guide](/connect/cockroachdb) for user permissions, TLS setup and garbage collection guidance.
 
 ## EventHub Peer
 
